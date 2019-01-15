@@ -1,6 +1,9 @@
 # vue-music
 a vue mobile music project
 
+#安装依赖
+npm install
+
 #启动后台服务
 npm run server
 
