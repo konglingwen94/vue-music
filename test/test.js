@@ -1,0 +1,1 @@
+console.log(JSON.parse('{"req_0":{"module":"SongPlay.SongPlayBaseServer","method":"GetPlaySongAd","param":{"app_user":1,"platform":2,"channel":3,"forbid":0,"share_musicid":"","encodetype":1,"songmid":"0002QqWB1sCGLm","singermid":"003UjVqB2flfGj","albummid":"00272aDr0KxAbZ","adtype":0,"id":"4967651"}},"comm":{"g_tk":1815597080,"uin":794430774,"format":"json"}}'));

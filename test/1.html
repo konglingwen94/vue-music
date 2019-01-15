@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <script src="https://cdn.bootcss.com/zepto/1.2.0/zepto.js"></script>
+  <!-- <script src="https://cdn.bootcss.com/jquery/3.3.0/jquery.js"></script> -->
+  <script src="https://cdn.bootcss.com/vue/2.5.21/vue.js"></script>
+  <style>
+  div {
+    /*background-image: url(http://p2.music.126.net/Kn40TnCtp2f3uqEVdOFc-w==/109951163710835311.jpg?param=300y300);*/
+    height: 400px;
+  }
+
+  .inner {
+    background: rgba(0, 0, 0, .4);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(120px);
+    height: 100%;
+  }
+
+  .head {
+    color: red;
+  }
+
+  </style>
+</head>
+
+<body>
+</body>
+<script>
+$.ajax({
+  url: 'http://192.168.1.5:3000/getMusicData?singermid=002J4UUk29y8BY&begin=0&num=200',
+
+}).onprogress = function(p) {
+  // body...
+  console.log(p.loaded)
+}
+console.log();
+
+</script>
+
+</html>

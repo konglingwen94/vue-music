@@ -1,0 +1,71 @@
+.font-dpr(@font-size) {
+  font-size: @font-size;
+
+  /* no*/
+  [data-dpr="2"] & {
+    font-size: @font-size * 2;
+    /* no  */
+  }
+
+  [data-dpr="3"] & {
+    font-size: @font-size * 3;
+    /* no  */
+  }
+}
+
+.posCenter(@class: div) {
+  position: relative;
+
+  &>.@{class} {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.posCenterX(@class: div) {
+  position: relative;
+
+  &>.@{class} {
+    position: absolute;
+    left: 50%;
+    // top: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+.posCenterY(@class: div) {
+  position: relative;
+
+  &>.@{class} {
+    position: absolute;
+    // left: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+
+.posCenterBot(@class: div, @bot: 0) {
+  position: relative;
+
+  &>.@{class} {
+    position: absolute;
+    left: 50%;
+    // top: 50%;
+    bottom: @bot;
+    transform: translateX(-50%);
+  }
+}
+
+.posCenterTop(@class: div, @top: 0) {
+  position: relative;
+
+  &>.@{class} {
+    position: absolute;
+    left: 50%;
+    // top: 50%;
+    top: @top;
+    transform: translateX(-50%);
+  }
+}

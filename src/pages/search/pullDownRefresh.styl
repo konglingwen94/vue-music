@@ -1,0 +1,31 @@
+.cube-pulldown-wrapper
+    text-align: center
+    .before-trigger
+      height: auto
+      font-size: 30px
+      align-self: flex-end
+      span
+        display: inline-block
+        line-height: 1
+        transition: all 0.3s
+        color: red
+        padding: 15px 0
+        &.rotate 
+          transform: rotate(180deg)
+    .after-trigger
+      flex: 1
+      margin: 0
+      .text-wrapper
+        margin: 0 auto
+        margin-top: 2px
+        padding: 5px 0
+        color: #498ec2
+        background-color: #d6eaf8
+      .cube-loading-spinners
+        margin: auto
+  .success-enter-active, .success-leave-active
+    transition: width .5s
+  .success-enter, .success-leave-to
+    width: 70%
+  .success-enter-to, .success-leave
+    width: 100%
