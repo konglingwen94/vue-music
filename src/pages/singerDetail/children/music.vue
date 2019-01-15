@@ -1,6 +1,6 @@
 <template>
   <cube-scroll class="scrollWrapper" ref="scroll" @pulling-up="onPullingUp" :scroll-events="['scroll','scroll-end']" @scroll="onScroll" :options="options">
-    <list-view hasIndex name="music-list" :list="list" :keyInfo="{title:'name',desc:'singer'}">
+    <list-view @selectPlay="selectItem" hasIndex name="music-list" :list="list" :keyInfo="{title:'name',desc:'singer'}">
     </list-view>
   </cube-scroll>
 </template>
@@ -20,6 +20,11 @@ export default {
     };
   },
   methods: {
+    ...Vuex.mapActions(['selectPlay']),
+    selectItem(item, index) {
+      console.log(item, index);
+      this.selectPlay({ list: this.list, index })
+    },
     async getData() {
 
       var data = await this.__getJson(`http://${domain}:3000/getMusicData`, this.query);

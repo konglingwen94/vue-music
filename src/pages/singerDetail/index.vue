@@ -16,7 +16,7 @@
     <!-- 偏移容器 -->
     <div class="offsetBody" :style="offsetBodyStyle">
       <!-- 导航栏 -->
-      <nav-bar :style="[translateYStyle]" :query="$route.query" :navList="navList" class="navbar"></nav-bar>
+      <nav-bar @on-has-height="h=>navbarHeight=h" :style="[translateYStyle]" :query="$route.query" :navList="navList" class="navbar"></nav-bar>
       <!-- 偏移遮罩 -->
       <div :style="[translateYStyle,layerStyle]" class="layer">
         <!-- 子页面初始化状态提示 -->
@@ -58,7 +58,7 @@ export default {
         isLoading: false, //加载中
         isAbort: false //加载中断
       },
-      navbarHeight: this.$store.state.navbarHeight //导航列表高度
+      navbarHeight: 0 //导航列表高度
     };
   },
   computed: {

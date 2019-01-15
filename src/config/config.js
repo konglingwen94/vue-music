@@ -25,3 +25,9 @@ export const __SEARCH_URL = 'https://api.bzqll.com/music/tencent/search?key=5796
 export const __MV_LIST_CATEGORY_URL = 'https://api.bzqll.com/music/tencent/mvListCategory?key=579621905'
 export const __HOT_MV_LIST_URL = 'https://api.bzqll.com/music/tencent/hotMvList?key=579621905'
 export const __HOT_KEY = `http://${DOMAIN}:3000/getHotKey` //热门搜索
+
+export const playMode = {
+  sequence: 0,
+  loop: 1,
+  random: 2
+}

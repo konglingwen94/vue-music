@@ -3,7 +3,7 @@
     <!-- 列表容器 -->
     <ul :class="['list-wrapper',{twoColumn}]">
       <!-- 列表项 -->
-      <li :class="['list-item',{twoColumn}]" v-for="(item,key) in list" :key="key">
+      <li @click="selectPlay(item,key)" :class="['list-item',{twoColumn}]" v-for="(item,key) in list" :key="key">
         <!-- 图片插槽 -->
         <div :style="picWrapStyle" :class="['pic-wrap',{twoColumn}]" v-if="hasImg">
           <slot name="img">
@@ -79,7 +79,9 @@ export default {
     this.$options.name = this.name
   },
   methods: {
-
+    selectPlay(item, index) {
+      this.$emit('selectPlay', item, index)
+    }
   }
 };
 

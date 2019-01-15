@@ -66,9 +66,7 @@ export default {
 
   },
   methods: {
-    ...(Vuex.mapMutations(['setPageOnload', 'emitNavbarHeight'])),
 
-    ...Vuex.mapActions(['setPageState']),
     selectItem(item) {
       console.log(item);
     },

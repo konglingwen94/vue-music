@@ -43,8 +43,6 @@ export default {
     this.$refs.scroll && this.$refs.scroll.refresh()
   },
   methods: {
-    ...Vuex.mapMutations(['setPageOnload']),
-    ...Vuex.mapActions(['setPageState']),
 
     onPullingUp() {
 

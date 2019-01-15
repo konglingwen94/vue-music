@@ -86,7 +86,7 @@ export default {
   },
   methods: {
     // ...(Vuex.mapMutations(['setPageOnload'])),
-    ...Vuex.mapActions(['setPageState']),
+    // ...Vuex.mapActions(['setPageState']),
     setClass(label, id) {
       // var cate = {};
       var _class = {};
