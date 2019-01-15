@@ -36,7 +36,6 @@ export default {
       // this.isLoading = false
       // this.setPageOnload({ pageLoaded: true })
     })
-    this.setPageState(promise)
 
   },
   activated() {

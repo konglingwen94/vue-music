@@ -24,7 +24,7 @@ export function findVerticalScroll(argument) {
       return this
     } else {
 
-      console.log(`this is ${ret.direction} scroll`)
+      // console.log(`this is ${ret.direction} scroll`)
     }
   }
 }

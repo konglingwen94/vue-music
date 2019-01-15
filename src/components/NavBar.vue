@@ -32,7 +32,7 @@ export default {
   created() {
 
     var name = this.$attrs.namePrefix;
-    console.log(name);
+    // console.log(name);
     if (name) {
 
       var _name = _.toLower(this.$options.name.replace('-', ''))

@@ -68,7 +68,7 @@ export default {
   methods: {
 
     selectItem(item) {
-      console.log(item);
+      // console.log(item);
     },
     async getSingerOriginData() {
       var options = {
