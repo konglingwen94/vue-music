@@ -1,9 +1,17 @@
 <template>
   <div class="player">
     <!-- 全屏播放 -->
-    <normal></normal>
+    <div class="normal-player" v-show="fullScreen">
+      <div class="top">
+        <mt-header class="mt-top" :title="currentSong.name">
+          <div slot="left" class="back" @click="back">
+            <i class="cubeic-select"></i>
+          </div>
+        </mt-header>
+      </div>
+    </div>
     <!-- 最小化播放 -->
-    <mini></mini>
+    <div @click="open" class="mini-player" v-show="!fullScreen">mini-player</div>
   </div>
 </template>
 <script type="text/javascript">
@@ -28,11 +36,41 @@ export default {
     ]),
   },
   methods: {
+    ...Vuex.mapMutations({
+      setFullScreen: 'SET_FULL_SCREEN',
+    }),
+    back() {
+      this.setFullScreen(false)
+    },
+    open() {
+      this.setFullScreen(true)
 
+    },
   },
-  components: { Normal, Mini }
 };
 
 </script>
 <style scoped lang="less">
+.player {}
+
+.normal-player {
+  height: 100vh;
+  background: #eee;
+  position: fixed;
+  width: 100vw;
+
+  .mt-top {
+    background: transparent;
+  }
+}
+
+.mini-player {
+  border-top: 1px solid orange;
+  position: fixed;
+  bottom: 0px;
+  height: 70px;
+  width: 100%;
+  background: #eee;
+}
+
 </style>
