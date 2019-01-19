@@ -25,3 +25,9 @@ export const searchHistory = state => state.searchHistory
 export const playHistory = state => state.playHistory
 
 export const favoriteList = state => state.favoriteList
+
+
+export const miniPlayerHeight = state => state.miniPlayerHeight
+export const initialed = state => state.initialed
+
+export const hasPlaylist = state => Boolean(state.playlist.length)

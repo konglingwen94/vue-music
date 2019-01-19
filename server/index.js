@@ -1,6 +1,7 @@
 const Callback = require('./callback.js')
 const singerCallback = require('./singerCallback.js')
 const searchCb = require('./searchCb.js')
+const musicPlayDataCb = require('./musicPlayData.js')
 const IP = require('../config/local.js').IP
 
 const express = require('express')
@@ -25,6 +26,8 @@ app.get('/getSongList', Callback.getSongList)
 app.get('/getMusicData', singerCallback.getMusicData)
 app.get('/getAlbumData', singerCallback.getAlbumData)
 app.get('/getMvData', singerCallback.getMvData)
+app.get('/getMusicPlayData', musicPlayDataCb.getMusicPlayData)
+app.get('/getLyric', musicPlayDataCb.getLyric)
 // 获取搜索热词
 app.get('/getHotKey', searchCb.getHotKey)
 // 开启服务

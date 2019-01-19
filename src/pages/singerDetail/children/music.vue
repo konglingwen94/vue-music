@@ -6,7 +6,7 @@
 </template>
 <script type="text/javascript">
 import mixin from '../mixin.js'
-
+import { getPlayUrl } from '@/config/song'
 import ListView from '../listView-tpl.vue'
 
 
@@ -19,21 +19,24 @@ export default {
       list: [],
     };
   },
+  async created() {
+
+  },
   methods: {
     ...Vuex.mapActions(['selectPlay']),
     selectItem(item, index) {
-      console.log(item, index);
-      this.selectPlay({ list: this.list, index })
+      // console.log(item, index);
+      this.selectPlay({ list: this.__cloneDeep__(this.list), index })
     },
     async getData() {
 
-      var data = await this.__getJson(`http://${domain}:3000/getMusicData`, this.query);
+      var { data, code } = await this.__getJson(`http://${domain}:3000/getMusicData`, this.query);
       if (!this.total) {
-        this.total = data.data.total
+        this.total = data.total
       }
-      if (data.code == 0) {
+      if (code == 0) {
         this.netNormal = true;
-        return this.getListViewData(data.data.list)
+        return this.getListViewData(data.list)
       } else {
         throw Error('err')
       }
@@ -46,8 +49,24 @@ export default {
 
       })
       // this.checkMore()
-
+      this.getSongUrl(this.list)
       return this.forceUpdated()
+    },
+    async getSongUrl(list) {
+      var mids = list.map(song => {
+        return song.mid
+      })
+      const songParams = {
+        mid: mids.join(',')
+      }
+      var { code, req } = await this.__getJson(`http://${domain}:3000/getMusicPlayData`, songParams)
+      if (code == this.__QERR_OK && req.code == this.__QERR_OK) {
+        var { midurlinfo } = req.data
+        midurlinfo.forEach((mid, index) => {
+          list[index].songUrl = `${this.SONG_SOURCE}${mid.purl}`
+        })
+        // console.log(list)
+      }
     }
   }
 };

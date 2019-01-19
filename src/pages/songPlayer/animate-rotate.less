@@ -1,0 +1,26 @@
+@keyframes rotate {
+  from {
+    transform: rotate(0);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+
+}
+
+.cd-wrap {
+  transform: rotate(0);
+
+  .cd {
+    border-radius: 50%;
+
+
+
+    &.rotate {
+      animation: rotate 20s linear infinite;
+      // animation-iteration-count: infinite
+    }
+
+  }
+}

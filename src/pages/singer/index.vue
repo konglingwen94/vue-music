@@ -39,6 +39,7 @@ export default {
     },
     pageStyle() {
       return {
+        height: '94vh'
         // transform: 'translate(0,0)',
       }
     }

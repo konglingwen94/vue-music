@@ -8,7 +8,7 @@ import './registerComp/vux.js'
 // 引入全局自定义样式
 // import './style/global.less'
 import './style'
-
+// import 'swiper/dist/css/swiper.css'
 // 引入第三方库样式
 import 'vue2-animate/dist/vue2-animate.min.css';
 

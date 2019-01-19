@@ -1,15 +1,17 @@
 <template>
-  <div id="app" :style="{paddingTop:isHome?navbarHeight+'px':0}">
-    <nav-bar v-show="isHome" @on-has-height="h=>navbarHeight=h" :navList="navList" namePrefix='home' ref="navbar"></nav-bar>
-    <!-- <cube-loading class="loadingIcon" v-if="!pageLoaded"></cube-loading> -->
-    <div class="page" v-show="!$store.state.fullScreen">
+  <div @click.once="initPlay" id="app" :style="padTopStyle">
+    <div class="page" v-show="!fullScreen">
+      <nav-bar v-show="isHome" @on-has-height="h=>navbarHeight=h" :navList="navList" namePrefix='home' ref="navbar"></nav-bar>
+      <!-- <cube-loading class="loadingIcon" v-if="!pageLoaded"></cube-loading> -->
       <keep-alive>
         <!-- <router-view v-if="$route.meta.keepAlive" /> -->
         <router-view :key="$route.query.id" :class="[{fullScreenFixed},$route.name && $route.matched[0].name+'-page']" />
       </keep-alive>
     </div>
     <!-- 音乐播放器 -->
-    <song-player v-show="$store.getters.playlist.length>0"></song-player>
+    <keep-alive>
+      <song-player :class="{hidden:!$store.getters.playlist.length>0}"></song-player>
+    </keep-alive>
   </div>
 </template>
 <script>
@@ -40,7 +42,10 @@ export default {
     }
   },
   computed: {
-    // ...Vuex.mapGetters(['pageLoaded']),
+    padTopStyle() {
+      return { paddingTop: this.isHome && !this.fullScreen ? this.navbarHeight + 'px' : 0 }
+    },
+    ...Vuex.mapGetters(['fullScreen', 'initialed', 'currentSong']),
     // ...Vuex.mapState(['navbarHeight']),
     fullScreenFixed() {
       // console.log(this.$route);
@@ -62,7 +67,7 @@ export default {
     },
   },
   created() {
-
+    // this.canplayPromise = null;
   },
   watch: {
 
@@ -71,7 +76,12 @@ export default {
   components: { SongPlayer },
   methods: {
 
-
+    initPlay() {
+      $('audio') && $('audio')[0].play().catch(err => {
+        console.log(err);
+      })
+      // await this.canplayPromise;
+    }
   }
 }
 

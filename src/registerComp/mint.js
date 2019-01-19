@@ -1,6 +1,6 @@
 import Vue from 'vue'
 // 引入mint组件
-import { Progress, Search, Button, Cell, Navbar, Header } from 'mint-ui'
+import { Swipe, SwipeItem, Toast, Range, Progress, Search, Button, Cell, Navbar, Header } from 'mint-ui'
 
 // 全局注册mint组件
 Vue.component(Button.name, Button)
@@ -9,4 +9,7 @@ Vue.component(Header.name, Header);
 Vue.component(Navbar.name, Navbar);
 Vue.component(Search.name, Search);
 Vue.component(Progress.name, Progress);
-// Vue.component(Toast.name, Toast);
+Vue.component(Range.name, Range);
+Vue.component(Swipe.name, Swipe);
+Vue.component(SwipeItem.name, SwipeItem);
+Vue.prototype.Toast = Toast

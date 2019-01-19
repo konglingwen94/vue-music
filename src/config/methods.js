@@ -31,7 +31,7 @@ export function findVerticalScroll(argument) {
 
 export function setScrollWrapHeight() {
   var ret = this.findVerticalScroll();
-  if (ret) {
+  if (ret && !this.$attrs['self-height']) {
     var $el = ret.$el;
     if (this.isDom($el)) {
       if ($el.parentElement && $($el).index() == 0) {

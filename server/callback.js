@@ -47,6 +47,8 @@ module.exports.getSongList = function(req, res) {
     onlysong: 0,
 
   }, qs.parse(query))
+
+  // https://c.y.qq.com/v8/fcg-bin/fcg_v8_singer_track_cp.fcg
   request({
     url: `https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg`,
     qs: params,

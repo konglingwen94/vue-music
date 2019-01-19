@@ -1,6 +1,15 @@
 import * as types from './mutation-types'
 
 const matutaions = {
+  [types.SET_MINI_PLAYER_HEIGHT](state, height) {
+    state.miniPlayerHeight = height
+  },
+  [types.ADD_PLAY_LIST](state, list) {
+    state.playlist.push(...list)
+  },
+  [types.SET_INITIAL](state, isInited) {
+    state.initialed = isInited
+  },
   [types.SET_SINGER](state, singer) {
     state.singer = singer
   },

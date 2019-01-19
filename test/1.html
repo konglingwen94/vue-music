@@ -28,8 +28,13 @@
 </head>
 
 <body>
+  <audio autoplay="true" id="ado" src="http://dl.stream.qqmusic.qq.com/C400000Qepff3UyUWO.m4a?guid=5165714425&vkey=38549303F0F848C3537D02B2A2960E34C13BAF1696229A2AB60E7E915F23482687DBB513C100183CFB12002E11DE743BB05BF56F7FB8A4C6&uin=0&fromtag=38">
+  </audio>
 </body>
 <script>
+ado.ontimeupdate = () => {
+  console.log(ado.currentTime);
+}
 $.ajax({
   url: 'http://192.168.1.5:3000/getMusicData?singermid=002J4UUk29y8BY&begin=0&num=200',
 

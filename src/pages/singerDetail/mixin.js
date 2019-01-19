@@ -193,6 +193,9 @@ export default {
   },
 
   methods: {
+    ...Vuex.mapMutations({
+      addList: 'ADD_PLAY_LIST'
+    }),
     refreshPage() {
       // this.$off()
 
