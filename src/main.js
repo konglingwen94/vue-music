@@ -1,9 +1,15 @@
+// 兼容低版本浏览器
+import 'babel-polyfill'
+
 import 'lib-flexible'
 // 注册全局组件
 import './registerComp/custom.js'
 import './registerComp/cube.js'
 import './registerComp/mint.js'
 import './registerComp/vux.js'
+
+// 引入全局自定义指令
+// import directives from './directive'
 
 // 引入全局自定义样式
 // import './style/global.less'
@@ -14,7 +20,7 @@ import 'vue2-animate/dist/vue2-animate.min.css';
 
 // 引入布局框架
 import './config/index.js'
-import Resource from 'vue-resource'
+// import Resource from 'vue-resource'
 import store from './store/index.js'
 import Vue from 'vue'
 
@@ -32,14 +38,17 @@ import vueTap from 'v-tap';
 
 // 全局设置mixin
 import './common/mixins/global.js'
-import './jsx'
+// import './jsx'
+require('es6-promise').polyfill();
+require('es6-promise/auto');
 
 Vue.use(vueTap);
 
-Vue.use(Resource)
+// Vue.use(Resource)
 
+// Vue.use(directives);
 
-// new vconsole()
+new vconsole()
 
 
 Vue.use(VueLazyLoad, {

@@ -3,7 +3,7 @@
     <mt-progress v-show="progressPer<100" :value="progressPer" class="progressBar"></mt-progress>
     <!-- 悬浮 -->
     <div @click="showMutiPicker" v-show="isShow" class="select-wrap">
-      <cube-button class="select-list flexAround" outline primary>
+      <cube-button class="select-list iflex around" outline primary>
         <span class="select-item" :key="key" v-for="(item,key) in showSelect">{{item.text}}--{{item.title}}</span>
         <i class="cubeic-select"></i>
       </cube-button>

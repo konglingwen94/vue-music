@@ -7,7 +7,7 @@ exports.getMusicPlayData = function(req, res) {
   let query = req._parsedUrl.query;
   query = qs.parse(query).mid;
   query = query.split(',');
-  console.log(query)
+  // console.log(query)
   const songParams = {
     "req": {
       "module": "vkey.GetVkeyServer",

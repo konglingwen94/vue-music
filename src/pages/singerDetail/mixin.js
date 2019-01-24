@@ -30,6 +30,7 @@ export default {
   },
   // inject: ['onLine'],
   computed: {
+    ...Vuex.mapGetters(['miniPlayerHeight']),
     options() {
       // console.log(this.navigator.onLine);
       return {
@@ -102,9 +103,7 @@ export default {
     pageState: {}
   },
   watch: {
-    inited() {
 
-    }
   },
   created() {
     // 设置页面初始化状态

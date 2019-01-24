@@ -28,6 +28,7 @@ export const favoriteList = state => state.favoriteList
 
 
 export const miniPlayerHeight = state => state.miniPlayerHeight
+export const _miniPlayerHeight = state => state._miniPlayerHeight
 export const initialed = state => state.initialed
 
 export const hasPlaylist = state => Boolean(state.playlist.length)

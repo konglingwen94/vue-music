@@ -1,6 +1,6 @@
 <template>
   <div @click.once="initPlay" id="app" :style="padTopStyle">
-    <div class="page" v-show="!fullScreen">
+    <div class="page" v-show="true">
       <nav-bar v-show="isHome" @on-has-height="h=>navbarHeight=h" :navList="navList" namePrefix='home' ref="navbar"></nav-bar>
       <!-- <cube-loading class="loadingIcon" v-if="!pageLoaded"></cube-loading> -->
       <keep-alive>
@@ -77,6 +77,8 @@ export default {
   methods: {
 
     initPlay() {
+      console.log('initPlay');
+
       $('audio') && $('audio')[0].play().catch(err => {
         console.log(err);
       })

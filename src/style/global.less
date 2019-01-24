@@ -69,3 +69,44 @@
     transform: translateX(-50%);
   }
 }
+
+.fullBoxParent(@class: div) {
+  position: relative;
+
+  &>.@{class} {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+  }
+}
+
+.fullBox {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+
+}
+
+.flexYCenter {
+  display: flex;
+  align-items: center;
+}
+
+.flexAround {
+  display: flex;
+  justify-content: space-around;
+}
+
+.flexBetween {
+  display: flex;
+  justify-content: space-between;
+}
+
+.flexXCenter {
+  display: flex;
+  justify-content: center;
+}

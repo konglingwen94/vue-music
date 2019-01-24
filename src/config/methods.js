@@ -48,23 +48,28 @@ export function setElHeight({ selector, top = 0, bottom = 0, el = 'parent' }) {
   setTimeout(() => {
     if (typeof this.$attrs['client-top'] == "number") {
       top = this.$attrs['client-top']
-    } else if (typeof this.$attrs.scroll__Bot == "number") {
-      bottom = this.$attrs.scroll__Bot
     } else {
       top = this.getClientTop(selector)
     }
+
+    if (typeof this.miniPlayerHeight == "number" && this.hasPlaylist) {
+      bottom = this.miniPlayerHeight
+      // console.log(bottom)
+    } else {}
     // console.log('mixin' + top);
-    // console.log('mixin mounted')
-
-    // this.$nextTick(() => {
-
 
 
     var height = innerHeight - bottom - top;
-    if ($(selector)[0].__vue__) {
+    /*if ($(selector)[0].__vue__) {
       $(selector)[0].__vue__.wrapHeight = height
+    }*/
+    $(selector).css({ height }).attr('data-height', height + bottom).attr('data-mHeight', innerHeight - top - this.miniPlayerHeight).attr('initialed', '')
+    if (bottom != 0) {
+
+      $(selector).attr('hasplaylist', '')
     }
-    $(selector).css({ height }).attr('data-height', `${height}`)
+
+    // this.$scrollWrapper = $(selector)[0]/**/
     // console.log(`set ${el} height ${height}`)
   }, 40)
   // })

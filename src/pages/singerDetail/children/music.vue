@@ -24,8 +24,9 @@ export default {
   },
   methods: {
     ...Vuex.mapActions(['selectPlay']),
-    selectItem(item, index) {
+    async selectItem(item, index) {
       // console.log(item, index);
+      await this.playPromise;
       this.selectPlay({ list: this.__cloneDeep__(this.list), index })
     },
     async getData() {
@@ -49,7 +50,7 @@ export default {
 
       })
       // this.checkMore()
-      this.getSongUrl(this.list)
+      this.playPromise = this.getSongUrl(this.list)
       return this.forceUpdated()
     },
     async getSongUrl(list) {
