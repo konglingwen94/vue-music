@@ -18,7 +18,7 @@
       <!-- 滚动遮罩 -->
       <div class="layer"></div>
       <!-- 歌曲列表 -->
-      <cube-scroll :options="options" @pulling-up="onPullingUp" :scroll-events="['scroll']" :probeType="2" @scroll="onScroll" class="scrollWrap" ref="scroll">
+      <cube-scroll :data="musicList" :options="options" @pulling-up="onPullingUp" :scroll-events="['scroll']" :probeType="2" @scroll="onScroll" class="scrollWrap" ref="scroll">
         <cube-loading class="icon-loading" v-if="!musicList.length"></cube-loading>
         <music-list v-if="musicList.length" :list="musicList"></music-list>
       </cube-scroll>
@@ -131,41 +131,39 @@ export default {
     getMusicList(list) {
       $.each(list, (key, item) => {
         // (item, key)
+        console.log(item)
         this.musicList.push(new this.__Song(item))
       })
     },
-    getSongList() {
-      this.__getJson(`http://${domain}:3000/getSongList`, {
-        disstid: this.$route.query.id,
-        song_begin: this.song_begin,
-        song_num: this.song_num
-      }).then(data => {
-        if (!this.total_song_num) {
-          console.log()
-          this.total_song_num = data.cdlist[0].total_song_num
-        }
-        // (data)
-        // if (data.code == 0) {
-        this.originData = data.cdlist[0];
-        // this.cd.dissname = data.cdlist[0].dissname;
-        if (this.__isEmptyObject(this.cd)) {
+    async getSongList() {
+      var params = {
+        id: this.$route.query.id,
+        // song_begin: this.song_begin,
+        // song_num: this.song_num
+      };
+      var { data, code } = await this.__getJson(this.__SONG_LIST, params)
+      if (code === this.__BERR_OK) {
+        this.musicList = data.songs
+        console.log()
+        // this.total_song_num = cdlist[0].total_song_num
+      }
+      // this.originData = cdlist[0];
+      // this.cd.dissname = data.cdlist[0].dissname;
+      if (this.__isEmptyObject(this.cd)) {
 
-          this.initCd(data.cdlist[0])
+        // this.initCd(cdlist[0])
+      }
+      // this.musicList.push(...data.cdlist[0].songlist)
+      // this.getMusicList(cdlist[0].songlist)
+      // }
+      this.$nextTick(() => {
+        // this.options.pullUpLoad = this.songList.length >= this.total_song_num ? false : true
+        if (this.musicList.length >= this.total_song_num) {
+          // this.loadEnd = true
+          // this.options.pullUpLoad = false
+          // this.$refs.scroll.finishPullUp()
         }
-        // this.musicList.push(...data.cdlist[0].songlist)
-        this.getMusicList(data.cdlist[0].songlist)
-        // }
-        this.$nextTick(() => {
-          // this.options.pullUpLoad = this.songList.length >= this.total_song_num ? false : true
-          if (this.musicList.length >= this.total_song_num) {
-            this.loadEnd = true
-            this.options.pullUpLoad = false
-            // this.$refs.scroll.finishPullUp()
-          }
-          this.$refs.scroll.refresh()
-          this.$refs.scroll.forceUpdate()
-        })
-      }).catch()
+      })
     },
   }
 };

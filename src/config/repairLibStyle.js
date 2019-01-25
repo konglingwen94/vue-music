@@ -30,8 +30,13 @@ function setBorderWidth(style) {
 function eachStyleSheets(sheets) {
   // body...
   Array.from(sheets).forEach(sheet => {
-    if (sheet.cssRules) {
-      eachCssRules(sheet.cssRules)
+    try {
+
+      if (sheet.cssRules) {
+        eachCssRules(sheet.cssRules)
+      }
+    } catch (err) {
+      console.log(err)
     }
   })
 }

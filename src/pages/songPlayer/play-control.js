@@ -3,6 +3,7 @@ export default {
     if (!this.songReady) {
       return
     }
+    // this.play()
     let index = this.currentIndex - 1;
     if (index == -1) {
       index = this.playlist.length - 1

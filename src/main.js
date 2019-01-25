@@ -39,8 +39,8 @@ import vueTap from 'v-tap';
 // 全局设置mixin
 import './common/mixins/global.js'
 // import './jsx'
-require('es6-promise').polyfill();
-require('es6-promise/auto');
+// require('es6-promise').polyfill();
+// require('es6-promise/auto');
 
 Vue.use(vueTap);
 
@@ -48,7 +48,7 @@ Vue.use(vueTap);
 
 // Vue.use(directives);
 
-new vconsole()
+// new vconsole()
 
 
 Vue.use(VueLazyLoad, {

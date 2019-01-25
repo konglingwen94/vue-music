@@ -284,7 +284,11 @@ export default {
     z-index: 10;
     width: 100%;
     color: #fff;
-    background: rgba(255, 255, 255, .9);
+    background: rgba(255, 255, 255, .5);
+
+    backdrop-filter: blur(10px);
+
+    &.backdropFilter {}
 
     // justify-content
     .select-list {

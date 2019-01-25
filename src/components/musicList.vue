@@ -2,7 +2,7 @@
   <div class="list-wrap">
     <!-- <cube-scroll v-bind="$attrs" v-on="$listeners" class="musicList"> -->
     <!-- <slot name="pullDownRefresh"></slot> -->
-    <div :class="['list-item']" :key="index" v-for="(item,index) in list">
+    <div @click="selectItem(item,index)" :class="['list-item']" :key="index" v-for="(item,index) in list">
       <div :class="['sortIndex',{addItem:item.addItem}]">{{index+1}}</div>
       <div class="text-wrap">
         <div class="text-name">
@@ -17,6 +17,7 @@
   <!-- </cube-scroll> -->
 </template>
 <script type="text/javascript">
+import { mapActions } from 'vuex'
 export default {
   name: 'music-list',
   data() {
@@ -31,6 +32,12 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['selectPlay']),
+    async selectItem(item, index) {
+      // console.log(item, index);
+      // await this.playPromise;
+      this.selectPlay({ list: this.__cloneDeep__(this.list), index })
+    },
 
   },
   // render(h) {

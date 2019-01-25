@@ -88,3 +88,22 @@ exports.getLyric = function(req, res) {
     }
   })
 }
+exports.getBLyric = function(req, res) {
+  // body...
+  var query = req._parsedUrl.query;
+  var id = qs.parse(query).id;
+  console.log(id)
+  var options = {
+    url: 'https://api.bzqll.com/music/tencent/lrc?key=579621905',
+    headers: {
+      // 'referer': 'http://y.qq.com'
+    },
+    qs: { id }
+  };
+  request(options, function(error, response, body) {
+    if (!error && response.statusCode == 200) {
+      res.end(body)
+      console.log(body)
+    }
+  })
+}

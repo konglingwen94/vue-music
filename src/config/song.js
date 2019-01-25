@@ -8,7 +8,8 @@ export class __Song {
     this.mid = songmid;
     this.name = songname;
     this.singer = format(singer);
-    this.picUrl = remoteUrl.__albumImg(albummid);
+    // this.url = url;
+    this.pic = remoteUrl.__albumImg(albummid);
     this.albummid = albummid
     this.albumid = albumid
   }

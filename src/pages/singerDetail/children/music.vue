@@ -64,7 +64,7 @@ export default {
       if (code == this.__QERR_OK && req.code == this.__QERR_OK) {
         var { midurlinfo } = req.data
         midurlinfo.forEach((mid, index) => {
-          list[index].songUrl = `${this.SONG_SOURCE}${mid.purl}`
+          list[index].url = `${this.SONG_SOURCE}${mid.purl}`
         })
         // console.log(list)
       }

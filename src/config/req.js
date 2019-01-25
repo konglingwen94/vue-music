@@ -24,6 +24,29 @@ function __getJson(url, option = {}) {
   })
 }
 
+function __get(url, option = {}) {
+  // debugger
+  return new Promise((resolve, reject) => {
+
+    $.ajax({
+      url,
+      method: 'get',
+      data: option,
+      // timeout: 0,
+      dataType: 'text',
+      success(_res) {
+        console.log(_res)
+        resolve(_res)
+      },
+      error(xhr, errType, err) {
+        // (res)
+        // debugger;
+        reject(errType)
+      },
+    })
+  })
+}
+
 
 function __jsonp(url, option = {}) {
   return new Promise((resolve, reject) => {
@@ -60,6 +83,6 @@ export default {
   __getJson,
   __jsonp,
   // __getSingerPicUrl,
-  // __get
+  __get
 }
 // console.dir(_$)

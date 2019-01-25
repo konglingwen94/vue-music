@@ -7,6 +7,7 @@
           <div slot="left" class="back" @click="back">
             <i class="cubeic-select"></i>
           </div>
+          <mt-button @click="handleMore" icon="more" slot="right"></mt-button>
         </mt-header>
         <div class="subtitle">
           <span>{{currentSong.singer}}</span>
@@ -14,14 +15,14 @@
       </div>
       <!-- 背景图 -->
       <div :class="['background']" ref="background">
-        <img :key="currentSong.albummid" width="100%" height="100%" :src="currentSong.picUrl">
+        <img :key="currentSong.id" width="100%" height="100%" :src="currentSong.pic">
       </div>
         <!-- 中间左右轮播 -->
         <div :style="middleStyle" class="middle" @touchstart.prevent="middleTouchStart" @touchmove.prevent="middleTouchMove" @touchend.prevent="middleTouchEnd">
           <!-- <mt-swipe ref="swiper" prevent :auto="0" :continuous="false"> -->
           <div class='middle-l'>
             <div class="cd-wrap" ref="cdWrap">
-              <img ref="cd" :class="['cd',{rotate:playing && !waiting && songReady}]" :key="currentSong.albummid" v-lazy="currentSong.picUrl" />
+              <img ref="cd" :class="['cd',{rotate:playing && !waiting && songReady}]" :key="currentSong.id" v-lazy="currentSong.pic" />
               </div>
               <div class="curLyric-wrapper">
                 <p class="ellipsis">{{curLyric}}</p>
@@ -34,6 +35,7 @@
                   <p ref="lyricLine" :key="index" :class="[{current:index==curLine},'lyricLine','ellipsis']" v-for="(line,index) in currentLyric.lines">{{line.txt}}</p>
                 </div>
               </cube-scroll>
+              <div class="lyric-text" v-if="currentLyric && currentLyric.lines.length===0">{{currentLyric.lyric}}</div>
             </div>
             <!-- </mt-swipe> -->
           </div>
@@ -76,10 +78,14 @@
           <div class="spinner-wrapper flex Center" v-show="waiting && playing">
             <mt-spinner :size="60*__DPR" type="fading-circle"></mt-spinner>
           </div>
+          <div class="volume-wrapper">
+            <mt-actionsheet :actions="actions" v-model="showVolumn">
+            </mt-actionsheet>
+          </div>
         </div>
         <!-- 播放内核 -->
         <div class="playAudio">
-          <audio @canplaythrough="oncanplaythrough" @stalled="onstalled" @loadstart="onloadstart" @loadeddata="onloadeddata" @emptied="onemptied" @loadedmetadata="onloadedmetadata" @waiting="onwaiting" @playing="onplaying" @progress="onprogress" @timeupdate="onupdateTime" @ended="onended" :src="currentSong.songUrl" @canplay="oncanplay" ref="audio" autoplay>
+          <audio @error="onerror" @abort="onabort" @canplaythrough="oncanplaythrough" @stalled="onstalled" @loadstart="onloadstart" @loadeddata="onloadeddata" @emptied="onemptied" @loadedmetadata="onloadedmetadata" @waiting="onwaiting" @playing="onplaying" @progress="onprogress" @timeupdate="onupdateTime" @ended="onended" :src="currentSong.url" @canplay="oncanplay" ref="audio" autoplay>
           </audio>
         </div>
         <div class="mini-wrap">
@@ -99,7 +105,7 @@
           <!-- 吸底播放器 -->
           <div :style="{}" @click="open" :class="['flex', 'mini-player' ,'border-top-1px',{hidden:fullScreen}]">
             <div class="cd-wrap">
-              <img :class="['cd',{rotate:playing && !waiting}]" :src="currentSong.picUrl">
+              <img :class="['cd',{rotate:playing && !waiting}]" :key="currentSong.id" :src="currentSong.pic">
        </div>
               <div class="text">
                 <div class="title-wrap">
@@ -205,8 +211,14 @@ export default {
   },
   watch: {
     playing(newplaying) {
+      // debugger
+      if (!this.songReady) {
+        return
+      }
       if (newplaying) {
-        this.audio.play();
+        this.audio.play().catch(err => {
+          console.log(err)
+        });
         // this.currentLyric.play()
       } else {
         this.audio.pause()
@@ -239,6 +251,7 @@ export default {
     currentLyric(newLyric, oldLyric) {
       // newLyric && 
       oldLyric && oldLyric.stop()
+
       // this.$refs.scrollLyric && this.$refs.scrollLyric.scrollTo(0, 0, 1000)
       this.curLyric = newLyric.lines[0].txt
     },
@@ -253,12 +266,7 @@ export default {
       if (oldSong.id == newSong.id) {
         return
       }
-      if (this.__isPlainObject(newSong)) {
-        console.log('isPlainObject')
-
-      } else {
-
-      }
+      this.timeRanges = 0; //缓冲进度置零
       if (this.__isEmptyObject(newSong)) {
         this.setMiniPlayerHeight(this.miniHeight)
         // this.audio.paused && this.audio.play()
@@ -266,6 +274,7 @@ export default {
         // 重置
         this.getLyric()
         this.resetStart()
+
         // 获取歌词
 
       }
@@ -282,6 +291,9 @@ export default {
       setMiniPlayerHeight: 'SET_MINI_PLAYER_HEIGHT'
     }),
     ...playerControls,
+    handleMore() {
+
+    },
     onScrollEnd({ y }) {
       if (y === 0) {
         console.log(y)
@@ -366,6 +378,12 @@ export default {
       this.$refs.background.style[transitionDuration] = `500ms`
       // this.touch.percent = 0
     },
+    play() {
+      if (!this.playing) {
+        this.togglePlaying()
+      }
+
+    },
     onProgressChange(currentTime) {
       this.draging = false
       this.currentTime = currentTime
@@ -377,9 +395,7 @@ export default {
 
       }
       this.audio.currentTime = currentTime
-      if (!this.playing) {
-        this.togglePlaying()
-      }
+      this.play()
     },
     resetStart() {
 
@@ -387,10 +403,10 @@ export default {
       this.curLine = 0;
       this.resetCdTransform()
       this.$refs.scrollLyric && this.$refs.scrollLyric.scrollTo(0, 0, 300)
-      if (this.playMode.loop !== this.mode) {
+      // if (this.playMode.loop !== this.mode) {
 
-        this.timeRanges = 0;
-      }
+      // this.timeRanges = 0;
+      // }
       // this.scrollToCurrentLyric()
     },
     onemptied() {
@@ -475,9 +491,19 @@ export default {
       this.draging && this.lyricStop()
     },
     async getLyric() {
-      var lyric = await this.currentSong.getLyric();
+      var lyric = '',
+        param = { id: this.currentSong.id };
+      if (this.currentSong.lrc !== undefined) {
+        lyric = await this.__get(`http://${domain}:3000/getBLyric`, param);
+        // console.log(lyric)
+
+      } else {
+
+        lyric = await this.currentSong.getLyric();
+      }
       this.currentLyric = new lyricParser(lyric, this.handleLyric);
       this.songReady && this.currentLyric.play()
+
     },
     handleLyric({ lineNum, txt }) {
       if (this.curLine == lineNum) {
@@ -571,18 +597,11 @@ export default {
       this.setPlaylist([])
       this.setMiniPlayerHeight(0)
 
-      this.$nextTick(() => {
-
-        this.audio.pause()
-      })
+      this.setPlayingState(false)
+      // this.$nextTick(() => {})
       // }
     },
     onupdateTime(e) {
-      if (!this.songReady) {
-        // this.songReady = true
-      }
-
-      // console.log(e.target.currentTime);
       // if (this.touch && !this.touch.touchstart) {
       if (!this.draging) {
 
@@ -590,19 +609,30 @@ export default {
       }
     },
     oncanplay() {
+      console.log('canplay')
+
       if (this.isBuffered) {
         return
       }
+      console.log(`  waiting--${this.waiting}  `, `  songReady--${this.songReady}`)
 
       this.waiting = false;
       this.songReady = true;
 
-      console.log('canplay', `  waiting--${this.waiting}  `, `  songReady--${this.songReady}`)
-      this.audio.play();
 
     },
-    oncanplaythrough() {
+    onerror() {
 
+      console.log('onerror')
+      this.toggleNext()
+    },
+    onabort() {
+      console.log('onabort')
+    },
+    oncanplaythrough() {
+      this.play()
+
+      console.log('oncanplaythrough')
     },
     back() {
       if (this.isShowPlaylist) {
@@ -740,7 +770,7 @@ export default {
 
   .dots-wrap {
     position: fixed;
-    bottom: 140px;
+    bottom: 120px;
     width: 100%;
     // left: 0;
     .flexXCenter;
@@ -767,6 +797,10 @@ export default {
     }
   }
 
+  .spinner-wrapper {
+    position: relative;
+    z-index: 50;
+  }
 
   .bottom {
     position: fixed;

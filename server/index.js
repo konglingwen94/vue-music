@@ -28,6 +28,7 @@ app.get('/getAlbumData', singerCallback.getAlbumData)
 app.get('/getMvData', singerCallback.getMvData)
 app.get('/getMusicPlayData', musicPlayDataCb.getMusicPlayData)
 app.get('/getLyric', musicPlayDataCb.getLyric)
+app.get('/getBLyric', musicPlayDataCb.getBLyric)
 // 获取搜索热词
 app.get('/getHotKey', searchCb.getHotKey)
 // 开启服务

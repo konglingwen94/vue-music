@@ -39,6 +39,8 @@
   </div>
 </template>
 <script type="text/javascript">
+import { prefixStyle } from '@/config/dom.js'
+const filter = prefixStyle('backdrop-filter')
 export default {
   // name: 'singerDetail',
 
@@ -98,7 +100,7 @@ export default {
     },
     themeFilterStyle() {
       return {
-        '-webkit-backdrop-filter': `blur(${this.scrollY < 0 ? this.blur : 0}px)`
+        'backdrop-filter': `blur(${this.scrollY < 0 ? this.blur : 0}px)`
       }
     },
   },
@@ -113,7 +115,7 @@ export default {
       // 设置图片放大倍数
       this.scale = 1 + percent
       // 设置图片模糊值
-      this.blur = Math.min(40, 40 * percent)
+      this.blur = Math.min(30, 30 * percent)
       // 如果容器向下滚动，放大图片
       this.zIndex = 0;
       // 判断是否滚动到顶部
