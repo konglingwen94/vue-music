@@ -74,6 +74,11 @@ export default {
       // (this.picHeight)
     })
   },
+  beforeRouteLeave(to, from, next) {
+    to.meta.back = true
+    // to.meta.forward = false
+    next()
+  },
   methods: {
     onScroll({ x, y }) {
       this.scrollY = y
@@ -113,13 +118,7 @@ export default {
       ('pullingUp')
       // 加载更多数据
       this.song_begin += this.song_num
-      if (this.musicList.length >= this.total_song_num) {
-        // (this.total_song_num)
-        // this.options.pullUpLoad = false
-        // this.$refs.scroll.forceUpdate(!this.loadEnd)
-
-        // return false
-      }
+      if (this.musicList.length >= this.total_song_num) {}
 
       this.getSongList();
 
@@ -138,31 +137,17 @@ export default {
     async getSongList() {
       var params = {
         id: this.$route.query.id,
-        // song_begin: this.song_begin,
-        // song_num: this.song_num
       };
       var { data, code } = await this.__getJson(this.__SONG_LIST, params)
       if (code === this.__BERR_OK) {
         this.musicList = data.songs
         console.log()
-        // this.total_song_num = cdlist[0].total_song_num
       }
-      // this.originData = cdlist[0];
-      // this.cd.dissname = data.cdlist[0].dissname;
       if (this.__isEmptyObject(this.cd)) {
 
-        // this.initCd(cdlist[0])
       }
-      // this.musicList.push(...data.cdlist[0].songlist)
-      // this.getMusicList(cdlist[0].songlist)
-      // }
       this.$nextTick(() => {
-        // this.options.pullUpLoad = this.songList.length >= this.total_song_num ? false : true
-        if (this.musicList.length >= this.total_song_num) {
-          // this.loadEnd = true
-          // this.options.pullUpLoad = false
-          // this.$refs.scroll.finishPullUp()
-        }
+        if (this.musicList.length >= this.total_song_num) {}
       })
     },
   }
@@ -170,6 +155,10 @@ export default {
 
 </script>
 <style scoped lang="less">
+.songList-page {
+  z-index: 200;
+}
+
 .mt-header {
   z-index: 20;
   background: transparent;

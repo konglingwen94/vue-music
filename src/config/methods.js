@@ -71,7 +71,7 @@ export function setElHeight({ selector, top = 0, bottom = 0, el = 'parent' }) {
 
     // this.$scrollWrapper = $(selector)[0]/**/
     // console.log(`set ${el} height ${height}`)
-  }, 40)
+  }, 50)
   // })
 }
 export function isDom(obj) {

@@ -7,6 +7,9 @@ const matutaions = {
   [types.ADD_PLAY_LIST](state, list) {
     state.playlist.push(...list)
   },
+  [types.DELETE_PLAY_LIST_ITEM](state, index) {
+    state.playlist.splice(index, 1)
+  },
   [types.SET_INITIAL](state, isInited) {
     state.initialed = isInited
   },

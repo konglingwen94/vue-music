@@ -1,17 +1,19 @@
 <template>
-  <div :style="pageStyle">
-    <cube-index-list @select="selectItem" :speed="300" :pullUpLoad="pullUpLoad" @pulling-up="onPullingUp" ref="indexList" :data="loadList">
-      <cube-index-list-group v-for="(group, index) in loadList" :key="index" :group="group">
-        <router-link tag="div" v-for="(item, index) in group.items" :key="index" :to="{name: 'singerDetail',
+  <transition>
+    <div :style="pageStyle">
+      <cube-index-list @select="selectItem" :speed="300" :pullUpLoad="pullUpLoad" @pulling-up="onPullingUp" ref="indexList" :data="loadList">
+        <cube-index-list-group v-for="(group, index) in loadList" :key="index" :group="group">
+          <router-link tag="div" v-for="(item, index) in group.items" :key="index" :to="{name: 'singerDetail',
         query: item
       }">
-          <mt-cell :data-mid="item.mid" class="singer-item" :item="item" :title="item.name">
-            <img class="singerPic" slot="icon" v-lazy="item.picUrl">
+            <mt-cell :data-mid="item.mid" class="singer-item" :item="item" :title="item.name">
+              <img class="singerPic" slot="icon" v-lazy="item.picUrl">
           </mt-cell>
-        </router-link>
-      </cube-index-list-group>
-    </cube-index-list>
-  </div>
+          </router-link>
+        </cube-index-list-group>
+      </cube-index-list>
+    </div>
+  </transition>
 </template>
 <script type="text/javascript">
 export default {
@@ -150,6 +152,28 @@ export default {
 
 </script>
 <style scoped lang="less">
+.slide-enter,
+.slide-leave-to {
+  // left: -100vw;
+  transform: translate3d(-100vw, 0, 0);
+
+}
+
+.slide-enter-to,
+.slide-leave {
+  transform: translate3d(0, 0, 0);
+  // left: 0;
+}
+
+
+.slide-enter-active,
+.slide-leave-active {
+  width: 100vw;
+  position: fixed;
+  transition: transform 500ms linear;
+
+}
+
 .page-singer {
   // height: 90vh;
   // background: #000;

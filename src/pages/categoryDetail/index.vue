@@ -38,7 +38,27 @@ export default {
     // console.log('activated')
 
   },
+  beforeRouteLeave(to, from, next) {
+    if (to.name === 'songList') {
+      to.meta.forward = true
 
+    } else {
+      to.meta.forward = false
+
+    }
+    next()
+  },
+  beforeRouteEnter(to, from, next) {
+    if (from.name === 'songList') {
+      to.meta.back = true
+      to.meta.forward = false
+    } else {
+      to.meta.back = false
+      to.meta.forward = true
+
+    }
+    next()
+  },
   methods: {
     toDetail(item) {
       this.$router.push({
@@ -46,21 +66,21 @@ export default {
         query: item
       })
     },
-    getDetailList(id) {
+    async getDetailList(id) {
       // (id)
-      this.__getJson('https://api.bzqll.com/music/tencent/hotSongList?key=579621905', {
+      var param = {
         categoryId: id,
         // limit: 19,
         sortId: 3
-      }).then(data => {
-        if (data.code == 200) {
-          this.detailList = data.data
-          if (this.loading) {
-            // console.log(this.loading)
-            this.loading = false
-          }
+      }
+      var { code, data } = await this.__getJson(this.__HOT_SONG_LIST, param)
+      if (code == 200) {
+        this.detailList = data
+        if (this.loading) {
+          // console.log(this.loading)
+          this.loading = false
         }
-      })
+      }
     },
   }
 };
@@ -74,8 +94,9 @@ export default {
   font-size: 130px;
 }
  */
-.categoryDetail {
+.categoryDetail-page {
   // position: fixed;
+  z-index: 100;
   top: 0;
   left: 0;
   right: 0;

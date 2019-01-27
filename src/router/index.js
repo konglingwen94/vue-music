@@ -35,24 +35,27 @@ export default new Router({
     }
   },
   routes: [
-    { path: '/', redirect: '/singer' },
+    { path: '*', redirect: '/singer' },
+
     {
       path: '/songList',
       name: 'songList',
       component: SongList,
-      meta: { keepAlive: false, fullScreenFixed: true },
+      meta: { fullScreenFixed: true, useSlide: true, index: 7 },
+
     },
     {
       path: '/categoryGroup',
       name: 'categoryGroup',
       component: CategoryGroup,
-      meta: { keepAlive: true },
+      meta: { fullScreenFixed: true, index: 5, useSlide: true, enter_active_class: '' },
+
     },
     {
       path: '/categoryDetail',
       name: 'categoryDetail',
       component: CategoryDetail,
-      meta: { keepAlive: false },
+      meta: { fullScreenFixed: true, useSlide: true, index: 6 },
 
 
     },
@@ -60,22 +63,22 @@ export default new Router({
       path: '/songSheet',
       name: 'songSheet',
       component: SongSheet,
-      meta: { isHome: true },
-
+      meta: { isHome: true, index: 1, useSlide: true, },
 
     },
     {
       path: '/singer',
       name: 'singer',
       component: Singer,
-      meta: { isHome: true },
+      meta: { index: 0, useSlide: true, isHome: true },
 
     },
     {
       path: '/singerDetail/',
       name: 'singerDetail',
       component: SingerDetail,
-      meta: { keepAlive: false, fullScreenFixed: true },
+      meta: { index: 5, useSlide: true, fullScreenFixed: true },
+
       redirect: '/singerDetail/music',
 
       children: [{
@@ -99,14 +102,14 @@ export default new Router({
       path: '/mv',
       name: 'mv',
       component: Mv,
-      meta: { isHome: true },
+      meta: { isHome: true, index: 2, useSlide: true, },
       children: [{ name: 'listView', path: 'listView', component: ListView }]
     },
     {
       path: '/search',
       name: 'search',
       component: Search,
-      meta: { isHome: true, fullScreenFixed: false },
+      meta: { isHome: true, index: 3, fullScreenFixed: false, useSlide: true, },
 
     },
     {
@@ -116,5 +119,6 @@ export default new Router({
       meta: { keepAlive: false },
 
     },
+
   ]
 })

@@ -1,51 +1,59 @@
 <template>
   <div class="player">
     <!-- 全屏播放 -->
-    <div :class="['normal-player',{hidden:!fullScreen}]">
-      <div class="top">
-        <mt-header class="mt-top" :title="currentSong.name">
-          <div slot="left" class="back" @click="back">
-            <i class="cubeic-select"></i>
+    <transition :duration="{enter:30}" enter-active-class="fadeIn" leave-active-class="fadeOut">
+      <div v-show="fullScreen" :class="['normal-player','fullScreenFixed']">
+        <transition enter-active-class="bounceInDown" leave-active-class="bounceOutUp">
+          <div v-show="fullScreen" class="top">
+            <mt-header class="mt-top" :title="currentSong.name">
+              <div slot="left" class="back" @click="back">
+                <i class="cubeic-select"></i>
+              </div>
+              <mt-button @click="handleMore" icon="more" slot="right"></mt-button>
+            </mt-header>
+            <div class="subtitle">
+              <span>{{currentSong.singer}}</span>
+            </div>
           </div>
-          <mt-button @click="handleMore" icon="more" slot="right"></mt-button>
-        </mt-header>
-        <div class="subtitle">
-          <span>{{currentSong.singer}}</span>
-        </div>
+        </transition>
+        <!-- 背景图 -->
+        <transition enter-active-class="fadeIn" leave-active-class="fadeOut">
+          <div v-show="fullScreen" :class="['background']" ref="background">
+            <img :key="currentSong.id" width="100%" height="100%" :src="currentSong.pic">
       </div>
-      <!-- 背景图 -->
-      <div :class="['background']" ref="background">
-        <img :key="currentSong.id" width="100%" height="100%" :src="currentSong.pic">
-      </div>
+        </transition>
         <!-- 中间左右轮播 -->
         <div :style="middleStyle" class="middle" @touchstart.prevent="middleTouchStart" @touchmove.prevent="middleTouchMove" @touchend.prevent="middleTouchEnd">
           <!-- <mt-swipe ref="swiper" prevent :auto="0" :continuous="false"> -->
           <div class='middle-l'>
-            <div class="cd-wrap" ref="cdWrap">
-              <img ref="cd" :class="['cd',{rotate:playing && !waiting && songReady}]" :key="currentSong.id" v-lazy="currentSong.pic" />
+            <transition @enter="enter" @after-enter="afterEnter" @before-leave="beforeLeave" @leave="leave" @after-leave="afterLeave">
+              <div class="cd-wrap" v-show="fullScreen" ref="cdWrap">
+                <img ref="cd" :class="['cd',{rotate:playing && !waiting && songReady}]" :key="currentSong.id" v-lazy="currentSong.pic" />
               </div>
-              <div class="curLyric-wrapper">
-                <p class="ellipsis">{{curLyric}}</p>
-              </div>
+            </transition>
+            <div class="curLyric-wrapper">
+              <p class="ellipsis">{{curLyric}}</p>
             </div>
-            <!--滚动歌词 -->
-            <div class="middle-r" :style="{}">
-              <cube-scroll @scroll-end="onScrollEnd" :scroll-events="['scroll-end']" local ref="scrollLyric" v-if="currentLyric && currentLyric.lines.length>0" :data="currentLyric && currentLyric.lines" :self-height="true" class="scroll-lyric">
-                <div class="lyric-wrapper">
-                  <p ref="lyricLine" :key="index" :class="[{current:index==curLine},'lyricLine','ellipsis']" v-for="(line,index) in currentLyric.lines">{{line.txt}}</p>
-                </div>
-              </cube-scroll>
-              <div class="lyric-text" v-if="currentLyric && currentLyric.lines.length===0">{{currentLyric.lyric}}</div>
-            </div>
-            <!-- </mt-swipe> -->
           </div>
+          <!--滚动歌词 -->
+          <div class="middle-r" :style="{}">
+            <cube-scroll @scroll-end="onScrollEnd" :scroll-events="['scroll-end']" local ref="scrollLyric" v-if="currentLyric && currentLyric.lines.length>0" :data="currentLyric && currentLyric.lines" :self-height="true" class="scroll-lyric">
+              <div class="lyric-wrapper">
+                <p ref="lyricLine" :key="index" :class="[{current:index==curLine},'lyricLine','ellipsis']" v-for="(line,index) in currentLyric.lines">{{line.txt}}</p>
+              </div>
+            </cube-scroll>
+            <div class="lyric-text" v-if="currentLyric && currentLyric.lines.length===0">{{currentLyric.lyric}}</div>
+          </div>
+          <!-- </mt-swipe> -->
+        </div>
+        <transition-group tag="div" enter-active-class="bounceInUp" leave-active-class="bounceOutDown">
           <!-- 指示器 -->
-          <div class="dots-wrap">
+          <div key="dots" class="dots-wrap">
             <div :class="['dot',{active:currentShow==='cd'}]"></div>
             <div :class="['dot',{active:currentShow==='lyric'}]"></div>
           </div>
           <!-- 底部 -->
-          <div class="bottom">
+          <div key="bottom" class="bottom">
             <!-- 播放显示 -->
             <div class="play-progress">
               <div :class="['currentTimer',{draging}]" slot="start">
@@ -56,7 +64,7 @@
               </div>
             </div>
             <!-- 播放控制 -->
-            <div class="player-control YCenter flex Around">
+            <div v-show="fullScreen" class="player-control YCenter flex Around">
               <p @click="changeMode" class="flex Center playMode">
                 <i :class="[modeCls,'iconfont']"></i>
               </p>
@@ -74,65 +82,68 @@
               </p>
             </div>
           </div>
-          <!-- 缓冲提示 -->
-          <div class="spinner-wrapper flex Center" v-show="waiting && playing">
-            <mt-spinner :size="60*__DPR" type="fading-circle"></mt-spinner>
-          </div>
-          <div class="volume-wrapper">
-            <mt-actionsheet :actions="actions" v-model="showVolumn">
-            </mt-actionsheet>
+        </transition-group>
+        <!-- 缓冲提示 -->
+        <div class="spinner-wrapper flex Center" v-show="waiting && playing">
+          <mt-spinner :size="60*__DPR" type="fading-circle"></mt-spinner>
+        </div>
+        <div class="volume-wrapper">
+          <!-- <mt-actionsheet :actions="actions" v-model="showVolumn"> -->
+          <!-- </mt-actionsheet> -->
+        </div>
+      </div>
+    </transition>
+    <!-- 播放内核 -->
+    <div class="playAudio">
+      <audio @error="onerror" @abort="onabort" @canplaythrough="oncanplaythrough" @stalled="onstalled" @loadstart="onloadstart" @loadeddata="onloadeddata" @emptied="onemptied" @loadedmetadata="onloadedmetadata" @waiting="onwaiting" @playing="onplaying" @progress="onprogress" @timeupdate="onupdateTime" @ended="onended" :src="currentSong.url" @canplay="oncanplay" ref="audio" autoplay>
+      </audio>
+    </div>
+    <div class="mini-wrap">
+      <!-- 当前播放列表 -->
+      <div class="playlist" :style="{bottom:miniPlayerHeight+'px'}" v-show="isShowPlaylist && !fullScreen">
+        <!--  -->
+        <div class="title-wrap flex YCenter">
+          <p class="title">播放列表</p>
+          <p @click="changeMode" class="playMode-wrapper">
+            <i :class="[modeCls,'iconfont','icon']"></i>
+          </p>
+          <div class="icon delete-wrapper" @click="deleteList">
+            <i class="cubeic-delete"></i>
           </div>
         </div>
-        <!-- 播放内核 -->
-        <div class="playAudio">
-          <audio @error="onerror" @abort="onabort" @canplaythrough="oncanplaythrough" @stalled="onstalled" @loadstart="onloadstart" @loadeddata="onloadeddata" @emptied="onemptied" @loadedmetadata="onloadedmetadata" @waiting="onwaiting" @playing="onplaying" @progress="onprogress" @timeupdate="onupdateTime" @ended="onended" :src="currentSong.url" @canplay="oncanplay" ref="audio" autoplay>
-          </audio>
-        </div>
-        <div class="mini-wrap">
-          <!-- 当前播放列表 -->
-          <div class="playlist" :style="{bottom:miniPlayerHeight+'px'}" v-show="isShowPlaylist && !fullScreen">
-            <!--  -->
-            <div class="title-wrap flex Between">
-              <p class="title">播放列表</p>
-              <div class="delete-icon" @click="deleteList">
-                <i class="cubeic-delete"></i>
-              </div>
-            </div>
-            <cube-scroll local ref="scrollPlaylist" :client-top="500">
-              <music-list :list="playlist"></music-list>
-            </cube-scroll>
-          </div>
-          <!-- 吸底播放器 -->
-          <div :style="{}" @click="open" :class="['flex', 'mini-player' ,'border-top-1px',{hidden:fullScreen}]">
-            <div class="cd-wrap">
-              <img :class="['cd',{rotate:playing && !waiting}]" :key="currentSong.id" :src="currentSong.pic">
+        <play-list></play-list>
+      </div>
+      <!-- 吸底播放器 -->
+      <div v-show="!fullScreen" @click="open" :class="['flex', 'mini-player' ,'border-top-1px']">
+        <div class="cd-wrap">
+          <img :class="['cd',{rotate:playing && !waiting}]" :key="currentSong.id" :src="currentSong.pic">
        </div>
-              <div class="text">
-                <div class="title-wrap">
-                  <p class="title">{{currentSong.name}}</p>
-                </div>
-                <div class="singer-wrap">
-                  <p class="singer">{{currentSong.singer}}</p>
-                </div>
-              </div>
-              <div class="playing-control">
-                <div class="circle-progress" @click.stop="togglePlaying">
-                  <x-circle :trail-width="3" trail-color="#aaaaaa" :percent="percentProgress" :stroke-width="5" stroke-color="#04BE02">
-                    <!-- <span>{{ percent }}%</span> -->
-                    <i :class="['iconfont' ,{'icon-bofang2':!playing,'icon-zanting':playing}]"></i>
-                  </x-circle>
-                </div>
-              </div>
-              <div class="playlist-icon">
-                <i @click.stop="isShowPlaylist=!isShowPlaylist" class="iconfont icon-bofangliebiao"></i>
-              </div>
+          <div class="text">
+            <div class="title-wrap">
+              <p class="title">{{currentSong.name}}</p>
+            </div>
+            <div class="singer-wrap">
+              <p class="singer">{{currentSong.singer}}</p>
             </div>
           </div>
+          <div class="playing-control">
+            <div class="circle-progress" @click.stop="togglePlaying">
+              <x-circle :trail-width="3" trail-color="#aaaaaa" :percent="percentProgress" :stroke-width="5" stroke-color="#04BE02">
+                <!-- <span>{{ percent }}%</span> -->
+                <i :class="['iconfont' ,{'icon-bofang2':!playing,'icon-zanting':playing}]"></i>
+              </x-circle>
+            </div>
+          </div>
+          <div class="playlist-icon">
+            <i @click.stop="isShowPlaylist=!isShowPlaylist" class="iconfont icon-bofangliebiao"></i>
+          </div>
         </div>
+      </div>
+    </div>
 </template>
 <script type="text/javascript">
-import Normal from './normal.vue'
-import Mini from './mini.vue'
+import PlayList from './playlist.vue'
+import Animation from 'create-keyframe-animation'
 import playerControls from './play-control.js'
 import playMode from '@/common/js/config'
 import { shuffle } from '@/common/js/util'
@@ -158,6 +169,9 @@ export default {
       currentShow: 'cd',
       songReady: false
     };
+  },
+  components: {
+    PlayList
   },
   computed: {
     ...Vuex.mapGetters([
@@ -188,6 +202,8 @@ export default {
     },
   },
   created() {
+    this.movePos = {}
+
     this.initialed = false;
     this.touch = { blur: 40 };
 
@@ -234,7 +250,7 @@ export default {
       if (newIsShow) {
         this.$nextTick(() => {
 
-          this.$refs.scrollPlaylist.refresh()
+          // this.$refs.scrollPlaylist.refresh()
         })
       }
 
@@ -291,6 +307,74 @@ export default {
       setMiniPlayerHeight: 'SET_MINI_PLAYER_HEIGHT'
     }),
     ...playerControls,
+    enter(el, done) {
+      if (this.__isEmptyObject(this.movePos)) {
+        this.movePos = this._getPosAndScale()
+        console.log(this.movePos)
+      }
+      const { x, y, scale } = this.movePos
+      const animation = {
+        0: {
+          transform: `translate3d(${x}px,${y}px,0) scale(${scale})`
+        },
+        60: {
+          transform: `translate3d(0,0,0) scale(1.2)`
+
+        },
+        100: {
+          transform: `translate3d(0,0,0) scale(1)`
+
+        }
+      }
+      Animation.registerAnimation({
+        name: 'move',
+        animation,
+        presets: {
+          duration: 400,
+          easing: 'linear'
+        }
+      })
+      Animation.runAnimation(this.$refs.cdWrap, 'move', done)
+    },
+    afterEnter() {
+      Animation.unregisterAnimation('move')
+      this.$refs.cdWrap.style.animation = ''
+    },
+    beforeLeave() {
+      // console.log('beforeLeave')
+    },
+    leave(el, done) {
+      const { x, y, scale } = this.movePos;
+      this.$refs.cdWrap.style.transition = "all 1s"
+      this.$refs.cdWrap.style[transform] = `translate3d(${x}px,${y}px,0) scale(${scale})`;
+      // console.dir(done)
+      this.end = () => {
+        // $('.normal-player').toggleClass('hidden')
+
+        done()
+      }
+      this.$refs.cdWrap.addEventListener('transitionend', this.end)
+
+    },
+    afterLeave(el, done) {
+      console.log('after-leave')
+      this.$refs.cdWrap.style.transition = ""
+      this.$refs.cdWrap.style[transform] = ""
+      this.$refs.cdWrap.removeEventListener('transitionend', this.end)
+    },
+    _getPosAndScale() {
+      const targetWidth = $('.mini-player .cd-wrap').width()
+      const padLeft = $('.mini-player .cd-wrap').offset().left;
+      const padBot = $('.mini-player .cd-wrap').position().top;
+      const offset = $('.normal-player .cd-wrap').offset()
+      const padTop = offset.top;
+      const width = offset.width;
+      const radiusDiff = (width + targetWidth) / 2
+      const x = -(window.innerWidth - radiusDiff - padLeft)
+      const y = window.innerHeight - padTop - padBot - radiusDiff
+      const scale = targetWidth / width
+      return { x, y, scale }
+    },
     handleMore() {
 
     },
@@ -614,7 +698,7 @@ export default {
       if (this.isBuffered) {
         return
       }
-      console.log(`  waiting--${this.waiting}  `, `  songReady--${this.songReady}`)
+      // console.log(`  waiting--${this.waiting}  `, `  songReady--${this.songReady}`)
 
       this.waiting = false;
       this.songReady = true;
@@ -627,17 +711,19 @@ export default {
       this.toggleNext()
     },
     onabort() {
-      console.log('onabort')
+      // console.log('onabort')
     },
     oncanplaythrough() {
       this.play()
 
-      console.log('oncanplaythrough')
+      // console.log('oncanplaythrough')
     },
     back() {
       if (this.isShowPlaylist) {
         this.isShowPlaylist = false;
       }
+      // await this.closer;
+      // console.log('setFullScreen')
       this.setFullScreen(false)
     },
     open() {
@@ -668,19 +754,16 @@ export default {
 
 .player {
   // height: 100vh;
+  position: relative;
+  z-index: 400;
+
 
 }
 
 .normal-player {
-  z-index: 100;
   height: 100vh;
   background: #444;
-  position: fixed;
-  width: 100vw;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
+  animation-duration: 6s !important;
 
   .top {
 
@@ -865,16 +948,25 @@ export default {
 
   .title-wrap {
     padding: 12px;
-    // margin-bottom: 4px;
-  }
 
-  .delete-icon {
-    font-size: 20px;
+    // margin-bottom: 4px;
+    .icon {
+
+      font-size: 24px;
+    }
+
+    .playMode-wrapper {
+      margin-left: 20px;
+    }
+
+    .delete-wrapper {
+      margin-left: auto;
+    }
   }
 }
 
 .mini-player {
-  align-items: center;
+  align-item s: center;
   padding: 0 10px;
   height: 60px !important;
 

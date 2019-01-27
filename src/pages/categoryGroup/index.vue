@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="categoryGroup">
     <cube-loading class="icon-loading" v-if="loading"></cube-loading>
     <x-header class="header-nav">全部分类</x-header>
     <div class="table-wrap" @touchmove.stop>
@@ -33,7 +33,35 @@ export default {
 
     this.getCategoryOriginData()
   },
+  beforeRouteEnter(to, from, next) {
+    if (from.name === 'categoryDetail') {
 
+      // this.$emit('back')
+      to.meta.back = true
+    } else {
+      to.meta.back = false
+
+    }
+    if (from.name === 'songSheet') {
+      to.meta.forward = true
+
+    } else {
+      to.meta.forward = false
+
+    }
+    next()
+  },
+  beforeRouteLeave(to, from, next) {
+    if (to.name === 'songSheet') {
+      // to.meta.back = true
+      // to.meta.forward = false
+    } else {
+      // to.meta.back = false
+      // to.meta.forward = true
+
+    }
+    next()
+  },
   methods: {
     targetRouter(item) {
       // console.log(item)
@@ -64,7 +92,7 @@ export default {
   padding-top: 50px;
 
   .header-nav {
-    position: fixed;
+    position: fixed !important;
     top: 0;
     left: 0;
     right: 0;

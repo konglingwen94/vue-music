@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "animate.css": "^3.7.0",
+    "create-keyframe-animation": "^0.1.0",
     "cube-ui": "^1.12.8",
     "es6-promise": "^4.2.5",
     "fastclick": "^1.0.6",
