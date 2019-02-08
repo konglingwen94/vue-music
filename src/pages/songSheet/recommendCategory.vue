@@ -8,10 +8,10 @@
     </div>
     <!-- content -->
     <div class="category-wrap">
-      <router-link :key="item.categoryId" tag="div" :to="{name:'categoryDetail',query:item}" class="category-cell" v-for="item in recommendCategory">
+      <div :key="item.categoryId" @click="goDetail(item)" class="category-cell" v-for="item in recommendCategory">
         <!-- <cube-button :inline="1">{{item.categoryName}}</cube-button> -->
         {{item.categoryName}}
-      </router-link>
+      </div>
     </div>
   </div>
 </template>
@@ -38,6 +38,16 @@ export default {
     // this.getRecommendCategory()
   },
   methods: {
+    goDetail(item) {
+      this.$router.push({
+        query: {
+
+          ...item,
+          id: item.categoryId
+        },
+        name: 'categoryDetail'
+      })
+    },
     toCategoryGroup() {
       this.$router.push({
         path: '/categoryGroup',

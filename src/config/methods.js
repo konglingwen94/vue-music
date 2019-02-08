@@ -51,28 +51,20 @@ export function setElHeight({ selector, top = 0, bottom = 0, el = 'parent' }) {
     } else {
       top = this.getClientTop(selector)
     }
-
+    var height = 0;
     if (typeof this.miniPlayerHeight == "number" && this.hasPlaylist) {
       bottom = this.miniPlayerHeight
+      height = window.innerHeight - bottom - top;
       // console.log(bottom)
-    } else {}
-    // console.log('mixin' + top);
+      $(selector).css({ height }).attr('minHeight', height).attr('maxHeight', height + bottom)
+    } else {
+      height = window.innerHeight - bottom - top;
 
-
-    var height = innerHeight - bottom - top;
-    /*if ($(selector)[0].__vue__) {
-      $(selector)[0].__vue__.wrapHeight = height
-    }*/
-    $(selector).css({ height }).attr('data-height', height + bottom).attr('data-mHeight', innerHeight - top - this.miniPlayerHeight).attr('initialed', '')
-    if (bottom != 0) {
-
-      $(selector).attr('hasplaylist', '')
+      $(selector).css({ height }).attr('maxHeight', height + bottom)
     }
 
-    // this.$scrollWrapper = $(selector)[0]/**/
-    // console.log(`set ${el} height ${height}`)
+    console.log($(selector)[0])
   }, 50)
-  // })
 }
 export function isDom(obj) {
   if (typeof HTMLElement === 'object') {

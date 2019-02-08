@@ -3,12 +3,15 @@
     <!-- <slot :datakey="keys"> -->
     <div :key="key" style="" class="mv-item" v-for="(item,key) in data">
       <!-- 图片容器 -->
-      <div class="pic-wrap">
-        <!-- 背景图 -->
+      <div class="pic-wrap" @click="selectPlay(item)">
+        <!-- <video :scr="item.url" autoplay="" @canplay="oncanplay" @click="playItem($event,item)" class="video" width="100%" :poster="item[keys.picUrl]">
+        </video>
+         -->
+        <!-- <p class="toggle-playing"> -->
+        <i :class="['iconfont' ,{'icon-bofang2':!playing},{'icon-zanting':playing}]"></i>
+        <!-- </p> 背景图 -->
         <div :key="item[keys.picUrl]" v-if="useBackground" class="bgBox" v-lazy:background-image="item[keys.picUrl]">
         </div>
-        <!--  -->
-        <!-- <img :key="item[keys.picUrl]" v-else v-lazy="item[keys.picUrl]" /> -->
         <img class="image" v-else :key="item[keys.picUrl]" v-lazy="item[keys.picUrl]" />
       </div>
         <!-- 文案 -->
@@ -29,7 +32,8 @@ export default {
   name: 'mv-list',
   data() {
     return {
-
+      currentMv: null,
+      playing: false
     };
   },
   computed: {
@@ -68,9 +72,25 @@ export default {
       // console.log(el, formCache)
     })
   },
-  methods: {
-
+  mounted() {
+    // this.video=this.$refs.video
   },
+  methods: {
+    selectPlay(item) {
+      this.$router.push({ name: 'mvPlayer', query: item })
+    },
+    oncanplay() {
+      this.playing = true
+      // this.
+    },
+    playItem(e, mv) {
+      // console.log(e.target, url)
+      // e.target.src = mv.url
+      e.target.autoplay = true
+      e.target.controls = true
+      this.currentMv = mv;
+    },
+  }
 };
 
 </script>
@@ -101,6 +121,24 @@ export default {
 }
 
 .pic-wrap {
+  background-repeat: no-repeat;
+  background-size: cover;
+  // height: 200px;
+
+  .posCenter(iconfont);
+
+  .iconfont {
+    font-size: 6em;
+    color: #fff;
+    z-index: 10;
+  }
+
+  .video {
+    // display: none;
+    width: 100%;
+    // height: 300px;
+  }
+
   .bgBox {
     background-position: center;
     background-size: cover;

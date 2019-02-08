@@ -35,7 +35,7 @@ function __get(url, option = {}) {
       // timeout: 0,
       dataType: 'text',
       success(_res) {
-        console.log(_res)
+        // console.log(_res)
         resolve(_res)
       },
       error(xhr, errType, err) {

@@ -64,7 +64,7 @@ export default {
 
 .navbar {
   // display: flex;
-  position: fixed;
+  // position: fixed;
   top: 0;
   right: 0;
   left: 0;

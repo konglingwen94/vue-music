@@ -162,7 +162,6 @@ export default {
       this.scrollMinY = this.topNavHeight - this.picHeight;
     })
   },
-
   methods: {
     onScroll(y) {
       // this.scrollY = y;

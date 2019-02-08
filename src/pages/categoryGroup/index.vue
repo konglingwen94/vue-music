@@ -2,7 +2,7 @@
   <div class="categoryGroup">
     <cube-loading class="icon-loading" v-if="loading"></cube-loading>
     <x-header class="header-nav">全部分类</x-header>
-    <div class="table-wrap" @touchmove.stop>
+    <div class="table-wrapper native-vertical-scroll">
       <x-table class="categoryTable" full-bordered v-for="(categoryGroupList,key)
  in category" :key="key">
         <tbody>
@@ -33,34 +33,11 @@ export default {
 
     this.getCategoryOriginData()
   },
-  beforeRouteEnter(to, from, next) {
-    if (from.name === 'categoryDetail') {
-
-      // this.$emit('back')
-      to.meta.back = true
-    } else {
-      to.meta.back = false
-
-    }
-    if (from.name === 'songSheet') {
-      to.meta.forward = true
-
-    } else {
-      to.meta.forward = false
-
-    }
-    next()
-  },
-  beforeRouteLeave(to, from, next) {
-    if (to.name === 'songSheet') {
-      // to.meta.back = true
-      // to.meta.forward = false
-    } else {
-      // to.meta.back = false
-      // to.meta.forward = true
-
-    }
-    next()
+  mounted() {
+    const navHeight = $('.header-nav').height();
+    console.log(navHeight);
+    const height = window.innerHeight - navHeight;
+    $('.table-wrapper').css({ height })
   },
   methods: {
     targetRouter(item) {
@@ -71,15 +48,14 @@ export default {
         query
       }
     },
-    getCategoryOriginData() {
-      this.__getJson(`http://${domain}:3000/getCategoryTags`).then(data => {
-        if (data.code == 0) {
-          // (data.data)
-          this.category = data.data.categories
-          // this.getRecommendCategory()
-          this.loading = false
-        }
-      })
+    async getCategoryOriginData() {
+      const { data, code } = await this.__getJson(`http://${domain}:3000/getCategoryTags`)
+      if (code == 0) {
+        // (data.data)
+        this.category = data.categories
+        // this.getRecommendCategory()
+        this.loading = false
+      }
     },
   }
 };
@@ -99,8 +75,7 @@ export default {
   }
 
   .table-wrap {
-    overflow: auto;
-    height: 90vh;
+    // height: calc(100vh - 1.33rem);
   }
 }
 

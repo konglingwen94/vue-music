@@ -9,7 +9,7 @@
           <p class="title">热门搜索</p>
         </div>
         <ul class="hotkey-list flexWrap">
-          <li @click="addQuery(item.k)" class="hotkey-item" :key="key" v-for="(item,key) in hotkeyList">
+          <li @click="addQuery(item.k.trim())" class="hotkey-item" :key="key" v-for="(item,key) in hotkeyList">
             <p>{{item.k}}</p>
           </li>
         </ul>

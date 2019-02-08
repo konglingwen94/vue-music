@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width
+, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <title>Document</title>
+  <script src="https://cdn.bootcss.com/zepto/1.2.0/zepto.js"></script>
+  <script src="https://cdn.bootcss.com/vue/2.5.22/vue.js"></script>
+  <script src="https://cdn.bootcss.com/vue-router/3.0.2/vue-router.js"></script>
+  <style type="text/css">
+  body {
+    margin: 0;
+  }
+
+  #app {
+    width: 100vw;
+    height: 100vh;
+    overflow-x: hidden;
+    position: fixed;
+
+  }
+
+  .navbar {
+    display: flex;
+    font-size: 1.4em;
+    justify-content: space-around;
+  }
+
+  .active {
+    color: red;
+  }
+
+  .prev,
+  .current,
+  .next {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+  }
+
+  .current {
+    z-index: -10;
+  }
+
+  .prev {
+    left: -100vw;
+    /*transform: translateX(-100vw);*/
+  }
+
+  .next {
+    left: 100vw;
+    top: 0;
+  }
+
+  .left {
+    background: lightgreen;
+  }
+
+  .middle {
+    background: red;
+  }
+
+  .right {
+    background: lightblue;
+  }
+
+  .end {
+    background: pink;
+  }
+
+  .view-wrap {
+    width: 100vw;
+    height: 90vh;
+    /*display: flex;*/
+    position: relative;
+    flex-wrap: nowrap;
+  }
+
+  .next-enter-active,
+  .next-leave-active,
+  .prev-leave-active,
+  .prev-enter-active {
+    transition: all 1s;
+
+  }
+
+  .next-enter,
+  .prev-leave-to {
+    transform: translateX(100vw)
+  }
+
+  .next-leave-to,
+  .prev-enter {
+    transform: translateX(-100vw)
+  }
+
+  .next-enter-to,
+  .prev-leave {
+    transform: translateX(0)
+  }
+
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <div class="navbar">
+      <div :class="{active:item.index===showIndex}" :key="item.index" v-for="item in navbar" @click="toggleTab(item)">{{item.name}}</div>
+    </div>
+    <div @transitionend="ontransitionend" class="view-wrap" @touchstart="ontouchstart" @touchmove="ontouchmove" @touchend="ontouchend">
+      <component v-if="index!==0 && isTouch" class="prev" :is="showLeft"></component>
+      <transition :name="name" :css="css" @enter="enter" @after-enter="afterEnter" @leave="leave" @after-leave="afterLeave">
+        <router-view @transitionend.stop.native="toggleEnd" :class="['current']"></router-view>
+      </transition>
+      <component v-if="index!==navbar.length-1 && isTouch" class="next" :is="showRight"></component>
+    </div>
+  </div>
+</body>
+<script type="text/javascript">
+const Left = {
+  name: 'left',
+  template: `<div class="left">left</div>`
+}
+const Middle = {
+  name: 'middle',
+  template: `<div class="middle">middle</div>`
+}
+const Right = {
+  name: 'right',
+  template: `<div class="right">right</div>`
+}
+const End = {
+  name: 'end',
+  template: `<div class="end">end</div>`
+}
+const pages = [Left, Middle, Right, End]
+var router = new VueRouter({
+  routes: [
+    { name: "left", path: '/left', component: Left, meta: { index: 0 } },
+    { name: "middle", path: '/middle', component: Middle, meta: { index: 1 } },
+    { name: "right", path: '/right', component: Right, meta: { index: 2 } },
+    { name: "end", path: '/end', component: End, meta: { index: 3 } }
+  ]
+})
+
+new Vue({
+  el: '#app',
+  data: {
+    css: false,
+    name: 'next',
+    initiated: false,
+    isTouch: false,
+    isTransition: false,
+    threshold: window.innerWidth / 3,
+    index: 0,
+    showIndex: 0,
+    navbar: [
+      { name: 'left', path: '/left', index: 0 },
+      { name: 'middle', path: '/middle', index: 1 },
+      { name: 'right', path: '/right', index: 2 },
+      { name: 'end', path: '/end', index: 3 },
+    ],
+    delay: 1000
+  },
+  router,
+
+  computed: {
+    showLeft() {
+      return pages[this.index - 1]
+    },
+    showRight() {
+      return pages[this.index + 1]
+    }
+  },
+  watch: {
+    '$route': function(newRoute, oldRoute) {
+      // body...
+      if (oldRoute === null) {
+        return
+      }
+      console.log();
+      this.name = newRoute.meta.index > oldRoute.meta.index ? 'next' : 'prev'
+    }
+  },
+  methods: {
+    toggleTab(item) {
+      if (this.isTransition) {
+        return
+      }
+      this.css = true
+      this.$router.push(item)
+      this.isTransition = true
+      setTimeout(() => {
+        this.isTransition = false
+        this.css = false
+
+      }, this.delay)
+      this.setIndex()
+    },
+    toggleEnd() {
+      return false
+      console.log('isTransitionend');
+      this.isTransition = false
+      this.css = false
+
+    },
+    setIndex() {
+      this.showIndex = this.index = this.navbar.findIndex(item => item.name === this.$route.name)
+    },
+    async ontouchstart(e) {
+      if (this.isTransition || this.css) {
+
+        return
+      }
+      this.isTouch = true;
+      this.translateX = 0
+      await this.$nextTick()
+      console.log('ontouchstart');
+      this.initiated = true;
+      // this.css = false;
+      this.startX = e.touches[0].pageX;
+      this.startY = e.touches[0].pageY;
+      this.minTranslateX = -window.innerWidth;
+      this.maxTranslateX = window.innerWidth;
+
+      if (this.index === 0) {
+        this.minTranslateX = -window.innerWidth;
+        this.maxTranslateX = 0;
+      } else if (this.index === this.navbar.length - 1) {
+        this.minTranslateX = 0;
+        this.maxTranslateX = window.innerWidth;
+      }
+
+    },
+    ontouchmove(e) {
+      const vm = this;
+      if (!this.initiated) {
+        return
+      }
+      this.ismoved = true
+      const moveX = e.touches[0].pageX - this.startX;
+      this.moveX = moveX
+      const moveY = e.touches[0].pageY - this.startY;
+      this.moveY = moveY
+      this.percent = Math.abs(moveX / window.innerWidth)
+
+      const flag = Math.abs(this.moveX / 2) < Math.abs(this.moveY);
+      // console.log(flag);
+      this.ismoved = Math.abs(this.moveX) > 2
+
+      const translateX = Math.max(this.minTranslateX, Math.min(this.maxTranslateX, moveX))
+      this.translateX = translateX
+
+      if (Math.abs(translateX) > vm.threshold) {
+        vm.canToggle = true
+        vm.showIndex = translateX > 0 ? vm.index - 1 : vm.index + 1
+      } else {
+        vm.canToggle = false
+        vm.showIndex = vm.index
+      }
+      if (flag) {
+        // return
+      }
+
+
+      $('.view-wrap').css({ transform: `translateX(${translateX}px)` })
+    },
+    async ontouchend() {
+      const vm = this;
+      if (!this.initiated || vm.translateX === 0) {
+        vm.isTouch = false
+        return
+      }
+      console.log('ontouchend');
+      if (Math.abs(vm.translateX) < window.innerWidth) {
+
+        vm.isTransition = true
+      }
+      // const offset = vm.moveX > 0 ? window.innerWidth : -window.innerWidth;
+      if (vm.canToggle) {
+        let offset = 0,
+          index = vm.index;
+
+        vm.offset = vm.moveX > 0 ? window.innerWidth : -window.innerWidth
+        $('.view-wrap').css({ transform: `translateX(${vm.offset}px)`, transition: `all ${vm.delay * (1 - vm.percent)}ms` })
+      } else {
+        // console.log('bounce', vm.moveX);
+
+        const delay = vm.delay * vm.percent
+        $('.view-wrap').css({ transform: `translateX(0)`, transition: `all ${delay}ms` })
+      }
+      vm.initiated = false
+
+    },
+    async ontransitionend(e) {
+      const vm = this;
+      if (vm.css) {
+        return
+      }
+      if (Math.abs(vm.moveX) > vm.threshold) {
+        const index = vm.moveX > 0 ? vm.index - 1 : vm.index + 1
+        const name = vm.navbar[index].name
+
+
+        $('.current').css({ transform: `translateX(${-vm.offset}px)` })
+        vm.$router.push({ name })
+      }
+      await vm.$nextTick()
+
+      console.log('ontransitionend');
+      $('.current').css({ transform: `` })
+      $(e.target).css({ 'transition': '', transform: '' })
+      vm.isTransition = false
+      vm.setIndex()
+      await new Promise(resolve => setTimeout(resolve, 400))
+      vm.isTouch = false;
+      await vm.$nextTick()
+      // console.log(vm.moveX);
+    },
+    enter() {},
+    afterEnter() {},
+    leave() {},
+    afterLeave() {},
+  }
+})
+
+</script>
+
+</html>

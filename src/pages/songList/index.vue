@@ -156,7 +156,7 @@ export default {
 </script>
 <style scoped lang="less">
 .songList-page {
-  z-index: 200;
+  z-index: 50;
 }
 
 .mt-header {

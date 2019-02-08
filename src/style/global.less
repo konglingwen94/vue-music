@@ -70,6 +70,27 @@
   }
 }
 
+.posRightBot(@class: div) {
+  position: relative;
+
+  &>.@{class} {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+  }
+}
+
+.posRightCen(@class: div) {
+  position: relative;
+
+  &>.@{class} {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+
 .fullBoxParent(@class: div) {
   position: relative;
 
@@ -107,6 +128,12 @@
 }
 
 .flexXCenter {
+  display: flex;
+  justify-content: center;
+}
+
+.flexCenter {
+  align-items: center;
   display: flex;
   justify-content: center;
 }

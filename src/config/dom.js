@@ -16,14 +16,17 @@ const vendor = (() => {
   return false
 })()
 
-export function prefixStyle(style) {
+export function prefixStyle(style, camelCase = false) {
   // body...
-  if (style[vendor] === false) {
+  if (vendor === false) {
     return false
   }
-  if (style[vendor] === style) {
+  if (vendor === 'standard') {
     return style
   }
-  return vendor + style.charAt(0).toUpperCase() + style.substr(1)
+  if (camelCase === true) {
+    return _.camelCase(vendor + _.upperFirst(style))
+  }
+  return '-' + vendor + '-' + style
 }
 // Vue.prototype.prefixStyle = prefixStyle

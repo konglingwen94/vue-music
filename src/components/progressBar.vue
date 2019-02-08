@@ -1,5 +1,5 @@
 <template>
-  <div class="progress-bar" @click="onProgressClick">
+  <div v-if="initiated" class="progress-bar" @click="onProgressClick">
     <div class="bar-inner">
       <div class="timeRanges fullBox"></div>
       <div :style="progressStyle" class="progress">
@@ -18,6 +18,7 @@ export default {
   name: '',
   data() {
     return {
+      initiated: true,
       progressWidth: 0,
       progressTotalWidth: 0,
       barWidth: 0,
@@ -62,7 +63,7 @@ export default {
   created() {
     this.btnWidth = btnWidth * this.__DPR;
 
-    this.currentTime = 0
+    // this.currentTime = 0
   },
   async mounted() {
     // this.btnWidth = $('.progress-btn-wrapper').width()

@@ -2,14 +2,15 @@
   <div>
     <mt-progress v-show="progressPer<100" :value="progressPer" class="progressBar"></mt-progress>
     <!-- 悬浮 -->
-    <div @click="showMutiPicker" v-show="isShow" class="select-wrap">
+    <div @click="showMutiPicker" v-show="isShow" class="select-wrapper">
       <cube-button class="select-list iflex around" outline primary>
         <span class="select-item" :key="key" v-for="(item,key) in showSelect">{{item.text}}--{{item.title}}</span>
         <i class="cubeic-select"></i>
       </cube-button>
       <!-- <i @click="closeTip(key)" class="cubeic-close"></i> -->
     </div>
-    <cube-scroll :scroll-events="['scroll']" @scroll="onScroll" :data="$refs.listView?$refs.listView.mvList:[]" ref="scroll" :options="options" @pulling-up="onPullingUp">
+    <cube-scroll :scroll-events="['scroll','scroll-end']" @scroll="onScroll" @scroll-end="onScrollEnd
+" :data="$refs.listView && $refs.listView.mvList" ref="scroll" :options="options" @pulling-up="onPullingUp">
       <!-- 滚动导航 -->
       <div class="scrollNav" v-show="1">
         <cube-scroll ref="scrollInstance" :key="index" v-for="(category,label,index) in categoryMvData" direction="horizontal" class="horizontal-scroll-list-wrap">
@@ -27,7 +28,7 @@
         <list-view @created="onCreate" ref="listView" :query="query" :key="__values__(keyCode).join('') || '000'"></list-view>
       </keep-alive>
     </cube-scroll>
-    <div class="backtop-wrapper" v-show="backtopShow">
+    <div class="backtop-wrapper" v-show="showToTop">
       <i @click="backTop" class="cubeic-arrow backtop"></i>
     </div>
     <!-- {{mutiPickerData}} -->
@@ -41,10 +42,30 @@ export default {
   components: { ListView },
   mixins: [pullUpLoad],
   // name: 'mv',
+  provide() {
+    let reactive = {};
+    Object.defineProperty(reactive, 'scrollY', {
+      get: () => this.scrollY,
+      enumerable: true
+    })
+    Object.defineProperty(reactive, 'clientTop', {
+      get: () => this.clientTop,
+      enumerable: true
+    })
+    Object.defineProperty(reactive, '$scroll', {
+      get: () => this.$refs && this.$refs.scroll,
+      enumerable: true
+    })
+    return {
+      reactive
+
+    }
+  },
   data() {
     return {
       // labelText,
-      scrollY: 0,
+      scrollY: -1,
+      clientTop: -1,
       label: {
         // area:{}
       },
@@ -59,7 +80,8 @@ export default {
       progressPer: 0,
       navHeight: 0,
       isShow: false,
-      ListViewIsMounted: false
+      ListViewIsMounted: false,
+      showToTop: false
     };
   },
   computed: {
@@ -79,10 +101,6 @@ export default {
     },
     obData() {
       return this.__values__({ ...this.label, ...this.queryNum })
-    },
-    backtopShow() {
-      var wrapHeight = this.$refs.scroll ? this.$refs.scroll.wrapHeight : 0
-      return Math.abs(this.scrollY) > wrapHeight * 3
     },
     isShow1: {
       get() {
@@ -127,6 +145,9 @@ export default {
     this.$refs.scroll.scroll.stop()
   },
   async mounted() {
+    this.$nextTick(() => {
+      this.clientTop = this.$el.getBoundingClientRect().top
+    })
     this.$mvList = this.$refs.listView.mvList
     await this.catePromise;
 
@@ -198,10 +219,13 @@ export default {
         i++;
       }
     },
-
+    onScrollEnd({ y }) {
+      const wrapperHeight = this.$refs.scroll.scroll.wrapperHeight
+      this.showToTop = Math.abs(y) > wrapperHeight * 3
+    },
     onScroll({ y }) {
       this.scrollY = y
-      // console.log(y);
+
     },
     setClass(label, id) {
       // var cate = {};
@@ -278,7 +302,7 @@ export default {
     z-index: 10;
   }
 
-  .select-wrap {
+  .select-wrapper {
     position: absolute;
     // top: 100px;
     z-index: 10;
@@ -315,7 +339,7 @@ export default {
     right: 10px;
     transform: rotate(-90deg);
     font-size: 22px;
-    z-index: 10;
+    z-index: 30;
     // color: red;
   }
 }

@@ -48,7 +48,7 @@ export default new Router({
       path: '/categoryGroup',
       name: 'categoryGroup',
       component: CategoryGroup,
-      meta: { fullScreenFixed: true, index: 5, useSlide: true, enter_active_class: '' },
+      meta: { fullScreenFixed: true, index: 5, useSlide: true },
 
     },
     {
@@ -77,15 +77,15 @@ export default new Router({
       path: '/singerDetail/',
       name: 'singerDetail',
       component: SingerDetail,
-      meta: { index: 5, useSlide: true, fullScreenFixed: true },
 
       redirect: '/singerDetail/music',
-
+      meta: { index: 5, useSlide: true, fullScreenFixed: true },
       children: [{
         path: 'music',
         name: 'music',
         label: '单曲',
         component: Music,
+
       }, {
         path: 'album',
         name: 'album',
@@ -116,7 +116,7 @@ export default new Router({
       path: '/mvPlayer',
       name: 'mvPlayer',
       component: MvPlayer,
-      meta: { keepAlive: false },
+      meta: { fullScreenFixed: true, keepAlive: true },
 
     },
 

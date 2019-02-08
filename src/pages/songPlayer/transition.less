@@ -1,0 +1,94 @@
+.normal-player {
+
+  &.v-enter-active,
+  &.v-leave-active,
+    {
+    transition: all 0.4s;
+
+    .curLyric-wrapper,
+    .background,
+    .scroll-lyric,
+    .top,
+    .bottom {
+
+      transition: all 0.4s;
+    }
+
+    .top,
+    .bottom {
+      transition-timing-function: cubic-bezier(0.86, 0.18, 0.82, 1.32);
+
+    }
+  }
+
+  &.v-enter,
+  &.v-leave-to {
+    background: transparent;
+
+    .curLyric-wrapper {
+      transform: translateX(100vw);
+    }
+
+    .scroll-lyric {
+      transform: scale(0);
+    }
+
+    .background {
+      opacity: 0 !important;
+    }
+
+    .top {
+      transform: translate3d(0, -100px, 0);
+    }
+
+    .bottom {
+      transform: translate3d(0, 100px, 0);
+
+    }
+
+  }
+
+  &.v-enter-to,
+  &.v-leave {
+    background: #444;
+
+    .curLyric-wrapper {
+      transform: translateX(0);
+    }
+
+    .background {
+      opacity: .6;
+    }
+
+    .scroll-lyric {
+      transform: scale(1);
+    }
+
+    .top,
+    .bottom {
+
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+
+}
+
+.mini-player {
+
+
+  transition: all 0.4s;
+
+  &.v-enter,
+  &.v-leave-to {
+    opacity: 0;
+    transform: translate3d(0, 100px, 0);
+  }
+
+  &.v-enter-to,
+  &.v-leave {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+
+  }
+}

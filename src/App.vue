@@ -1,19 +1,18 @@
 <template>
-  <div @click.once="initPlay" id="app" :style="padTopStyle">
-    <div class="page" v-show="true">
-      <nav-bar v-show="isHome" @on-has-height="h=>navbarHeight=h" :navList="navList" namePrefix='home' ref="navbar"></nav-bar>
+  <div @click.once="initPlay" id="app" style="">
+    <div class="page">
+      <nav-bar class="home-navbar" :navList="navList" namePrefix='home' ref="navbar"></nav-bar>
       <!-- <cube-loading class="loadingIcon" v-if="!pageLoaded"></cube-loading> -->
-      <transition type="animation" :duration="1500" @before-enter="slide=true" @after-enter="slide=false" @before-leave="slide=true" @after-leave="slide=false" :enter-active-class="enter_active_class" :leave-active-class="leave_active_class">
+      <transition :name="transitionName" @enter="enter" @after-enter="afterEnter" @leave="leave" @after-leave="afterLeave">
         <keep-alive>
-          <!-- <router-view v-if="$route.meta.keepAlive" /> -->
-          <router-view :style="routeStyle" :key="$route.query.id" :class="[{fullScreenFixed},{slide},$route.name && $route.matched[0].name+'-page']" />
+          <router-view ref="page" @transitionend.native="ontransitionend" :style="zIndex" :key="$route.query.id" :class="[{fullScreenFixed},pageCls]" />
         </keep-alive>
       </transition>
     </div>
     <!-- 音乐播放器 -->
-    <keep-alive>
-      <song-player :class="{hidden:!$store.getters.playlist.length>0}"></song-player>
-    </keep-alive>
+    <!-- <keep-alive> -->
+    <song-player></song-player>
+    <!-- </keep-alive> -->
   </div>
 </template>
 <script>
@@ -22,9 +21,7 @@ export default {
 
   data() {
     return {
-      slide: false,
-      enter_active_class: '',
-      leave_active_class: '',
+      transitionName: '',
       navbarHeight: 0,
       navList: [{
         label: '歌手',
@@ -47,37 +44,19 @@ export default {
     }
   },
   computed: {
-    routeStyle() {
-      let style = {}
-      if (this.isHome) {
-
-        style.top = this.navbarHeight + 'px'
+    zIndex() {
+      console.log(this.$refs.page);
+      return {
+        zIndex: this.$route.name ? this.$route.matched[0].meta.index : 0
       }
-      return style
     },
-    padTopStyle() {
-      return { paddingTop: this.isHome && !this.fullScreen ? this.navbarHeight + 'px' : 0 }
+    pageCls() {
+      return this.$route.name ? this.$route.matched[0].name + '-page' : ''
     },
-    ...Vuex.mapGetters(['fullScreen', 'initialed', 'currentSong']),
-    // ...Vuex.mapState(['navbarHeight']),
     fullScreenFixed() {
       // console.log(this.$route);
-      var ret;
-      this.$route.matched.forEach(route => {
-        // var ret;
-        if (route.meta.fullScreenFixed) {
-          ret = route.meta.fullScreenFixed;
-        }
-      })
-
-      return ret
-    },
-    isHome() {
-      // console.log(this.$route);
-
-      var routeName = this.$route.name;
-      var isHome = routeName ? this.$route.matched[0].meta.isHome : true;
-      return isHome
+      var matchRoutes = this.$route.matched;
+      return matchRoutes[0] && matchRoutes[0].meta.fullScreenFixed
     },
   },
   created() {
@@ -85,59 +64,64 @@ export default {
   },
   watch: {
     '$route': function(to, from) {
-
-
-      // try {
-      to = to.matched[0]
-      from = from.matched[0]
-      console.log(to, from)
-      if (!to || !from) {
+      if (!to.name || !from.name) {
         return
       }
-      var useSlide = to && to.meta && to.meta.useSlide
-      if (!useSlide) {
-        this.enter_active_class = ''
 
-        this.leave_active_class = ''
-        return
-      }
-      var fromIndex = from.meta.index
-      var toIndex = to.meta.index
-      if (toIndex < fromIndex) {
-        this.enter_active_class = 'slideInLeft'
-        this.leave_active_class = 'slideOutRight'
-
-      } else {
-        this.enter_active_class = 'slideInRight'
-        this.leave_active_class = 'slideOutLeft'
-      }
-      if (to.meta && to.meta.back) {
-        this.enter_active_class = ''
-
-      }
-      if (to.meta && to.meta.forward) {
-        this.leave_active_class = ''
-
-      }
-      // } catch (err) {
-      // console.log(err)
-      // }
+      this.setTransitionName(to, from);
     }
   },
-  mounted() {},
   components: { SongPlayer },
   methods: {
-    onBack() {
-      console.log('enter_active_class=')
-      this.enter_active_class = ''
+    enter(el, done) {
+      console.log('enter');
+      setTimeout(done, 300)
+    },
+    afterEnter() {
+      console.log('afterEnter');
+    },
+    leave(el, done) {
+      console.log('leave');
+      setTimeout(done, 300)
+
+    },
+    afterLeave() {
+      console.log('after-leave');
+    },
+    ontransitionend() {
+      // console.log('ontransitionend')
+
+    },
+    setTransitionName(to, from) {
+      to = to.matched[0]
+      from = from.matched[0]
+
+      const fromIndex = from.meta.index
+      const toIndex = to.meta.index
+      if (toIndex < fromIndex) {
+        this.transitionName = 'prev'
+        if (fromIndex >= 4) {
+
+          this.transitionName = 'back'
+
+        }
+      } else {
+        this.transitionName = 'next'
+        if (!to.meta.isHome) {
+          this.transitionName = 'forward'
+
+        }
+
+      }
+
     },
     initPlay() {
-      // console.log('initPlay');
+      try {
+        $('audio')[0].play()
 
-      $('audio') && $('audio')[0].play().catch(err => {
-        console.log(err);
-      })
-      // await this.canplayPromise;
+      } catch (err) {
+        console.error(err);
+      }
     }
   }
 }
@@ -151,10 +135,16 @@ export default {
   color: #2c3e50;
   .posCenter(loadingIcon);
 
-  .navbar {
-    // .font-dpr(16Px); // font-size: 16px;
+  .page {
+    position: fixed;
+    width: 100vw;
+    top: 0;
+    // overflow-y: auto;
   }
 
+  .home-navbar {
+    line-height: 2;
+  }
 }
 
 .loadingIcon {
@@ -162,12 +152,39 @@ export default {
   z-index: 10;
 }
 
-.slide {
-  animation-duration: .5s !important;
+
+
+.next-enter-active,
+.next-leave-active,
+.prev-leave-active,
+.prev-enter-active,
+.back-enter-active,
+.back-leave-active,
+.forward-enter-active,
+.forward-leave-active,
+  {
+  transition: all .3s;
   width: 100vw;
+
   position: fixed;
-  // top: 40px;
-  // transition: transform 500ms linear;
+
+}
+
+.next-enter,
+.prev-leave-to,
+.back-leave-to,
+.forward-enter {
+  transform: translate3d(100vw, 0, 0)
+}
+
+.next-leave-to,
+.prev-enter {
+  transform: translate3d(-100vw, 0, 0)
+}
+
+.next-enter-to,
+.prev-leave {
+  transform: translate3d(0, 0, 0)
 }
 
 </style>

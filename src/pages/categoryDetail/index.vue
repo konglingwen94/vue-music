@@ -1,8 +1,8 @@
 <template>
   <div>
     <cube-loading class="icon-loading" v-if="loading"></cube-loading>
-    <x-header class="header-nav">{{$route.query.categoryName}}</x-header>
-    <div class="scroller panel-wrap">
+    <x-header class="header-navbar" ref="header">{{$route.query.categoryName}}</x-header>
+    <div ref="container" class="native-vertical-scroll panel-wrap">
       <div class="panel-content">
         <div @click="toDetail(item)" :key="key" v-for="(item,key) in detailList" class="panel">
           <div class="picBox">
@@ -34,30 +34,12 @@ export default {
     this.getDetailList(this.$route.query.categoryId)
     // console.log('created')
   },
-  activated() {
-    // console.log('activated')
-
-  },
-  beforeRouteLeave(to, from, next) {
-    if (to.name === 'songList') {
-      to.meta.forward = true
-
-    } else {
-      to.meta.forward = false
-
-    }
-    next()
-  },
-  beforeRouteEnter(to, from, next) {
-    if (from.name === 'songList') {
-      to.meta.back = true
-      to.meta.forward = false
-    } else {
-      to.meta.back = false
-      to.meta.forward = true
-
-    }
-    next()
+  async mounted() {
+    // await this.$nextTick();
+    const top = this.$refs.header.$el.getBoundingClientRect().height
+    const height = window.innerHeight - top
+    console.log(top)
+    $('.panel-wrap').css({ height })
   },
   methods: {
     toDetail(item) {
@@ -96,18 +78,18 @@ export default {
  */
 .categoryDetail-page {
   // position: fixed;
-  z-index: 100;
+  // z-index: 50;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   background: pink;
-  // overflow: auto;
+  overflow: auto;
   padding-top: 50px;
 
 }
 
-.header-nav {
+.header-navbar {
   position: fixed;
   top: 0;
   width: 100%;
@@ -115,7 +97,7 @@ export default {
 }
 
 .panel-wrap {
-  height: calc(100vh - 50px);
+  // height: calc(100vh - 50px);
 
   .panel-content {
     // padding: 16px;

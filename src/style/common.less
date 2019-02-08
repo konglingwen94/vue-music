@@ -57,11 +57,14 @@ a {
   right: 0;
   bottom: 0;
   left: 0;
-  z-index: 10;
   background: #eee;
 }
 
 
+.native-vertical-scroll {
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
+}
 
 .horizontal-scroll {
   -webkit-overflow-scrolling: touch;
@@ -83,4 +86,9 @@ a {
   visibility: hidden !important;
   height: 0 !important;
   overflow: hidden !important;
+}
+
+img,
+video {
+  vertical-align: middle;
 }

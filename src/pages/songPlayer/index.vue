@@ -1,123 +1,120 @@
 <template>
-  <div class="player">
+  <div class="player" v-show="playlist.length>0">
     <!-- 全屏播放 -->
-    <transition :duration="{enter:30}" enter-active-class="fadeIn" leave-active-class="fadeOut">
+    <transition @enter="enter" @after-enter="afterEnter" @leave="leave" @after-leave="afterLeave">
       <div v-show="fullScreen" :class="['normal-player','fullScreenFixed']">
-        <transition enter-active-class="bounceInDown" leave-active-class="bounceOutUp">
-          <div v-show="fullScreen" class="top">
-            <mt-header class="mt-top" :title="currentSong.name">
-              <div slot="left" class="back" @click="back">
-                <i class="cubeic-select"></i>
-              </div>
-              <mt-button @click="handleMore" icon="more" slot="right"></mt-button>
-            </mt-header>
-            <div class="subtitle">
-              <span>{{currentSong.singer}}</span>
+        <div class="top">
+          <mt-header class="mt-top" :title="currentSong.name">
+            <div slot="left" class="back" @click="back">
+              <i class="cubeic-select"></i>
             </div>
+            <mt-button @click="handleMore" icon="more" slot="right"></mt-button>
+          </mt-header>
+          <div class="subtitle">
+            <span>{{currentSong.singer}}</span>
           </div>
-        </transition>
+        </div>
         <!-- 背景图 -->
-        <transition enter-active-class="fadeIn" leave-active-class="fadeOut">
-          <div v-show="fullScreen" :class="['background']" ref="background">
-            <img :key="currentSong.id" width="100%" height="100%" :src="currentSong.pic">
+        <div :class="['background',{currentShow:currentShow==='lyric'}]" ref="background">
+          <img :key="currentSong.id" width="100%" height="100%" :src="currentSong.pic">
       </div>
-        </transition>
-        <!-- 中间左右轮播 -->
-        <div :style="middleStyle" class="middle" @touchstart.prevent="middleTouchStart" @touchmove.prevent="middleTouchMove" @touchend.prevent="middleTouchEnd">
-          <!-- <mt-swipe ref="swiper" prevent :auto="0" :continuous="false"> -->
-          <div class='middle-l'>
-            <transition @enter="enter" @after-enter="afterEnter" @before-leave="beforeLeave" @leave="leave" @after-leave="afterLeave">
-              <div class="cd-wrap" v-show="fullScreen" ref="cdWrap">
+          <!-- 中间左右轮播 -->
+          <div :style="middleStyle" class="middle" @touchstart.prevent="middleTouchStart" @touchmove.prevent="middleTouchMove" @touchend.prevent="middleTouchEnd">
+            <!-- <mt-swipe ref="swiper" prevent :auto="0" :continuous="false"> -->
+            <div class='middle-l' ref="middleL">
+              <div class="cd-wrap" ref="cdWrap">
                 <img ref="cd" :class="['cd',{rotate:playing && !waiting && songReady}]" :key="currentSong.id" v-lazy="currentSong.pic" />
               </div>
-            </transition>
-            <div class="curLyric-wrapper">
-              <p class="ellipsis">{{curLyric}}</p>
+                <div class="curLyric-wrapper">
+                  <p class="ellipsis">{{curLyric}}</p>
+                </div>
+              </div>
+              <!--滚动歌词 -->
+              <div ref="middleR" class="middle-r" :style="{}">
+                <cube-scroll @scroll-end="onScrollEnd" :scroll-events="['scroll-end']" local ref="scrollLyric" v-if="currentLyric && currentLyric.lines.length>0" :data="currentLyric && currentLyric.lines" :self-height="true" class="scroll-lyric">
+                  <div class="lyric-wrapper">
+                    <p ref="lyricLine" :key="index" :class="[{current:index==curLine},'lyricLine','ellipsis']" v-for="(line,index) in currentLyric.lines">{{line.txt}}</p>
+                  </div>
+                </cube-scroll>
+                <div class="lyric-text" v-if="currentLyric && currentLyric.lines.length===0">{{currentLyric.lyric}}</div>
+              </div>
+              <!-- </mt-swipe> -->
+            </div>
+            <!-- 指示器 -->
+            <div key="dots" class="dots-wrap">
+              <div :class="['dot',{active:currentShow==='cd'}]"></div>
+              <div :class="['dot',{active:currentShow==='lyric'}]"></div>
+            </div>
+            <!-- 底部 -->
+            <div key="bottom" class="bottom">
+              <!-- 播放显示 -->
+              <div class="play-progress">
+                <div :class="['currentTimer',{draging}]" slot="start">
+                  <span>{{formatTimer(currentTime)}}</span>
+                </div>
+                <progress-bar v-if="showProgressBar" :timeRanges="timeRanges" @input="oninput" @progressChange="onProgressChange" :duration="duration" :currentTime="currentTime" class="progress-bar"></progress-bar>
+                <div class="totalTimer" slot="end">{{formatTimer(duration)}}
+                </div>
+              </div>
+              <!-- 播放控制 -->
+              <div class="player-control YCenter flex Around">
+                <p @click="changeMode" class="flex Center playMode">
+                  <i :class="[modeCls,'iconfont']"></i>
+                </p>
+                <p @click="togglePrev" class="toggle-prev">
+                  <i class="iconfont icon-icon-"></i>
+                </p>
+                <p @click="togglePlaying" class="toggle-playing flexCenter">
+                  <span v-show="!waiting">
+                  <i v-show="!playing" :class="['iconfont' ,'icon-bofang2']"></i>
+                  <i v-show="playing" :class="['iconfont' ,'icon-zanting']"></i>
+                  </span>
+                  <mt-spinner color="#ffcd32" v-show="waiting" :size="20*__DPR" type="fading-circle"></mt-spinner>
+                </p>
+                <p @click="toggleNext" class="toggle-next">
+                  <i class="iconfont icon-xiayishou-yuanshijituantubiao"></i>
+                </p>
+                <p class="favorite flex Center">
+                  <i :class="['iconfont',favoriteCls]"></i>
+                </p>
+              </div>
+            </div>
+            <!-- 缓冲提示 -->
+            <!-- <div class="spinner-wrapper flex Center" v-show="waiting && playing">
+              <mt-spinner :size="30*__DPR" type="fading-circle"></mt-spinner>
+            </div>
+             -->
+            <div class="volume-wrapper">
+              <!-- <mt-actionsheet :actions="actions" v-model="showVolumn"> -->
+              <!-- </mt-actionsheet> -->
             </div>
           </div>
-          <!--滚动歌词 -->
-          <div class="middle-r" :style="{}">
-            <cube-scroll @scroll-end="onScrollEnd" :scroll-events="['scroll-end']" local ref="scrollLyric" v-if="currentLyric && currentLyric.lines.length>0" :data="currentLyric && currentLyric.lines" :self-height="true" class="scroll-lyric">
-              <div class="lyric-wrapper">
-                <p ref="lyricLine" :key="index" :class="[{current:index==curLine},'lyricLine','ellipsis']" v-for="(line,index) in currentLyric.lines">{{line.txt}}</p>
-              </div>
-            </cube-scroll>
-            <div class="lyric-text" v-if="currentLyric && currentLyric.lines.length===0">{{currentLyric.lyric}}</div>
-          </div>
-          <!-- </mt-swipe> -->
-        </div>
-        <transition-group tag="div" enter-active-class="bounceInUp" leave-active-class="bounceOutDown">
-          <!-- 指示器 -->
-          <div key="dots" class="dots-wrap">
-            <div :class="['dot',{active:currentShow==='cd'}]"></div>
-            <div :class="['dot',{active:currentShow==='lyric'}]"></div>
-          </div>
-          <!-- 底部 -->
-          <div key="bottom" class="bottom">
-            <!-- 播放显示 -->
-            <div class="play-progress">
-              <div :class="['currentTimer',{draging}]" slot="start">
-                <span>{{formatTimer(currentTime)}}</span>
-              </div>
-              <progress-bar :timeRanges="timeRanges" @input="oninput" @progressChange="onProgressChange" :duration="duration" :currentTime="currentTime" class="progress-bar"></progress-bar>
-              <div class="totalTimer" slot="end">{{formatTimer(duration)}}
-              </div>
-            </div>
-            <!-- 播放控制 -->
-            <div v-show="fullScreen" class="player-control YCenter flex Around">
-              <p @click="changeMode" class="flex Center playMode">
-                <i :class="[modeCls,'iconfont']"></i>
-              </p>
-              <p @click="togglePrev" class="toggle-prev">
-                <i class="iconfont icon-icon-"></i>
-              </p>
-              <p @click="togglePlaying" class="toggle-playing">
-                <i :class="['iconfont' ,{'icon-bofang':!playing,'icon-bofang1':playing}]"></i>
-              </p>
-              <p @click="toggleNext" class="toggle-next">
-                <i class="iconfont icon-xiayishou-yuanshijituantubiao"></i>
-              </p>
-              <p class="favorite flex Center">
-                <i :class="['iconfont',favoriteCls]"></i>
-              </p>
-            </div>
-          </div>
-        </transition-group>
-        <!-- 缓冲提示 -->
-        <div class="spinner-wrapper flex Center" v-show="waiting && playing">
-          <mt-spinner :size="60*__DPR" type="fading-circle"></mt-spinner>
-        </div>
-        <div class="volume-wrapper">
-          <!-- <mt-actionsheet :actions="actions" v-model="showVolumn"> -->
-          <!-- </mt-actionsheet> -->
-        </div>
-      </div>
     </transition>
     <!-- 播放内核 -->
     <div class="playAudio">
       <audio @error="onerror" @abort="onabort" @canplaythrough="oncanplaythrough" @stalled="onstalled" @loadstart="onloadstart" @loadeddata="onloadeddata" @emptied="onemptied" @loadedmetadata="onloadedmetadata" @waiting="onwaiting" @playing="onplaying" @progress="onprogress" @timeupdate="onupdateTime" @ended="onended" :src="currentSong.url" @canplay="oncanplay" ref="audio" autoplay>
       </audio>
     </div>
-    <div class="mini-wrap">
-      <!-- 当前播放列表 -->
-      <div class="playlist" :style="{bottom:miniPlayerHeight+'px'}" v-show="isShowPlaylist && !fullScreen">
-        <!--  -->
-        <div class="title-wrap flex YCenter">
-          <p class="title">播放列表</p>
-          <p @click="changeMode" class="playMode-wrapper">
-            <i :class="[modeCls,'iconfont','icon']"></i>
-          </p>
-          <div class="icon delete-wrapper" @click="deleteList">
-            <i class="cubeic-delete"></i>
-          </div>
+    <!-- 当前播放列表 -->
+    <div class="playlist" :style="{bottom:miniPlayerHeight+'px'}" v-show="isShowPlaylist && !fullScreen">
+      <!--  -->
+      <div class="title-wrap flex YCenter">
+        <p class="title">播放列表</p>
+        <p @click="changeMode" class="playMode-wrapper">
+          <i :class="[modeCls,'iconfont','icon']"></i>
+        </p>
+        <div class="icon delete-wrapper" @click="deleteList">
+          <i class="cubeic-delete"></i>
         </div>
-        <play-list></play-list>
       </div>
-      <!-- 吸底播放器 -->
-      <div v-show="!fullScreen" @click="open" :class="['flex', 'mini-player' ,'border-top-1px']">
-        <div class="cd-wrap">
+      <play-list></play-list>
+    </div>
+    <!-- 吸底播放器 -->
+    <transition>
+      <div v-if="hasPlaylist" v-show="!fullScreen" @click="open" :class="['flex', 'mini-player' ,'border-top-1px']">
+        <div class="cd-wrap" ref="minCdWrap">
           <img :class="['cd',{rotate:playing && !waiting}]" :key="currentSong.id" :src="currentSong.pic">
-       </div>
+        </div>
           <div class="text">
             <div class="title-wrap">
               <p class="title">{{currentSong.name}}</p>
@@ -138,8 +135,8 @@
             <i @click.stop="isShowPlaylist=!isShowPlaylist" class="iconfont icon-bofangliebiao"></i>
           </div>
         </div>
-      </div>
-    </div>
+    </transition>
+  </div>
 </template>
 <script type="text/javascript">
 import PlayList from './playlist.vue'
@@ -150,7 +147,7 @@ import { shuffle } from '@/common/js/util'
 import lyricParser from 'lyric-parser'
 import { prefixStyle } from '@/config/dom'
 const filter = prefixStyle('filter')
-const transitionDuration = prefixStyle('transitionDuration')
+const transitionDuration = prefixStyle('transition-duration')
 const transform = prefixStyle('transform')
 
 export default {
@@ -167,7 +164,8 @@ export default {
       draging: false,
       waiting: false,
       currentShow: 'cd',
-      songReady: false
+      songReady: false,
+      showProgressBar: false
     };
   },
   components: {
@@ -202,7 +200,6 @@ export default {
     },
   },
   created() {
-    this.movePos = {}
 
     this.initialed = false;
     this.touch = { blur: 40 };
@@ -212,18 +209,13 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      let height = $('.mini-player').height();
-      this.miniHeight = height;
-
-      this.setMiniPlayerHeight(height)
+      // 获取mini进度条高度
+      // this.getMiniHeight()
       this.audio = $('audio')[0];
       this.$refs.background.style[filter] = `blur(${this.touch.blur}px)`
       // 设置进度条缓冲进度高度
     })
-    setTimeout(() => {
-      console.log($('.middle-r').height(), this.$refs.scrollLyric)
 
-    }, 1000)
   },
   watch: {
     playing(newplaying) {
@@ -271,29 +263,30 @@ export default {
       // this.$refs.scrollLyric && this.$refs.scrollLyric.scrollTo(0, 0, 1000)
       this.curLyric = newLyric.lines[0].txt
     },
-    fullScreen(newShow, oldShow) {
-      // !newShow && this.setMiniPlayerHeight()
+    fullScreen() {
+      if (!this.showProgressBar) {
+        this.showProgressBar = true
+      }
+      if (!this.miniPlayerHeight) {
 
+        // this.getMiniHeight()
+        // this.setMiniPlayerHeight(this.miniHeight)
+      }
     },
     miniPlayerHeight(newHeight) {
       newHeight == 0 && this.lyricStop()
     },
     async currentSong(newSong, oldSong) {
-      if (oldSong.id == newSong.id) {
+      if (oldSong.id == newSong.id || !newSong.id) {
         return
       }
       this.timeRanges = 0; //缓冲进度置零
-      if (this.__isEmptyObject(newSong)) {
-        this.setMiniPlayerHeight(this.miniHeight)
-        // this.audio.paused && this.audio.play()
-      } else {
-        // 重置
-        this.getLyric()
-        this.resetStart()
+      // 重置
+      this.getLyric()
+      this.resetStart()
 
-        // 获取歌词
+      // 获取歌词
 
-      }
     },
 
   },
@@ -307,18 +300,24 @@ export default {
       setMiniPlayerHeight: 'SET_MINI_PLAYER_HEIGHT'
     }),
     ...playerControls,
-    enter(el, done) {
-      if (this.__isEmptyObject(this.movePos)) {
+    getMovePos() {
+      if (this.__isEmptyObject(this.movePos) || Object.values(this.movePos).includes(0)) {
         this.movePos = this._getPosAndScale()
+        // this.getMiniHeight()
         console.log(this.movePos)
       }
+
+    },
+    async enter(el, done) {
+      await this.$nextTick()
+      this.getMovePos()
       const { x, y, scale } = this.movePos
       const animation = {
         0: {
           transform: `translate3d(${x}px,${y}px,0) scale(${scale})`
         },
         60: {
-          transform: `translate3d(0,0,0) scale(1.2)`
+          transform: `translate3d(0,0,0) scale(1.3)`
 
         },
         100: {
@@ -334,19 +333,26 @@ export default {
           easing: 'linear'
         }
       })
+      // setTimeout(done, 10000)
       Animation.runAnimation(this.$refs.cdWrap, 'move', done)
     },
     afterEnter() {
       Animation.unregisterAnimation('move')
       this.$refs.cdWrap.style.animation = ''
     },
-    beforeLeave() {
-      // console.log('beforeLeave')
-    },
-    leave(el, done) {
+
+    async leave(el, done) {
+      await this.$nextTick()
+      if (!this.miniPlayerHeight) {
+        this.miniHeight = $('.mini-player').height()
+        this.setMiniPlayerHeight(this.miniHeight)
+      }
+      this.getMovePos()
+
       const { x, y, scale } = this.movePos;
-      this.$refs.cdWrap.style.transition = "all 1s"
+      this.$refs.cdWrap.style.transition = "all .4s"
       this.$refs.cdWrap.style[transform] = `translate3d(${x}px,${y}px,0) scale(${scale})`;
+      // this.$refs.cdWrap.style.zIndex = 500;
       // console.dir(done)
       this.end = () => {
         // $('.normal-player').toggleClass('hidden')
@@ -359,20 +365,23 @@ export default {
     afterLeave(el, done) {
       console.log('after-leave')
       this.$refs.cdWrap.style.transition = ""
+      // this.$refs.cdWrap.style.zIndex = 500;
       this.$refs.cdWrap.style[transform] = ""
       this.$refs.cdWrap.removeEventListener('transitionend', this.end)
     },
     _getPosAndScale() {
       const targetWidth = $('.mini-player .cd-wrap').width()
-      const padLeft = $('.mini-player .cd-wrap').offset().left;
+      const padLeft = this.$refs.minCdWrap.getBoundingClientRect().left;
       const padBot = $('.mini-player .cd-wrap').position().top;
-      const offset = $('.normal-player .cd-wrap').offset()
+      const offset = this.$refs.cdWrap.getBoundingClientRect()
       const padTop = offset.top;
       const width = offset.width;
-      const radiusDiff = (width + targetWidth) / 2
-      const x = -(window.innerWidth - radiusDiff - padLeft)
-      const y = window.innerHeight - padTop - padBot - radiusDiff
+      // const radiusDiff = (width + targetWidth) / 2
+      const x = -(window.innerWidth / 2 - targetWidth / 2 - padLeft)
+      const y = window.innerHeight - padTop - padBot - width / 2 - targetWidth / 2
       const scale = targetWidth / width
+      console.log(padLeft, padTop, padBot, width, targetWidth, offset)
+
       return { x, y, scale }
     },
     handleMore() {
@@ -386,9 +395,9 @@ export default {
       }
     },
     middleTouchStart(e) {
-      $('.middle-r').css('transition-duration', '0ms');
-      $('.middle-l').css('transition-duration', '0ms')
-      $('.background').css('transition-duration', '0ms')
+      // $('.middle-r').css('transition-duration', '0ms');
+      // $('.middle-l').css('transition-duration', '0ms')
+      // $('.background').css('transition-duration', '0ms')
       // this.touch = { blur: 40 };
       this.touch.blurRadio = this.touch.blur;
       const touch = e.touches[0]
@@ -404,7 +413,7 @@ export default {
       if (this.touch.initiated) {
         const deltaX = e.touches[0].pageX - this.touch.startX;
         const deltaY = e.touches[0].pageY - this.touch.startY;
-        if (Math.abs(deltaX) < Math.abs(deltaY / 2) || Math.abs(deltaX) < 3) {
+        if (Math.abs(deltaX) < Math.abs(deltaY / 3) || Math.abs(deltaX) < 3) {
           this.touch.ismoved = false
           return
         } else {
@@ -420,14 +429,14 @@ export default {
         $('.middle-r').css({ transform: `translate3d(${offsetWidth}px,0,0)` })
 
         // 设置背景模糊
-        // $('.background').css({ filter: `blur(${blur}px)` })
-        this.$refs.background.style[filter] = `blur(${blur}px)`
+        $('.background').css(filter, `blur(${blur}px)`)
+        // this.$refs.background.style[filter] = `blur(${blur}px)`
 
       }
     },
     middleTouchEnd() {
-
-      if (this.touch.ismoved === false) {
+      console.log(this.touch.percent);
+      if (this.touch.ismoved === false || this.touch.percent === 0 || this.touch.percent === 1) {
         return
       }
       const percent = 0.2;
@@ -456,11 +465,19 @@ export default {
 
         }
       }
-      $('.middle-r').css({ transform: `translate3d(${offsetWidth}px,0,0)`, transitionDuration: '300ms' })
-      $('.middle-l').css({ opacity, transitionDuration: '300ms' })
-      this.$refs.background.style[filter] = `blur(${blur}px)`
-      this.$refs.background.style[transitionDuration] = `500ms`
-      // this.touch.percent = 0
+      const delay = "300ms"
+      $('.middle-r').css({ transform: `translate3d(${offsetWidth}px,0,0)`, transitionDuration: delay }).bind('transitionend', function() {
+        $(this).css(transitionDuration, '').unbind('transitionend')
+      })
+      $('.middle-l').css({ opacity, transitionDuration: delay }).bind('transitionend', function() {
+        $(this).css(transitionDuration, '').unbind('transitionend')
+      })
+      console.log(transitionDuration, filter);
+
+      $('.background').css(filter, `blur(${blur}px)`).css(transitionDuration, delay).bind('transitionend', function() {
+        $(this).css(transitionDuration, '').unbind('transitionend')
+      })
+
     },
     play() {
       if (!this.playing) {
@@ -487,15 +504,11 @@ export default {
       this.curLine = 0;
       this.resetCdTransform()
       this.$refs.scrollLyric && this.$refs.scrollLyric.scrollTo(0, 0, 300)
-      // if (this.playMode.loop !== this.mode) {
 
-      // this.timeRanges = 0;
-      // }
-      // this.scrollToCurrentLyric()
     },
     onemptied() {
       console.log('onemptied')
-
+      this.setPlayingState(false)
     },
     onloadstart() {
       this.isBuffered = false
@@ -516,11 +529,16 @@ export default {
 
     },
     onprogress(e) {
-      const timeRanges = this.audio.buffered
-      this.timeRanges = timeRanges.end(0)
-      if (Math.ceil(this.timeRanges) >= this.duration) {
-        // this.isBuffered = true
-        console.log(timeRanges.end(0))
+      try {
+
+        const timeRanges = this.audio.buffered
+        this.timeRanges = timeRanges ? timeRanges.end(0) : 0
+        /*if (Math.ceil(this.timeRanges) >= this.duration) {
+          // this.isBuffered = true
+          console.log(timeRanges.end(0))
+        }*/
+      } catch (err) {
+        console.log(err);
       }
     },
     onplaying() {
@@ -548,7 +566,7 @@ export default {
       $('.cd-wrap').css({ transform: `rotate(0)` })
       this.$nextTick(() => {
 
-        $('audio')[0].volume = 0.1;
+        // $('audio')[0].volume = 0.6;
       })
 
     },
@@ -735,6 +753,7 @@ export default {
 
 </script>
 <style scoped lang="less">
+@import './transition.less';
 @import './animate-rotate.less';
 @height: 60vh;
 
@@ -755,7 +774,7 @@ export default {
 .player {
   // height: 100vh;
   position: relative;
-  z-index: 400;
+  z-index: 90;
 
 
 }
@@ -803,9 +822,11 @@ export default {
         // width: 100vw;
         margin: auto;
         width: 260px;
+        height: 260px;
 
         img.cd {
           width: 100%;
+          height: 100%;
           border: 10px solid hsla(0, 0%, 100%, .1);
         }
       }
@@ -924,6 +945,7 @@ export default {
       margin-top: 20px;
       color: #ffcd32;
 
+      .toggle-playing,
       .favorite,
       .playMode {
         border: 2px solid;
@@ -933,6 +955,17 @@ export default {
 
         .iconfont {
           font-size: 26px;
+        }
+
+      }
+
+      .toggle-playing {
+        width: 46px;
+        height: 46px;
+
+        .iconfont {
+          font-size: 32px;
+
         }
       }
     }
@@ -966,7 +999,7 @@ export default {
 }
 
 .mini-player {
-  align-item s: center;
+  align-items: center;
   padding: 0 10px;
   height: 60px !important;
 
@@ -974,6 +1007,7 @@ export default {
   .cd-wrap {
     img {
       width: 50px;
+      height: 50px;
       border-radius: 50%;
     }
 
@@ -1019,5 +1053,5 @@ export default {
 }
 
 </style>
-<style type="text/css">
+<style type="text/css" lang="less">
 </style>

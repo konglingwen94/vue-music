@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import util from './req.js'
 import * as methods from './methods.js'
-
+import { querystring } from 'vux'
 window._ = _
 
 
@@ -71,5 +71,6 @@ export default {
     var matrix = getComputedStyle($(selector)[0]).transform;
 
     return eval('this.get' + matrix)
-  }
+  },
+  ...querystring
 }
