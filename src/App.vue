@@ -5,7 +5,7 @@
       <!-- <cube-loading class="loadingIcon" v-if="!pageLoaded"></cube-loading> -->
       <transition :name="transitionName" @enter="enter" @after-enter="afterEnter" @leave="leave" @after-leave="afterLeave">
         <keep-alive>
-          <router-view ref="page" @transitionend.native="ontransitionend" :style="zIndex" :key="$route.query.id" :class="[{fullScreenFixed},pageCls]" />
+          <router-view :key="$route.query.id" :class="[{fullScreenFixed},pageCls]" />
         </keep-alive>
       </transition>
     </div>
@@ -23,6 +23,7 @@ export default {
     return {
       transitionName: '',
       navbarHeight: 0,
+      duration: 400,
       navList: [{
         label: '歌手',
         name: 'singer',
@@ -40,16 +41,9 @@ export default {
         name: 'search',
         link: '/search'
       }],
-      // names: []
     }
   },
   computed: {
-    zIndex() {
-      console.log(this.$refs.page);
-      return {
-        zIndex: this.$route.name ? this.$route.matched[0].meta.index : 0
-      }
-    },
     pageCls() {
       return this.$route.name ? this.$route.matched[0].name + '-page' : ''
     },
@@ -59,37 +53,37 @@ export default {
       return matchRoutes[0] && matchRoutes[0].meta.fullScreenFixed
     },
   },
-  created() {
-    // this.canplayPromise = null;
-  },
   watch: {
     '$route': function(to, from) {
       if (!to.name || !from.name) {
         return
       }
-
+      this.oldRoute = from
+      console.log('route changed');
       this.setTransitionName(to, from);
     }
   },
   components: { SongPlayer },
   methods: {
     enter(el, done) {
-      console.log('enter');
-      setTimeout(done, 300)
+      // console.log('enter', this.$route);
+      el.style.zIndex = this.$route.matched[0].meta.index
+      setTimeout(done, this.duration)
     },
-    afterEnter() {
-      console.log('afterEnter');
+    afterEnter(el) {
+      el.style.removeProperty('z-index')
+      // console.log('afterEnter');
     },
     leave(el, done) {
-      console.log('leave');
-      setTimeout(done, 300)
+      // console.log('leave', this.$route);
+      el.style.zIndex = this.oldRoute.matched[0].meta.index
+
+      setTimeout(done, this.duration)
 
     },
-    afterLeave() {
-      console.log('after-leave');
-    },
-    ontransitionend() {
-      // console.log('ontransitionend')
+    afterLeave(el) {
+      // console.log('after-leave');
+      el.style.removeProperty('z-index')
 
     },
     setTransitionName(to, from) {
@@ -116,12 +110,10 @@ export default {
 
     },
     initPlay() {
-      try {
-        $('audio')[0].play()
-
-      } catch (err) {
+      $('audio')[0].play().catch(err => {
         console.error(err);
-      }
+      })
+
     }
   }
 }
@@ -163,7 +155,7 @@ export default {
 .forward-enter-active,
 .forward-leave-active,
   {
-  transition: all .3s;
+  transition: all .4s;
   width: 100vw;
 
   position: fixed;
