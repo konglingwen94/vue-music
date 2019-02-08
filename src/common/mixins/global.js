@@ -60,7 +60,7 @@ Vue.mixin({
       }
       $(this.wrapperEl).css({ height: newheight })
       // this.hasPlaylist
-      console.log(this.wrapperEl)
+      // console.log(this.wrapperEl)
       this.refresh()
     }
   },
