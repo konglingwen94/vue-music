@@ -13,4 +13,5 @@ npm start
 #打包项目
 npm run build
 
-#未完待续
+#页面截图
+(https://github.com/konglingwen94/vue-music/blob/master/screenshot/singer.png)
