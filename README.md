@@ -14,4 +14,4 @@ npm start
 npm run build
 
 #页面截图
-(https://github.com/konglingwen94/vue-music/blob/master/screenshot/singer.png)
+!(https://github.com/konglingwen94/vue-music/blob/master/screenshot/singer.png)
