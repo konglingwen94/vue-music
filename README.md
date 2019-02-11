@@ -15,3 +15,6 @@ npm run build
 
 #页面截图  
 ![abc](https://github.com/konglingwen94/vue-music/blob/master/screenshot/singer.png)
+![abc](https://github.com/konglingwen94/vue-music/blob/master/screenshot/songSheet.png)
+![abc](https://github.com/konglingwen94/vue-music/blob/master/screenshot/mv.png)
+![abc](https://github.com/konglingwen94/vue-music/blob/master/screenshot/search.png)
