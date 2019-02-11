@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <script src="https://cdn.bootcss.com/vue/2.5.22/vue.js"></script>
+  <style type="text/css">
+  body {
+    margin: 0;
+  }
+
+  .inner {
+    background: #eee;
+    height: 100px;
+  }
+
+  .v-enter-active,
+  .v-leave-active {
+    transition: all 1s;
+    position: fixed;
+    width: 100%;
+    top: 0;
+  }
+
+  .v-enter {
+    transform: translateX(100vw);
+  }
+
+  .v-leave-to {
+    transform: translateX(-100vw);
+  }
+
+  .saved {
+    background: pink;
+  }
+
+  .edited {
+    background: #eee;
+  }
+
+  .editing {
+    background: lightgreen;
+  }
+
+  </style>
+</head>
+
+<body>
+  <div class="box">
+    <transition>
+      <div class="inner" :class="docState" @click="toggle" v-bind:key="docState">
+        {{ buttonMessage }}
+      </div>
+    </transition>
+    <transition :duration="300">
+      <div class="demo">
+        demo
+      </div>
+    </transition>
+  </div>
+</body>
+<script type="text/javascript">
+new Vue({
+  el: '.box',
+  data: {
+    show: 'a',
+    a: 'a',
+    b: 'b',
+    i: 0,
+    docState: 'saved',
+    state: ['saved', 'edited', 'editing']
+  },
+  computed: {
+    buttonMessage: function() {
+      switch (this.docState) {
+        case 'saved':
+          return 'Edit'
+        case 'edited':
+          return 'Save'
+        case 'editing':
+          return 'Cancel'
+        default:
+          return ''
+      }
+    }
+  },
+  methods: {
+    toggle() {
+      const random = ++this.i % 3
+      this.docState = this.state[random]
+    }
+  }
+})
+
+</script>
+
+</html>

@@ -3,6 +3,12 @@ Vue.mixin({
   computed: {
     ...Vuex.mapGetters(['miniPlayerHeight', 'hasPlaylist'])
   },
+  data() {
+    return {
+      // y: 0,
+
+    }
+  },
   created() {
     // 设置自定义组件name
     this.setCompName()

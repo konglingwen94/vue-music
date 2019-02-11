@@ -13,7 +13,7 @@
             <i  class="cubeic-delete clear"></i>
           </div>
         </div>
-        <cube-scroll rangeHeight local ref="listContent" :client-top="500" :data="playlist" class="list-content">
+        <cube-scroll rangeHeight ref="listContent" :client-top="500" :data="playlist" class="list-content">
           <transition-group name="deleteOne" tag="ul">
             <li ref="songItem" @click="playItem(item,index)" :class="['song-item', 'flex',{current:currentSong.id===item.id}]" v-for="(item,index) in sequenceList" :key="item.id">
               <div class="index-wrapper">
@@ -69,6 +69,11 @@ export default {
     },
     show() {
       this.showFlag = true
+
+      this.$nextTick(() => {
+        this.$refs.listContent.refresh()
+        this.scrollToCurrent()
+      })
     },
     clearList() {
       try {
@@ -114,7 +119,8 @@ export default {
 </script>
 <style scoped lang="less">
 .deleteOne-leave-to {
-  height: 0 !important;
+  // height: 0 !important;
+  transform: translate3d(-100%, 0, 0);
   // margin-bottom: 0;
 }
 
@@ -198,7 +204,11 @@ export default {
 
 .song-item {
   margin-bottom: 20px;
-  height: 20px;
+  // height: 20px;
+
+  .index-wrapper {
+    margin-right: 10px;
+  }
 
   &.current {
     color: red;

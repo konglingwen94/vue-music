@@ -30,8 +30,8 @@
                 </div>
               </div>
               <!--滚动歌词 -->
-              <div ref="middleR" class="middle-r" :style="{}">
-                <cube-scroll @scroll-end="onScrollEnd" :scroll-events="['scroll-end']" local ref="scrollLyric" v-if="currentLyric && currentLyric.lines.length>0" :data="currentLyric && currentLyric.lines" :self-height="true" class="scroll-lyric">
+              <div ref="middleR" class="middle-r">
+                <cube-scroll @scroll-end="onScrollEnd" :scroll-events="['scroll-end']" local ref="scrollLyric" v-if="currentLyric && currentLyric.lines.length>0" :data="currentLyric && currentLyric.lines" class="scroll-lyric">
                   <div class="lyric-wrapper">
                     <p ref="lyricLine" :key="index" :class="[{current:index==curLine},'lyricLine','ellipsis']" v-for="(line,index) in currentLyric.lines">{{line.txt}}</p>
                   </div>

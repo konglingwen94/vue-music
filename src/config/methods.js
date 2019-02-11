@@ -46,6 +46,9 @@ export function setScrollWrapHeight() {
   }
 }
 export function setElHeight({ selector, top = 0, bottom = 0, el = 'parent' }) {
+  if (this.$attrs.hasOwnProperty('local')) {
+    return
+  }
   setTimeout(() => {
     if (typeof this.$attrs['client-top'] == "number") {
       top = this.$attrs['client-top']

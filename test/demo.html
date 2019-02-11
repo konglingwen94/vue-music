@@ -4,9 +4,32 @@
 <head>
   <meta charset="UTF-8">
   <title>Document</title>
+  <style type="text/css">
+  .wrapper {
+    display: flex;
+    /*justify-content: center;*/
+    align-items: center;
+    height: 100px;
+    background: pink;
+  }
+
+  [class^=item] {
+    border: solid;
+  }
+
+  .item2 {
+    align-self: baseline;
+  }
+
+  </style>
 </head>
 
 <body>
+  <div class="wrapper">
+    <div class="item1">1</div>
+    <div class="item2">2</div>
+    <div class="item3">3</div>
+  </div>
 </body>
 <script type="text/javascript">
 (async () => {
