@@ -27,7 +27,6 @@
         </div>
       </div>
     </div>
-    <!-- </slot> -->
   </div>
 </template>
 <script type="text/javascript">
@@ -42,7 +41,6 @@ export default {
       error: false,
       fullscreen: false,
       orientation: 0,
-      // selectedIndex: [this.currentMv.videoType.index]
     };
   },
   props: {
@@ -62,7 +60,6 @@ export default {
       () => {
         //todo code
         this.fullscreen = document.webkitIsFullScreen && document.webkitCurrentFullScreenElement === this.currentVdo
-        // console.log(document.webkitCurrentFullScreenElement.nodeName)
       }
     );
   },
@@ -76,20 +73,15 @@ export default {
     // body...
     currentVdo(newVdo, oldVdo) {
       if (newVdo) {
-        // this.er = false
-        // this.selected.
         newVdo.load()
         $(newVdo).attr('controls', 'controls')
-        // newVdo.controls = true
 
-        // newVdo.play()
         this.reactive.$scroll.scrollToElement(newVdo, 1000, true, true)
 
       }
       if (oldVdo) {
 
         oldVdo.src = ''
-        // oldVdo.controls = false
         $(oldVdo).removeAttr('controls')
 
       }
@@ -106,9 +98,6 @@ export default {
       // console.log(top)
       if (bottom <= clientTop || top >= window.innerHeight) {
         this.currentVdo.src = ''
-        // this.currentVdo.load()
-        // this.currentVdo.controls = false
-        // $(oldVdo).removeAttr('constrols')
 
         this.currentVdo = null
         this.currentMv = null
@@ -228,6 +217,7 @@ video:-webkit-full-screen div {
 <style scoped lang="less">
 .mv-item {
   margin-bottom: 30px;
+  height: 240px;
 
   &.fullscreen {
     video::-webkit-media-controls-enclosure {
@@ -307,22 +297,6 @@ video:-webkit-full-screen div {
   }
 
 
-
-}
-
-@media all and (orientation: portrait) {
-
-  body div {
-    // background: red;
-  }
-
-}
-
-@media all and (orientation: landscape) {
-
-  body div {
-    background: blue;
-  }
 
 }
 

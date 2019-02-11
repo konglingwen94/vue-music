@@ -1,6 +1,6 @@
 <template>
-  <!-- <transition @before-leave="slide=true" @after-leave="afterLeave" :leave-active-class="leave_active_class" :enter-active-class="$route.meta.enter_active_class"> -->
   <div>
+    <my-loading v-if="hotSongList.length===0"></my-loading>
     <!-- 推荐分类 -->
     <cube-scroll :data="hotSongList" class="cube-scroll" ref="scroll" :options="options" @pulling-up="onPullingUp">
       <recommend-category :isLoading="isLoading" :recommendCategory="recommendCategory"></recommend-category>
@@ -14,6 +14,7 @@
 <script type="text/javascript">
 import HotSongList from './hotSongList.vue'
 import RecommendCategory from './recommendCategory.vue'
+import options from '@/common/mixins/pullUpLoad'
 export default {
   name: 'songSheet',
   data() {
@@ -25,17 +26,7 @@ export default {
       isLoading: true,
       recommendCategory: [],
       hotSongList: [],
-      options: {
-        pullUpLoad: {
-          txt: {
-            noMore: 'noMore',
-            more: 'more',
-          },
-          threshold: -40
-
-        },
-        scrollbar: true
-      },
+      options: this.options,
       sin: 0,
       ein: 9
 
@@ -43,41 +34,14 @@ export default {
   },
   created() {
 
-    // setTimeout(this.getHotSongList)
-
     this.getCategoryOriginData();
     this.getHotSongList()
   },
   activated() {
-    this.$nextTick(() => {
-
-    })
-
     this.$refs.scroll && this.$refs.scroll.refresh()
-  },
-  beforeRouteEnter(to, from, next) {
-    if (from.meta.isHome) {
-      to.meta.back = false
-
-    } else {
-      to.meta.back = true
-
-    }
-    next()
-  },
-  beforeRouteLeave(to, from, next) {
-    if (to.meta.isHome) {
-      to.meta.forward = false
-    } else {
-      to.meta.forward = true
-
-    }
-    next()
   },
   methods: {
     onPullingUp() {
-
-      // ('pullUpLoad')
       this.getHotSongList()
 
     },
@@ -99,13 +63,8 @@ export default {
       })
       if (code == this.__QERR_OK) {
         this.hotSongList.push(...list)
-        // this.lasttime = data.data.lasttime
         this.sin += 10;
         this.ein += 10;
-        // this.refresh()
-        if (this.hotSongList.length >= 100) {
-          this.options.pullUpLoad = false
-        }
       }
 
     },
@@ -131,7 +90,6 @@ export default {
         })
       })
 
-      if (this.recommendCategory.length >= num * len) {}
     },
 
   },
@@ -146,12 +104,10 @@ export default {
 
 </script>
 <style scoped lang="less">
-.icon-loading {
-  display: flex;
-  justify-content: center;
-  margin-top: 140px;
-  font-size: 130px;
+.my-loading {
+  top: 50%;
 }
+
 
 .songSheet-page {}
 

@@ -8,6 +8,9 @@ Vue.mixin({
     this.setCompName()
 
     this.hasVerticalScroll = !!this.findVerticalScroll()
+    if (this.hasVerticalScroll) {
+      this.flagLeave = false
+    }
   },
   mounted() {
     // 设置滚动容器高度
@@ -51,14 +54,11 @@ Vue.mixin({
     await this.$nextTick()
     var immediate = false;
     if (!this.wrapperEl) {
+      return
 
-      this.wrapperEl = this.$el.hasAttribute('maxHeight') ? this.$el : this.$el.parentElement
-    } else {
-
-      immediate = this.hasPlaylist !== this.flagLeave
     }
-    // if (this.hasPlaylist && ) {}
-    // this.flagBack = this.hasPlaylist
+    immediate = this.hasPlaylist !== this.flagLeave
+    // console.log(this.wrapperEl);
     this.unwatch = this.$watch('miniPlayerHeight', (newVal, oldVal) => {
 
 

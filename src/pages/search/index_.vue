@@ -2,11 +2,6 @@
   <div class="search-page">
     <!-- 顶部搜索块 -->
     <div class="search-wrap">
-      <!-- 搜索框 -->
-      <!-- <cube-input ref="comInput" autocomplete autofocus placeholder="placeholder" v-model.trim="params.s" :clearable="true">
-        搜索图标
-        <i class="cubeic-search search-icon" slot="prepend"></i>
-      </cube-input> -->
       <search></search>
     </div>
     <!--  -->
@@ -65,12 +60,6 @@ export default {
   computed: {
     ...Vuex.mapState(['navbarHeight']),
 
-    scrollStyle() {
-      return {
-
-        // height: `${this.scrollWrapHeight}px`
-      }
-    }
   },
   created() {
     this.getHotKey()
@@ -79,7 +68,6 @@ export default {
     // this.getScrollWrapHeight()
   },
   methods: {
-    onCancel() {},
     handleHotKey(k) {
       this.params.s = k;
       this.$refs.comInput.isFocus = true

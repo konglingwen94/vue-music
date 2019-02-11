@@ -95,20 +95,6 @@
       <audio @error="onerror" @abort="onabort" @canplaythrough="oncanplaythrough" @stalled="onstalled" @loadstart="onloadstart" @loadeddata="onloadeddata" @emptied="onemptied" @loadedmetadata="onloadedmetadata" @waiting="onwaiting" @playing="onplaying" @progress="onprogress" @timeupdate="onupdateTime" @ended="onended" :src="currentSong.url" @canplay="oncanplay" ref="audio" autoplay>
       </audio>
     </div>
-    <!-- 当前播放列表 -->
-    <div class="playlist" :style="{bottom:miniPlayerHeight+'px'}" v-show="isShowPlaylist && !fullScreen">
-      <!--  -->
-      <div class="title-wrap flex YCenter">
-        <p class="title">播放列表</p>
-        <p @click="changeMode" class="playMode-wrapper">
-          <i :class="[modeCls,'iconfont','icon']"></i>
-        </p>
-        <div class="icon delete-wrapper" @click="deleteList">
-          <i class="cubeic-delete"></i>
-        </div>
-      </div>
-      <play-list></play-list>
-    </div>
     <!-- 吸底播放器 -->
     <transition>
       <div v-if="hasPlaylist" v-show="!fullScreen" @click="open" :class="['flex', 'mini-player' ,'border-top-1px']">
@@ -131,17 +117,20 @@
               </x-circle>
             </div>
           </div>
-          <div class="playlist-icon">
-            <i @click.stop="isShowPlaylist=!isShowPlaylist" class="iconfont icon-bofangliebiao"></i>
+          <div @click.stop="showPlaylist" class="playlist-icon">
+            <i class="iconfont icon-bofangliebiao"></i>
           </div>
         </div>
     </transition>
+    <!-- 当前播放列表 -->
+    <play-list ref="playlist"></play-list>
   </div>
 </template>
 <script type="text/javascript">
 import PlayList from './playlist.vue'
 import Animation from 'create-keyframe-animation'
 import playerControls from './play-control.js'
+import mixin from './mixin.js'
 import playMode from '@/common/js/config'
 import { shuffle } from '@/common/js/util'
 import lyricParser from 'lyric-parser'
@@ -152,6 +141,7 @@ const transform = prefixStyle('transform')
 
 export default {
   name: '',
+  mixins: [mixin],
   data() {
     return {
       timeRanges: 0,
@@ -179,18 +169,10 @@ export default {
       'singer',
       'playing',
       'fullScreen',
-      'playlist',
-      'sequenceList',
       'mode',
-      'currentIndex',
-      'currentSong'
     ]),
     middleStyle() {
       return { height: `${window.innerHeight/2}px` }
-    },
-    modeCls() {
-
-      return this.mode === playMode.sequence ? 'icon-shunxubofang' : this.mode === playMode.loop ? 'icon-xunhuanbofang' : 'icon-bofangye-caozuolan-suijibofang'
     },
     favoriteCls() {
       return 'icon-shoucang'
@@ -205,12 +187,10 @@ export default {
     this.touch = { blur: 40 };
 
     this.$swiper = null;
-    // this.normalPlayerHeight = 0;
   },
   mounted() {
     this.$nextTick(() => {
       // 获取mini进度条高度
-      // this.getMiniHeight()
       this.audio = $('audio')[0];
       this.$refs.background.style[filter] = `blur(${this.touch.blur}px)`
       // 设置进度条缓冲进度高度
@@ -235,7 +215,10 @@ export default {
       }
     },
     hasPlaylist(newHas) {
-      newHas && this.setMiniPlayerHeight(this.miniHeight)
+      newHas ? this.setMiniPlayerHeight(this.miniHeight) : this.setMiniPlayerHeight(0);
+      if (!newHas) {
+        // this.audio.src = ''
+      }
     },
     isShowPlaylist: function(newIsShow) {
       // body...
@@ -277,12 +260,18 @@ export default {
       newHeight == 0 && this.lyricStop()
     },
     async currentSong(newSong, oldSong) {
-      if (oldSong.id == newSong.id || !newSong.id) {
+      if (this.__isEmptyObject(newSong)) {
+        console.log(newSong);
+        this.audio.src = ''
+        return
+      }
+      if (oldSong.id == newSong.id) {
         return
       }
       this.timeRanges = 0; //缓冲进度置零
-      // 重置
+
       this.getLyric()
+      // 重置
       this.resetStart()
 
       // 获取歌词
@@ -294,12 +283,12 @@ export default {
     ...Vuex.mapMutations({
       setFullScreen: 'SET_FULL_SCREEN',
       setPlayingState: 'SET_PLAYING_STATE',
-      setCurrentIndex: 'SET_CURRENT_INDEX',
-      setPlaylist: 'SET_PLAYLIST',
-      setPlayMode: 'SET_PLAY_MODE',
       setMiniPlayerHeight: 'SET_MINI_PLAYER_HEIGHT'
     }),
     ...playerControls,
+    showPlaylist() {
+      this.$refs.playlist.show()
+    },
     getMovePos() {
       if (this.__isEmptyObject(this.movePos) || Object.values(this.movePos).includes(0)) {
         this.movePos = this._getPosAndScale()
@@ -623,39 +612,6 @@ export default {
 
       this.$refs.scrollLyric.scrollToElement(lineEl, 1000, true, true)
 
-    },
-    changeMode() {
-      var mode = (this.mode + 1) % 3;
-      var list = null,
-        message = '';
-      if (mode === playMode.random) {
-        list = shuffle(this.sequenceList)
-        message = '随机播放'
-      } else {
-        if (mode === playMode.loop) {
-          message = '循环播放'
-
-        } else {
-          message = '顺序播放'
-
-        }
-        list = this.sequenceList
-      }
-
-      this.Toast({
-        message,
-        // duration: 2000
-      });
-      this.resetCurrentIndex(list)
-      this.setPlaylist(list)
-      this.setPlayMode(mode)
-    },
-    resetCurrentIndex(list) {
-      var index = list.findIndex(item => {
-        return item.id == this.currentSong.id;
-
-      })
-      this.setCurrentIndex(index)
     },
     oninput(currentTime) {
       if (!this.draging) {

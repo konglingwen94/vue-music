@@ -1,6 +1,6 @@
 <template>
   <div class="">
-    <x-search ref="search" class="searchBox" v-model.trim="query" :auto-fixed="true" placeholder="请输入歌曲、专辑...">
+    <x-search ref="search" :class="[{isSearch_:$refs.search && $refs.search.isFixed},'searchBox']" v-model.trim="query" :auto-fixed="true" placeholder="请输入歌曲、专辑...">
     </x-search>
     <cube-scroll v-show="!query">
       <!-- 热门搜索 -->
@@ -89,18 +89,15 @@ export default {
     })
   },
   watch: {
-    query(newQuery) {
-      // if (newQuery) {
-      this.isSearch = Boolean(newQuery);
+    isSearch_() {
 
-      // }
+    },
+    query(newQuery) {
+      this.isSearch = Boolean(newQuery);
     }
   },
   methods: {
     addQuery(query) {
-      if (this.showType != TYPE) {
-        // this.showType = TYPE;
-      }
       this.query = query
       this.$search.isFixed = true
     },
@@ -135,14 +132,14 @@ export default {
 
 </script>
 <style lang="less">
+.isSearch_ {
+  height: 53px;
+}
+
 .weui-search-bar__label {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.searchBox {
-  // position: static !important;
 }
 
 .search-content {

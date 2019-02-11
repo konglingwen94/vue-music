@@ -1,5 +1,6 @@
 <template>
   <cube-scroll :data="list" @pulling-down="onPullingDown" :options="options">
+    <my-loading v-if="showList.length===0"></my-loading>
     <pull-down-refresh :limit="pulldownLimit" :props="props" slot="pulldown" slot-scope="props"></pull-down-refresh>
     <music-list :list="showList"></music-list>
   </cube-scroll>
@@ -32,4 +33,8 @@ export default {
 
 </script>
 <style scoped lang="less">
+.my-loading {
+  top: calc(100vh / 2 - 100px);
+}
+
 </style>

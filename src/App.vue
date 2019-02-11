@@ -59,7 +59,7 @@ export default {
         return
       }
       this.oldRoute = from
-      console.log('route changed');
+      // console.log('route changed');
       this.setTransitionName(to, from);
     }
   },

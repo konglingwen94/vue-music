@@ -1,11 +1,10 @@
 <template>
   <div>
+    <my-loading v-if="musicList.length===0"></my-loading>
     <div>
       <!-- 顶部导航 -->
       <mt-header class="mt-header" fixed :title="cd.dissname">
-        <!-- <router-link to="/" slot="left"> -->
         <mt-button @click="$router.back()" slot="left" icon="back">返回</mt-button>
-        <!-- </router-link> -->
         <mt-button icon="more" slot="right"></mt-button>
       </mt-header>
       <!-- 背景图片 -->
@@ -19,36 +18,26 @@
       <div class="layer"></div>
       <!-- 歌曲列表 -->
       <cube-scroll :data="musicList" :options="options" @pulling-up="onPullingUp" :scroll-events="['scroll']" :probeType="2" @scroll="onScroll" class="scrollWrap" ref="scroll">
-        <cube-loading class="icon-loading" v-if="!musicList.length"></cube-loading>
         <music-list v-if="musicList.length" :list="musicList"></music-list>
       </cube-scroll>
-      <!-- </mt-loadmore> -->
     </div>
   </div>
 </template>
 <script type="text/javascript">
 import MusicList from '../../components/musicList.vue'
-// import ThemeBg from '../../components/themeBg.vue'
 export default {
   name: 'songList',
   components: {
     MusicList,
-    // ThemeBg
   },
   data() {
     return {
-      options: {
-        pullUpLoad: {
-          txt: { more: 'more', noMore: '没有更多数据了' }
-        },
-        // pullDownRefresh: true
-      },
+      options: this.options,
       isLoading: true,
       loadEnd: false,
       total_song_num: 0,
       song_begin: 0,
       song_num: 20,
-      // allLoaded: false,
       cd: {},
       musicList: [],
       scrollY: 0,
@@ -58,26 +47,17 @@ export default {
   },
   props: ['mid'],
   created() {
-    // this.mid = this.$route.params.mid
     this.cd = {}
     this.getSongList()
-    // this.reserved = 60
   },
   mounted() {
-    // debugger
     this.reserved = $('.mt-header').height()
     this.$nextTick(() => {
       this.picHeight = $('.themePic').height()
       $('.scrollWrap').css('top', this.picHeight)
       this.minTranslateY = this.reserved - this.picHeight
 
-      // (this.picHeight)
     })
-  },
-  beforeRouteLeave(to, from, next) {
-    to.meta.back = true
-    // to.meta.forward = false
-    next()
   },
   methods: {
     onScroll({ x, y }) {
@@ -88,15 +68,12 @@ export default {
       var scale = 0
       var blur = Math.min(30, 30 * percent)
       if (y > 0) {
-        // (y, $('.themePic').height() - this.picHeight)
 
         scale = 1 + percent
         $('.themePic').css({
           transform: `scale(${scale})`,
-          // height: this.picHeight + y,
           zIndex: 10
         })
-
       } else {
         if ($('.scrollWrap').css('overflow') != 'visible') {
           $('.scrollWrap').css('overflow', 'visible')
@@ -115,7 +92,6 @@ export default {
       }
     },
     onPullingUp() {
-      ('pullingUp')
       // 加载更多数据
       this.song_begin += this.song_num
       if (this.musicList.length >= this.total_song_num) {}
@@ -129,8 +105,6 @@ export default {
     },
     getMusicList(list) {
       $.each(list, (key, item) => {
-        // (item, key)
-        console.log(item)
         this.musicList.push(new this.__Song(item))
       })
     },
@@ -141,20 +115,17 @@ export default {
       var { data, code } = await this.__getJson(this.__SONG_LIST, params)
       if (code === this.__BERR_OK) {
         this.musicList = data.songs
-        console.log()
       }
-      if (this.__isEmptyObject(this.cd)) {
-
-      }
-      this.$nextTick(() => {
-        if (this.musicList.length >= this.total_song_num) {}
-      })
     },
   }
 };
 
 </script>
 <style scoped lang="less">
+.my-loading {
+  top: 70%;
+}
+
 .songList-page {
   z-index: 50;
 }

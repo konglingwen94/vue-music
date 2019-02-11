@@ -1,8 +1,11 @@
 <template>
-  <!-- <div class=""> -->
-  <list :pickerData="merge" :videoParams="videoParams" :data="mvList">
-  </list>
-  <!-- </div> -->
+  <transition>
+    <div class="list-wrap" v-if="showFlag">
+      <list :pickerData="merge" :videoParams="videoParams" :data="mvList">
+      </list>
+      <my-loading v-if="mvList.length==0"></my-loading>
+    </div>
+  </transition>
 </template>
 <script type="text/javascript">
 import List from './list.vue'
@@ -12,8 +15,6 @@ const videoParams = [{ index: 0, r: 1 }, { index: 1, r: 2 }, { index: 2, r: 3 },
 const r = 1;
 const merge = _.merge([], pickerData, videoParams)
 const videoType = merge.find(item => item.r === r)
-// console.log(_.merge([], pickerData, videoParams))
-// const videoType = { index: 1, r, text: '标清', value: 480 }
 
 export default {
   name: '',
@@ -22,6 +23,7 @@ export default {
     return {
       mvList: [],
       merge,
+      showFlag: false,
       videoParams
     };
   },
@@ -35,11 +37,15 @@ export default {
       default: () => ({})
     }
   },
-  watch: {},
+  activated() {
+    this.showFlag = true
+  },
+  deactivated() {
+    this.showFlag = false
+  },
   created() {
     // this.
-    this.initData()
-    // console.log('created')
+    this.initData();
     this.$emit('created')
   },
   mounted() {
@@ -52,15 +58,13 @@ export default {
     );
   },
   methods: {
-    async getMvList(type) {
+    async getMvList() {
       var { data, code } = await this.__getJson(this.__HOT_MV_LIST_URL, this.query)
       if (code == this.__BERR_OK) {
-        // console.log(data)
         return data.map(item => {
           item.videoType = this.__clone__(videoType)
           return item
         })
-
       }
     },
     async initData() {
@@ -75,4 +79,32 @@ export default {
 
 </script>
 <style scoped lang="less">
+.my-loading {
+  top: 52vh;
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: all .3s;
+  position: fixed;
+  width: 100%;
+
+  .my-loading {
+    top: 30vh;
+  }
+}
+
+.v-enter {
+  transform: translate3d(100vw, 0, 0)
+}
+
+.v-leave-to {
+  transform: translate3d(-100vw, 0, 0)
+}
+
+.v-leave,
+.v-enter-to {
+  transform: translate3d(0, 0, 0)
+}
+
 </style>

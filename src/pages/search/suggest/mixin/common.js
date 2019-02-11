@@ -47,7 +47,6 @@ export default {
   methods: {
     onPullingDown() {
       // console.log('onPullingDown');
-      // this.pulldownLimit = this.shuffeLimit(this.originLimit)
       this.pulldownLimit = this.randomFrom(this.originLimit / 3, this.originLimit)
       this.offset++;
     },
@@ -61,6 +60,7 @@ export default {
     },
     async coverData() {
 
+      this.list = []
       this.list = await this.search()
 
     },

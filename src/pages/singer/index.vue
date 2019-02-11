@@ -1,5 +1,6 @@
 <template>
   <div>
+    <my-loading v-if="loadList.length===0"></my-loading>
     <cube-index-list :speed="300" :options="options" @pulling-up="onPullingUp" ref="indexList" :data="loadList">
       <cube-index-list-group v-for="(group, index) in loadList" :key="index" :group="group">
         <router-link tag="div" v-for="(item, index) in group.items" :key="index" :to="{name: 'singerDetail',
@@ -15,22 +16,11 @@
 </template>
 <script type="text/javascript">
 export default {
-  // name: 'singer',
   data() {
     return {
       singerList: [],
       loadList: [],
-      options: {
-
-        pullUpLoad: {
-          txt: {
-            more: 'more',
-            noMore: 'nomore'
-          },
-          threshold: -100,
-        },
-        scrollbar: true
-      },
+      options: this.options
     };
   },
 
@@ -121,9 +111,10 @@ export default {
 
 </script>
 <style scoped lang="less">
-.page-singer {
-  // height: 90vh;
-  // background: #000;
+.page-singer {}
+
+.my-loading {
+  top: 50%;
 }
 
 .loadTip {

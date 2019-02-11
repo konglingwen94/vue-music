@@ -30,14 +30,8 @@ export default {
     }
 
   },
-  created() {
-    // this.getHotSongList()
-  },
   updated() {
-    // (this.__$('.swipeItem').length)
     this.$nextTick(() => {
-      // ('nextTick---', this.__$('.swipeItem').length)
-
       this.$emit('updated')
     })
   },

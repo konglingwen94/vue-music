@@ -1,6 +1,6 @@
 <template>
   <div class="categoryGroup">
-    <cube-loading class="icon-loading" v-if="loading"></cube-loading>
+    <my-loading v-if="category.length===0"></my-loading>
     <x-header class="header-nav">全部分类</x-header>
     <div class="table-wrapper native-vertical-scroll">
       <x-table class="categoryTable" full-bordered v-for="(categoryGroupList,key)
@@ -62,9 +62,11 @@ export default {
 
 </script>
 <style scoped lang="less">
+.my-loading {
+  top: 50%;
+}
+
 .categoryGroup {
-  // position: fixed;
-  // overflow: auto;
   padding-top: 50px;
 
   .header-nav {

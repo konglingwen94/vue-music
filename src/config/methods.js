@@ -31,17 +31,18 @@ export function findVerticalScroll(argument) {
 
 export function setScrollWrapHeight() {
   var ret = this.findVerticalScroll();
-  if (ret && !this.$attrs['self-height']) {
-    var $el = ret.$el;
-    if (this.isDom($el)) {
-      if ($el.parentElement && $($el).index() == 0) {
-
-        this.setElHeight({ selector: $el.parentElement })
-      } else {
-        this.setElHeight({ selector: $el, el: 'self' })
-
-      }
+  if (this.$attrs['local'] || !ret) {
+    return
+  }
+  var $el = ret.$el;
+  if (this.isDom($el)) {
+    let el = 'self';
+    if ($el.parentElement && $($el).index() == 0) {
+      $el = $el.parentElement;
+      el = 'parent'
     }
+    this.wrapperEl = $el;
+    this.setElHeight({ selector: $el, el })
   }
 }
 export function setElHeight({ selector, top = 0, bottom = 0, el = 'parent' }) {
@@ -51,19 +52,25 @@ export function setElHeight({ selector, top = 0, bottom = 0, el = 'parent' }) {
     } else {
       top = this.getClientTop(selector)
     }
-    var height = 0;
+    let height = 0;
+    const h = this.$attrs.hasOwnProperty('rangeHeight') ? 'maxHeight' : 'height';
+
     if (typeof this.miniPlayerHeight == "number" && this.hasPlaylist) {
       bottom = this.miniPlayerHeight
       height = window.innerHeight - bottom - top;
       // console.log(bottom)
-      $(selector).css({ height }).attr('minHeight', height).attr('maxHeight', height + bottom)
+      $(selector).css({
+        [h]: height
+      }).attr('minHeight', height).attr('maxHeight', height + bottom)
     } else {
       height = window.innerHeight - bottom - top;
 
-      $(selector).css({ height }).attr('maxHeight', height + bottom)
+      $(selector).css({
+        [h]: height
+      }).attr('maxHeight', height + bottom)
     }
 
-    console.log($(selector)[0])
+    // console.log($(selector)[0])
   }, 50)
 }
 export function isDom(obj) {

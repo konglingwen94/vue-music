@@ -34,3 +34,14 @@ export const playMode = {
   loop: 1,
   random: 2
 }
+export const options = {
+
+  pullUpLoad: {
+    txt: {
+      more: 'more',
+      noMore: 'noMore'
+    },
+    threshold: -70,
+  },
+  scrollbar: true
+}

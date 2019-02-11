@@ -1,6 +1,6 @@
 <template>
   <div>
-    <cube-loading class="icon-loading" v-if="loading"></cube-loading>
+    <my-loading v-if="detailList.length===0"></my-loading>
     <x-header class="header-navbar" ref="header">{{$route.query.categoryName}}</x-header>
     <div ref="container" class="native-vertical-scroll panel-wrap">
       <div class="panel-content">
@@ -69,16 +69,11 @@ export default {
 
 </script>
 <style scoped lang="less">
-/* .icon-loading {
-  display: flex;
-  justify-content: center;
-  margin-top: 140px;
-  font-size: 130px;
+.my-loading {
+  top: 50%;
 }
- */
+
 .categoryDetail-page {
-  // position: fixed;
-  // z-index: 50;
   top: 0;
   left: 0;
   right: 0;
