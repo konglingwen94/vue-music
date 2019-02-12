@@ -8,7 +8,7 @@
             <div slot="left" class="back" @click="back">
               <i class="cubeic-select"></i>
             </div>
-            <mt-button @click="handleMore" icon="more" slot="right"></mt-button>
+            <mt-button @click="showVolume" icon="more" slot="right"></mt-button>
           </mt-header>
           <div class="subtitle">
             <span>{{currentSong.singer}}</span>
@@ -20,75 +20,75 @@
       </div>
           <!-- 中间左右轮播 -->
           <div :style="middleStyle" class="middle" @touchstart.prevent="middleTouchStart" @touchmove.prevent="middleTouchMove" @touchend.prevent="middleTouchEnd">
-            <!-- <mt-swipe ref="swiper" prevent :auto="0" :continuous="false"> -->
             <div class='middle-l' ref="middleL">
-              <div class="cd-wrap" ref="cdWrap">
-                <img ref="cd" :class="['cd',{rotate:playing && !waiting && songReady}]" :key="currentSong.id" v-lazy="currentSong.pic" />
-              </div>
-                <div class="curLyric-wrapper">
-                  <p class="ellipsis">{{curLyric}}</p>
-                </div>
-              </div>
-              <!--滚动歌词 -->
-              <div ref="middleR" class="middle-r">
-                <cube-scroll @scroll-end="onScrollEnd" :scroll-events="['scroll-end']" local ref="scrollLyric" v-if="currentLyric && currentLyric.lines.length>0" :data="currentLyric && currentLyric.lines" class="scroll-lyric">
-                  <div class="lyric-wrapper">
-                    <p ref="lyricLine" :key="index" :class="[{current:index==curLine},'lyricLine','ellipsis']" v-for="(line,index) in currentLyric.lines">{{line.txt}}</p>
+              <transition name="cd">
+                <div :key="currentSong.id" class="cd-container">
+                  <div class="cd-wrap" ref="cdWrap">
+                    <img ref="cd" :class="['cd',{rotate:playing && !waiting && songReady}]" :key="currentSong.pic" v-lazy="currentSong.pic" />
                   </div>
-                </cube-scroll>
-                <div class="lyric-text" v-if="currentLyric && currentLyric.lines.length===0">{{currentLyric.lyric}}</div>
-              </div>
-              <!-- </mt-swipe> -->
-            </div>
-            <!-- 指示器 -->
-            <div key="dots" class="dots-wrap">
-              <div :class="['dot',{active:currentShow==='cd'}]"></div>
-              <div :class="['dot',{active:currentShow==='lyric'}]"></div>
-            </div>
-            <!-- 底部 -->
-            <div key="bottom" class="bottom">
-              <!-- 播放显示 -->
-              <div class="play-progress">
-                <div :class="['currentTimer',{draging}]" slot="start">
-                  <span>{{formatTimer(currentTime)}}</span>
+                  </div>
+              </transition>
+              <transition name="toggle">
+                <div class="curLyric-wrapper" :key="currentSong.id">
+                  <transition name="current">
+                    <p class="ellipsis curLyric-text" :key="curLyric">{{curLyric}}</p>
+                  </transition>
                 </div>
-                <progress-bar v-if="showProgressBar" :timeRanges="timeRanges" @input="oninput" @progressChange="onProgressChange" :duration="duration" :currentTime="currentTime" class="progress-bar"></progress-bar>
-                <div class="totalTimer" slot="end">{{formatTimer(duration)}}
+              </transition>
+            </div>
+            <!--滚动歌词 -->
+            <div ref="middleR" class="middle-r">
+              <my-loading v-show="currentLyric===null"></my-loading>
+              <cube-scroll @scroll-end="onScrollEnd" :scroll-events="['scroll-end']" local ref="scrollLyric" v-if="currentLyric && currentLyric.lines.length>0" :data="currentLyric && currentLyric.lines" class="scroll-lyric">
+                <div class="lyric-wrapper">
+                  <p ref="lyricLine" :key="index" :class="[{current:index==curLine},'lyricLine','ellipsis']" v-for="(line,index) in currentLyric.lines">{{line.txt}}</p>
                 </div>
+              </cube-scroll>
+              <div class="lyric-text" v-if="currentLyric && currentLyric.lines.length===0">{{currentLyric.lyric}}</div>
+            </div>
+          </div>
+          <!-- 指示器 -->
+          <div key="dots" class="dots-wrap">
+            <div :class="['dot',{active:currentShow==='cd'}]"></div>
+            <div :class="['dot',{active:currentShow==='lyric'}]"></div>
+          </div>
+          <!-- 底部 -->
+          <div key="bottom" class="bottom">
+            <!-- 播放显示 -->
+            <div class="play-progress">
+              <div :class="['currentTimer',{draging}]" slot="start">
+                <span>{{formatTimer(currentTime)}}</span>
               </div>
-              <!-- 播放控制 -->
-              <div class="player-control YCenter flex Around">
-                <p @click="changeMode" class="flex Center playMode">
-                  <i :class="[modeCls,'iconfont']"></i>
-                </p>
-                <p @click="togglePrev" class="toggle-prev">
-                  <i class="iconfont icon-icon-"></i>
-                </p>
-                <p @click="togglePlaying" class="toggle-playing flexCenter">
-                  <span v-show="!waiting">
+              <progress-bar v-if="showProgressBar" :timeRanges="timeRanges" @input="oninput" @progressChange="onProgressChange" :duration="duration" :currentTime="currentTime" class="progress-bar"></progress-bar>
+              <div class="totalTimer" slot="end">{{formatTimer(duration)}}
+              </div>
+            </div>
+            <!-- 播放控制 -->
+            <div class="player-control YCenter flex Around">
+              <p @click="changeMode" class="flex Center playMode">
+                <i :class="[modeCls,'iconfont']"></i>
+              </p>
+              <p @click="togglePrev" class="toggle-prev">
+                <i class="iconfont icon-icon-"></i>
+              </p>
+              <p @click="togglePlaying" class="toggle-playing flexCenter">
+                <span v-show="!waiting">
                   <i v-show="!playing" :class="['iconfont' ,'icon-bofang2']"></i>
                   <i v-show="playing" :class="['iconfont' ,'icon-zanting']"></i>
                   </span>
-                  <mt-spinner color="#ffcd32" v-show="waiting" :size="20*__DPR" type="fading-circle"></mt-spinner>
-                </p>
-                <p @click="toggleNext" class="toggle-next">
-                  <i class="iconfont icon-xiayishou-yuanshijituantubiao"></i>
-                </p>
-                <p class="favorite flex Center">
-                  <i :class="['iconfont',favoriteCls]"></i>
-                </p>
-              </div>
-            </div>
-            <!-- 缓冲提示 -->
-            <!-- <div class="spinner-wrapper flex Center" v-show="waiting && playing">
-              <mt-spinner :size="30*__DPR" type="fading-circle"></mt-spinner>
-            </div>
-             -->
-            <div class="volume-wrapper">
-              <!-- <mt-actionsheet :actions="actions" v-model="showVolumn"> -->
-              <!-- </mt-actionsheet> -->
+                <mt-spinner color="#ffcd32" v-show="waiting" :size="20*__DPR" type="fading-circle"></mt-spinner>
+              </p>
+              <p @click="toggleNext" class="toggle-next">
+                <i class="iconfont icon-xiayishou-yuanshijituantubiao"></i>
+              </p>
+              <p class="favorite flex Center">
+                <i :class="['iconfont',favoriteCls]"></i>
+              </p>
             </div>
           </div>
+          <!-- 声音提示 -->
+          <volume @input="onVolumeInput" ref="volume"></volume>
+        </div>
     </transition>
     <!-- 播放内核 -->
     <div class="playAudio">
@@ -128,6 +128,7 @@
 </template>
 <script type="text/javascript">
 import PlayList from './playlist.vue'
+import Volume from './volume.vue'
 import Animation from 'create-keyframe-animation'
 import playerControls from './play-control.js'
 import mixin from './mixin.js'
@@ -144,6 +145,7 @@ export default {
   mixins: [mixin],
   data() {
     return {
+      // current: 'current',
       timeRanges: 0,
       curLyric: '',
       curLine: 0,
@@ -155,11 +157,12 @@ export default {
       waiting: false,
       currentShow: 'cd',
       songReady: false,
-      showProgressBar: false
+      showProgressBar: false,
     };
   },
   components: {
-    PlayList
+    PlayList,
+    Volume
   },
   computed: {
     ...Vuex.mapGetters([
@@ -198,62 +201,36 @@ export default {
 
   },
   watch: {
-    playing(newplaying) {
+    volume() {
+      this.audio.volume = this.volume
+    },
+    currentIndex(newIndex, oldIndex) {
+      // console.log(newIndex, oldIndex);
+      this.oldIndex = oldIndex
+    },
+    playing() {
       // debugger
       if (!this.songReady) {
         return
       }
-      if (newplaying) {
-        this.audio.play().catch(err => {
-          console.log(err)
-        });
-        // this.currentLyric.play()
-      } else {
-        this.audio.pause()
-        // this.currentLyric.stop()
+      this.playing ? this.audio.play().catch(err => {
+        console.log(err)
+      }) : this.audio.pause()
 
-      }
     },
     hasPlaylist(newHas) {
       newHas ? this.setMiniPlayerHeight(this.miniHeight) : this.setMiniPlayerHeight(0);
-      if (!newHas) {
-        // this.audio.src = ''
-      }
-    },
-    isShowPlaylist: function(newIsShow) {
-      // body...
-      if (newIsShow) {
-        this.$nextTick(() => {
-
-          // this.$refs.scrollPlaylist.refresh()
-        })
-      }
-
     },
     percentProgress(newTime) {
-
       if (!this.waiting && this.draging) {
 
         this.seek();
         this.lyricStop()
       }
-
-    },
-    currentLyric(newLyric, oldLyric) {
-      // newLyric && 
-      oldLyric && oldLyric.stop()
-
-      // this.$refs.scrollLyric && this.$refs.scrollLyric.scrollTo(0, 0, 1000)
-      this.curLyric = newLyric.lines[0].txt
     },
     fullScreen() {
       if (!this.showProgressBar) {
         this.showProgressBar = true
-      }
-      if (!this.miniPlayerHeight) {
-
-        // this.getMiniHeight()
-        // this.setMiniPlayerHeight(this.miniHeight)
       }
     },
     miniPlayerHeight(newHeight) {
@@ -269,15 +246,15 @@ export default {
         return
       }
       this.timeRanges = 0; //缓冲进度置零
-
+      this.currentLyric && this.currentLyric.stop()
+      this.currentLyric = null;
+      // this.current = ''
+      // this.curLyric = ''
+      // 获取歌词
       this.getLyric()
       // 重置
       this.resetStart()
-
-      // 获取歌词
-
     },
-
   },
   methods: {
     ...Vuex.mapMutations({
@@ -286,16 +263,19 @@ export default {
       setMiniPlayerHeight: 'SET_MINI_PLAYER_HEIGHT'
     }),
     ...playerControls,
+    onVolumeInput(val) {
+      this.audio.volume = val / 100;
+    },
+    showVolume() {
+      this.$refs.volume.show()
+    },
     showPlaylist() {
       this.$refs.playlist.show()
     },
     getMovePos() {
       if (this.__isEmptyObject(this.movePos) || Object.values(this.movePos).includes(0)) {
         this.movePos = this._getPosAndScale()
-        // this.getMiniHeight()
-        console.log(this.movePos)
       }
-
     },
     async enter(el, done) {
       await this.$nextTick()
@@ -593,15 +573,15 @@ export default {
         lyric = await this.currentSong.getLyric();
       }
       this.currentLyric = new lyricParser(lyric, this.handleLyric);
+      // this.current = 'current'
+      this.curLyric = this.currentLyric.lines[this.curLine].txt
       this.songReady && this.currentLyric.play()
 
     },
     handleLyric({ lineNum, txt }) {
       if (this.curLine == lineNum) {
-        // console.log('===');
         return
       }
-      // console.log('!=');
 
       this.curLine = lineNum;
       this.curLyric = txt;
@@ -682,7 +662,11 @@ export default {
     onerror() {
 
       console.log('onerror')
-      this.toggleNext()
+      if (!__ON_LINE) {
+        return
+      }
+      this.songReady = true
+      this.oldIndex > this.currentIndex ? this.togglePrev() : this.toggleNext()
     },
     onabort() {
       // console.log('onabort')
@@ -771,26 +755,27 @@ export default {
 
     // height: @height;
     .middle-l {
+      .cd-container {
 
-      // 转动光盘
-      .cd-wrap {
-        // transform: rotate(0);
-        // width: 100vw;
-        margin: auto;
-        width: 260px;
-        height: 260px;
+        // 转动光盘
+        .cd-wrap {
+          margin: auto;
+          width: 260px;
+          height: 260px;
 
-        img.cd {
-          width: 100%;
-          height: 100%;
-          border: 10px solid hsla(0, 0%, 100%, .1);
+          img.cd {
+            width: 100%;
+            height: 100%;
+            border: 16px solid hsla(0, 0%, 100%, .1);
+          }
         }
       }
 
       // 当前歌词
       .curLyric-wrapper {
-        // margin-top: 100px;
         .font-dpr(12Px);
+        height: 26px;
+        overflow: hidden;
         text-align: center;
         position: fixed;
         top: 360px;
@@ -798,12 +783,23 @@ export default {
         width: 100%;
         padding: 0 30px;
         color: hsla(0, 0%, 100%, .5);
+
+        .curLyric-text {
+          // line-height: 16px;
+          padding: 5px 0;
+          height: 100%;
+        }
       }
 
     }
 
     .middle-r {
       height: 100%;
+
+      .my-loading {
+        top: 40%;
+        color: #fff;
+      }
 
       .scroll-lyric {
         text-align: center;

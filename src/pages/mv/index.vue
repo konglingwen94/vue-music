@@ -7,7 +7,7 @@
         <i class="cubeic-select"></i>
       </cube-button>
     </div>
-    <cube-scroll :scroll-events="['scroll','scroll-end']" @scroll="onScroll" @scroll-end="onScrollEnd
+    <cube-scroll :scroll-events="['scroll','scroll-end','before-scroll-start']" @before-scroll-start="onScrollStart" @scroll="onScroll" @scroll-end="onScrollEnd
 " :data="$refs.listView? $refs.listView.mvList:[]" ref="scroll" :options="options" @pulling-up="onPullingUp">
       <!-- 滚动导航 -->
       <div class="scrollNav">
@@ -55,6 +55,7 @@ export default {
   data() {
     return {
       scrollY: -1,
+      leaveY: 0,
       clientTop: -1,
       label: {},
       queryNum: {
@@ -65,7 +66,7 @@ export default {
       categoryMvData: {},
       progressPer: 0,
       navHeight: 0,
-      isShow: false,
+      // isShow: false,
       showToTop: false
     };
   },
@@ -89,14 +90,8 @@ export default {
     obData() {
       return this.__values__({ ...this.label, ...this.queryNum })
     },
-    isShow1: {
-      get() {
-        return -this.scrollY > this.navHeight
-      },
-      set(val) {
-        // return val
-        this.isShow = val
-      }
+    isShow() {
+      return -this.scrollY > this.navHeight
     },
     keyCode() {
       var query = {};
@@ -124,13 +119,17 @@ export default {
   created() {
     this.catePromise = this.getMvListCategory()
   },
-  activated() {
-    this.$refs.scroll && this.$refs.scroll.refresh()
-    this.$refs.scroll && this.$refs.scroll.scrollTo(0, this.leaveY)
+  async activated() {
+    // await this.$nextTick()
+    // this.$refs.scroll && this.$refs.scroll.refresh()
+    console.log(this.$refs.scroll.scroll);
+    this.scrollY = this.$refs.scroll ? this.$refs.scroll.scroll.y : -1;
   },
+
   deactivated() {
-    this.leaveY = this.scrollY;
     this.$refs.scroll.scroll.stop()
+    // this.leaveY = this.scrollY;
+    // next()
   },
   async mounted() {
     this.$nextTick(() => {
@@ -141,31 +140,20 @@ export default {
     await this.catePromise;
 
     this.navHeight = await this.getNextTickElHeight('.scrollNav')
-    // this.navHeight = $('.scrollNav').height()
-    // console.log(this.navHeight)
   },
   watch: {
-    scrollY(newY) {
-      if (-newY > this.navHeight) {
-        this.isShow = true;
-      } else {
-        this.isShow = false;
 
-      }
-    }
   },
   methods: {
+    onScrollStart() {
+      // console.log('onScrollStart');
+    },
     onCreate() {
-      this.isShow = false;
+      // this.isShow = false;
       this.$refs.scroll && this.$refs.scroll.scrollTo(0, 0)
+      this.scrollY = 0
     },
     showMutiPicker() {
-      // var selectedIndex = 
-      // console.log(selectedIndex);
-      if (this.mutiPicker) {
-        // this.mutiPicker.selectedIndex = this.selectedIndex
-
-      }
       if (!this.mutiPicker) {
         this.mutiPicker = this.$createPicker({
           title: 'Multi-column Picker',
@@ -182,7 +170,6 @@ export default {
           },
         })
       }
-      // console.log(this.mutiPicker);
       this.mutiPicker.show()
     },
     selectHandle(selectedVal, selectedIndex, selectedText) {
@@ -199,8 +186,9 @@ export default {
       }
     },
     onScrollEnd({ y }) {
+      // console.log('onScrollEnd');
       const wrapperHeight = this.$refs.scroll.scroll.wrapperHeight
-      this.showToTop = Math.abs(y) > wrapperHeight * 3
+      this.showToTop = Math.abs(y) > wrapperHeight * 3;
     },
     onScroll({ y }) {
       this.scrollY = y
@@ -241,12 +229,6 @@ export default {
       for (var key in this.categoryMvData) {
         var items = this.categoryMvData[key]
         this.$set(this.label, key, { ...items[0], text: labelText[i++] })
-        // this.$set(this.mutiPickerData, i, [])
-        // this.mutiPickerData
-        // for (var j in item) {
-        // this.mutiPickerData.push(items)
-        // }
-        // this.label[key] = this.categoryMvData[key][0]
       }
 
     },

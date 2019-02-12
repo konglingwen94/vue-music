@@ -31,6 +31,7 @@
 
     .scroll-lyric {
       transform: scale(0);
+      // opacity: 0 !important;
     }
 
     .background {
@@ -91,4 +92,61 @@
     opacity: 1;
 
   }
+}
+
+.current-leave-active,
+.current-enter-active,
+
+  {
+  transition: all .3s linear;
+}
+
+.toggle-leave-active,
+.toggle-enter-active {
+  transition: all .3s linear;
+
+  .curLyric-text {
+    transform: none !important;
+  }
+
+}
+
+.current-leave-to {
+  transform: translate3d(0, -100%, 0);
+}
+
+.current-enter-to,
+  {
+  transform: translate3d(0, -100%, 0);
+
+}
+
+.toggle-enter {
+  transform: translate3d(100vw, 0, 0);
+}
+
+.toggle-leave-to {
+  transform: translate3d(-100vw, 0, 0);
+}
+
+
+.cd-leave-active {
+  transition: all .7s cubic-bezier(0.31, 0, 0.46, 0.22);
+  position: absolute;
+  width: 100vw;
+  z-index: 10;
+
+  .cd-wrap {
+
+    transform: scale(0.87) !important;
+
+    .cd {
+      border: 0 !important;
+    }
+  }
+}
+
+.cd-leave-to {
+  transform: translate3d(0, -150%, 0);
+  opacity: 0.2;
 }

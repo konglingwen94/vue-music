@@ -50,8 +50,6 @@ export default {
 <style lang="less">
 .horizontal-scroll-list-wrap {
 
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 5px;
 
   .cube-scroll-content {
     // width: 2000px !important;
