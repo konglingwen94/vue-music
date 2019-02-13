@@ -4,7 +4,7 @@
       <div class="volume-wrapper" @click.stop>
         <div class="volume-content">
           <mt-range v-model="volume" v-on="$listeners" class="volume-range">
-            <div slot="start" class="volume-icon">
+            <div @click="muteVolume" slot="start" class="volume-icon">
               <i :class="volumeCls"></i>
             </div>
           </mt-range>
@@ -29,6 +29,11 @@ export default {
       return this.volume === 0 ? 'cubeic-mute' : 'cubeic-volume'
     },
   },
+  watch: {
+    volume(newV, oldV) {
+      this.oldV = oldV
+    },
+  },
   methods: {
     show() {
       this.showFlag = true
@@ -36,6 +41,20 @@ export default {
     hide() {
       this.showFlag = false
     },
+    muteVolume() {
+      $('.volume .mt-range-thumb').css({ transition: 'all .3s' }).bind('transitionend', function() {
+        $(this).css({ transition: '' })
+      })
+      if (this.volume === 0) {
+        this.volume = this.oldV
+
+      } else {
+
+        // this.normalVolume = this.volume;
+        this.volume = 0
+      }
+      this.$emit('input', this.volume)
+    }
   }
 };
 

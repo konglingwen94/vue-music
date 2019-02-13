@@ -1,5 +1,5 @@
 <template>
-  <div class="player" v-show="playlist.length>0">
+  <div class="player" v-show="1">
     <!-- 全屏播放 -->
     <transition @enter="enter" @after-enter="afterEnter" @leave="leave" @after-leave="afterLeave">
       <div v-show="fullScreen" :class="['normal-player','fullScreenFixed']">

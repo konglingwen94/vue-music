@@ -16,7 +16,7 @@ import './registerComp/vux.js'
 import './style'
 // import 'swiper/dist/css/swiper.css'
 // 引入第三方库样式
-import 'vue2-animate/dist/vue2-animate.min.css';
+// import 'vue2-animate/dist/vue2-animate.min.css';
 
 // 引入布局框架
 import './config/index.js'

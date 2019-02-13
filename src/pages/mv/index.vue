@@ -119,17 +119,15 @@ export default {
   created() {
     this.catePromise = this.getMvListCategory()
   },
-  async activated() {
-    // await this.$nextTick()
-    // this.$refs.scroll && this.$refs.scroll.refresh()
-    console.log(this.$refs.scroll.scroll);
-    this.scrollY = this.$refs.scroll ? this.$refs.scroll.scroll.y : -1;
+  activated() {
+    if (this.$refs.scroll && this.$refs.scroll.scroll) {
+
+      this.scrollY = this.$refs.scroll.scroll.y
+    }
   },
 
   deactivated() {
     this.$refs.scroll.scroll.stop()
-    // this.leaveY = this.scrollY;
-    // next()
   },
   async mounted() {
     this.$nextTick(() => {
