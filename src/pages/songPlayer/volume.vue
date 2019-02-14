@@ -2,6 +2,9 @@
   <transition name="volume">
     <div v-show="showFlag" @click="hide" class="volume fullScreenFixed">
       <div class="volume-wrapper" @click.stop>
+        <div class="radio-wrapper flex Around">
+          <li @click.stop="toggleRadio(item)" :class="{current:item.value===radio}" class="radio-item" :key="key" v-for="(item,key) in radios">{{item.text}}</li>
+        </div>
         <div class="volume-content">
           <mt-range v-model="volume" v-on="$listeners" class="volume-range">
             <div @click="muteVolume" slot="start" class="volume-icon">
@@ -15,18 +18,43 @@
   </transition>
 </template>
 <script type="text/javascript">
+const radios = [
+  { text: '标准', value: 48 },
+  { text: '高清', value: 96 },
+  { text: '高品质', value: 320 },
+  { text: '无损音质', value: 'flac' },
+  { text: '压缩无损音质', value: 'ape' }
+]
 export default {
   name: '',
   data() {
     return {
+      muted: false,
+      radios,
       showFlag: false,
-      volume: 100
+      volume: 20
     };
+  },
+  props: {
+    radio: {
+      type: [Number, String],
+      default: 96
+    },
+    muted1: {
+      type: Boolean,
+      default: false
+    }
+  },
+  mounted() {
+    setTimeout(() => {
+
+      this.$emit('input', this.volume)
+    })
   },
   computed: {
 
     volumeCls() {
-      return this.volume === 0 ? 'cubeic-mute' : 'cubeic-volume'
+      return this.volume === 0 || this.muted ? 'cubeic-mute' : 'cubeic-volume'
     },
   },
   watch: {
@@ -41,19 +69,15 @@ export default {
     hide() {
       this.showFlag = false
     },
+    toggleRadio(item) {
+      // this.brVal = this.radios.find(_item => item.value === _item.value).value;
+      this.$emit('toggleRadio', item)
+      this.$emit('update:radio', item.value)
+      this.hide()
+    },
     muteVolume() {
-      $('.volume .mt-range-thumb').css({ transition: 'all .3s' }).bind('transitionend', function() {
-        $(this).css({ transition: '' })
-      })
-      if (this.volume === 0) {
-        this.volume = this.oldV
-
-      } else {
-
-        // this.normalVolume = this.volume;
-        this.volume = 0
-      }
-      this.$emit('input', this.volume)
+      this.muted = !this.muted;
+      this.$emit('operate', this.muted)
     }
   }
 };
@@ -82,6 +106,18 @@ export default {
 .volume {
   position: fixed;
   background: rgba(0, 0, 0, .2);
+}
+
+.radio-wrapper {
+  padding: 10px;
+
+  .radio-item {
+    &.current {
+      color: red;
+    }
+
+    // margin-right: 5px;
+  }
 }
 
 .volume-wrapper {

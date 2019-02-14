@@ -2,29 +2,21 @@
   <div>
     <my-loading v-if="hotSongList.length===0"></my-loading>
     <!-- 推荐分类 -->
-    <cube-scroll :data="hotSongList" class="cube-scroll" ref="scroll" :options="options" @pulling-up="onPullingUp">
-      <recommend-category :isLoading="isLoading" :recommendCategory="recommendCategory"></recommend-category>
+    <cube-scroll :data="hotSongList" class="scroll-wrapper" ref="scroll" :options="options" @pulling-up="onPullingUp">
+      <category :category="recommend"></category>
       <!-- 精品歌单 -->
       <hot-song-list :hotSongList="hotSongList"></hot-song-list>
-      <load-more v-if="hotSongList.length>=100" :show-loading="false" tip="暂无数据"></load-more>
     </cube-scroll>
   </div>
-  <!-- </transition> -->
 </template>
 <script type="text/javascript">
 import HotSongList from './hotSongList.vue'
-import RecommendCategory from './recommendCategory.vue'
-import options from '@/common/mixins/pullUpLoad'
+import Category from './category.vue'
 export default {
   name: 'songSheet',
   data() {
     return {
-      slide: false,
-      enter_active_class: 'slideInRight',
-      leave_active_class: '',
-      category: [],
-      isLoading: true,
-      recommendCategory: [],
+      recommend: [],
       hotSongList: [],
       options: this.options,
       sin: 0,
@@ -34,7 +26,7 @@ export default {
   },
   created() {
 
-    this.getCategoryOriginData();
+    this.getCategoryData();
     this.getHotSongList()
   },
   activated() {
@@ -69,23 +61,23 @@ export default {
 
     },
 
-    async getCategoryOriginData() {
+    async getCategoryData() {
       var { code, data } = await this.__getJson(`http://${domain}:3000/getCategoryTags`)
       // (data)
       if (code == 0) {
         this.category = data.categories
-        this.getRecommendCategory()
+        this._formatCategory()
       }
     },
-    async getRecommendCategory() {
-      let num = 3,
-        len = this.category.length - 1;
+    async _formatCategory() {
+      let num = 3;
       this.category.forEach((item, index) => {
+        // console.log(index)
         if (index == 0) return
 
-        var arr = item.items.slice(0, num)
-        this.recommendCategory.push(...arr)
-        this.recommendCategory.sort((a, b) => {
+        const arr = item.items.slice(0, num)
+        this.recommend.push(...arr)
+        this.recommend.sort((a, b) => {
           return a.categoryId + b.categoryId
         })
       })
@@ -95,7 +87,7 @@ export default {
   },
   components: {
     HotSongList,
-    RecommendCategory
+    Category
   },
 
 
@@ -111,9 +103,9 @@ export default {
 
 .songSheet-page {}
 
-.cube-scroll {
-  padding: 14px;
-  // height: 90vh;
+.scroll-wrapper {
+  margin-top: 14px;
+  padding: 0 14px;
 }
 
 </style>

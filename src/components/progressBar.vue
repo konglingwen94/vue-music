@@ -5,7 +5,7 @@
       <div :style="progressStyle" class="progress">
       </div>
       <!-- <div class="progress-container"> -->
-      <div :style="{transform:`translate3d(${offsetWidth}px,-50%,0)`}" class="progress-btn-wrapper" @touchstart.prevent="onProgressBtnStart" @touchmove.prevent="onProgressBtnMove" @touchend.prevent="onProgressBtnEnd">
+      <div @transitionend.stop="transition=''" :style="{transform:`translate3d(${offsetWidth}px,-50%,0)`,transition}" class="progress-btn-wrapper" @touchstart.prevent="onProgressBtnStart" @touchmove.prevent="onProgressBtnMove" @touchend.prevent="onProgressBtnEnd">
         <div :style="btnStyle" class="progress-btn"></div>
       </div>
       <!-- </div> -->
@@ -18,6 +18,7 @@ export default {
   name: '',
   data() {
     return {
+      transition: '',
       initiated: true,
       progressWidth: 0,
       progressTotalWidth: 0,
@@ -28,7 +29,8 @@ export default {
   computed: {
     progressStyle() {
       return {
-        width: `${this.offsetWidth}px`
+        width: `${this.offsetWidth}px`,
+        transition: this.transition
       }
     },
     btnStyle() {
@@ -87,8 +89,6 @@ export default {
         this.offsetWidth = this.progressTotalWidth * percent
         // console.log(curTime, width)
       }
-      // this.offsetWidth = width;
-      // $('.progress').css({ width })
     },
   },
   methods: {
@@ -113,6 +113,7 @@ export default {
       // this.$emit('change', this.offsetWidth)
     },
     onProgressClick(e) {
+      this.transition = 'all .2s';
       // console.log(e)
       this.offsetWidth = e.pageX - this.barOffsetLeft - btnWidth
       this._triggerChange();

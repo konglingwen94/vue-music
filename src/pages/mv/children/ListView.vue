@@ -3,7 +3,8 @@
     <div class="list-wrap" v-if="showFlag">
       <list :pickerData="merge" :videoParams="videoParams" :data="mvList">
       </list>
-      <my-loading v-if="mvList.length==0"></my-loading>
+      <my-loading :error="error" v-if="mvList.length==0"></my-loading>
+      <!-- <my-error v-if="error"></my-error> -->
     </div>
   </transition>
 </template>
@@ -24,7 +25,8 @@ export default {
       mvList: [],
       merge,
       showFlag: false,
-      videoParams
+      videoParams,
+      error: false
     };
   },
   props: {
@@ -59,12 +61,17 @@ export default {
   },
   methods: {
     async getMvList() {
-      var { data, code } = await this.__getJson(this.__HOT_MV_LIST_URL, this.query)
+      var { data = [], code } = await this.__getJson(this.__HOT_MV_LIST_URL, this.query).catch(err => {
+        console.log(err);
+        this.error = true
+      })
       if (code == this.__BERR_OK) {
         return data.map(item => {
           item.videoType = this.__clone__(videoType)
           return item
         })
+      } else {
+        console.log(data);
       }
     },
     async initData() {
@@ -79,7 +86,8 @@ export default {
 
 </script>
 <style scoped lang="less">
-.my-loading {
+.my-loading,
+.my-error {
   top: 52vh;
 }
 
@@ -89,7 +97,8 @@ export default {
   position: fixed;
   width: 100%;
 
-  .my-loading {
+  .my-loading,
+  .my-error {
     top: 30vh;
   }
 }

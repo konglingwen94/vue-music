@@ -1,19 +1,21 @@
 <template>
   <div>
     <!-- 悬浮 -->
-    <div @click="showMutiPicker" v-show="isShow" class="select-wrapper">
-      <cube-button class="select-list iflex around" outline primary>
-        <span class="select-item" :key="key" v-for="(item,key) in showSelect">{{item.text}}--{{item.title}}</span>
-        <i class="cubeic-select"></i>
-      </cube-button>
-    </div>
+    <transition name="picker">
+      <div @click="showMutiPicker" v-show="isShow" class="select-wrapper">
+        <cube-button class="select-list iflex around" outline primary>
+          <span class="select-item" :key="key" v-for="(item,key) in showSelect">{{item.text}}--{{item.title}}</span>
+          <i class="cubeic-select"></i>
+        </cube-button>
+      </div>
+    </transition>
     <cube-scroll :scroll-events="['scroll','scroll-end','before-scroll-start']" @before-scroll-start="onScrollStart" @scroll="onScroll" @scroll-end="onScrollEnd
 " :data="$refs.listView? $refs.listView.mvList:[]" ref="scroll" :options="options" @pulling-up="onPullingUp">
       <!-- 滚动导航 -->
       <div class="scrollNav">
-        <cube-scroll ref="scrollInstance" :key="index" v-for="(category,label,index) in categoryMvData" direction="horizontal" class="horizontal-scroll-list-wrap">
+        <cube-scroll ref="scrollNavList" :key="key" v-for="(category,label,key) in categoryMvData" direction="horizontal" class="horizontal-scroll-list-wrap">
           <ul :class="['list-wrapper',label]">
-            <li ref="scrollItem" v-tap="{methods:selectItem,label,item}" :class="setClass(label,item.id)" :key="index" v-for="(item,index) in category">{{ item.title }}</li>
+            <li ref="navItem" v-tap="{methods:selectItem,label,item,key}" :class="setClass(label,item.id)" :key="index" v-for="(item,index) in category">{{ item.title }}</li>
           </ul>
         </cube-scroll>
       </div>
@@ -175,13 +177,19 @@ export default {
       for (var key in this.label) {
         this.label[key].id = selectedVal[i]
         this.label[key].title = selectedText[i]
-        var scrollInstance = this.$refs.scrollInstance[i];
+        var scrollNavList = this.$refs.scrollNavList[i];
 
-        var selectItem = $(scrollInstance.$el).find('li')[selectedIndex[i]]
+        var selectItem = $(scrollNavList.$el).find('li')[selectedIndex[i]]
         // console.log(selectItem, );
-        scrollInstance.scrollToElement(selectItem, 0, true)
+        scrollNavList.scrollToElement(selectItem, 0, true)
         i++;
       }
+      this.$refs.scroll.scrollTo(0, 0, 300)
+      setTimeout(() => {
+
+        this.scrollY = 0
+      }, 300)
+
     },
     onScrollEnd({ y }) {
       // console.log('onScrollEnd');
@@ -207,10 +215,12 @@ export default {
     getKey(keys) {
       console.log(keys);
     },
-    selectItem({ item, label }) {
-      // console.log(item)
+    selectItem({ item, label, key, event }) {
+      console.log(item)
       this.label[label].id = item.id;
       this.label[label].title = item.title;
+      const scrollNavList = this.$refs.scrollNavList[key];
+      scrollNavList.scrollToElement(event.currentTarget, 300, true)
 
     },
     async getMvListCategory() {
@@ -241,10 +251,11 @@ export default {
 </script>
 <style lang="less">
 .mv-page {
-  height: 100vh;
+  // height: 100vh;
   background: #eee;
   padding: 0 0px;
-
+  overflow: hidden;
+  position: relative;
 
   .select-wrapper {
     position: absolute;
@@ -285,7 +296,7 @@ export default {
 }
 
 .horizontal-scroll-list-wrap {
-  margin-top: 8px;
+  padding-top: 8px;
   border-bottom: 1Px solid rgba(0, 0, 0, 0.1);
   // border-radius: 5px;
 
@@ -315,6 +326,17 @@ export default {
 .cube-picker-confirm,
 .cube-picker-cancel {
   .font-dpr(13Px);
+}
+
+.picker-enter-active,
+.picker-leave-active {
+  transition: all .4s;
+}
+
+.picker-enter,
+.picker-leave-to {
+  transform: translate3d(0, -100%, 0);
+  // opacity: 0;
 }
 
 </style>

@@ -1,11 +1,29 @@
 <template>
   <div :class="['my-loading']">
-    <cube-loading :size="30*__DPR" class="loading"></cube-loading>
-    <p class="text">正在加载</p>
+    <cube-loading v-if="!error" :size="30*__DPR" class="loading"></cube-loading>
+    <p class="text">{{message}}</p>
   </div>
 </template>
 <script type="text/javascript">
-export default {};
+export default {
+  data() {
+    return {
+      message: '正在加载...',
+    }
+  },
+  props: {
+    error: {
+      type: Boolean,
+      default: false
+    }
+  },
+  watch: {
+    error(newError) {
+      this.message = newError ? "加载错误" :
+        "正在加载..."
+    }
+  }
+};
 
 </script>
 <style scoped lang="less">

@@ -44,7 +44,7 @@
                   <p ref="lyricLine" :key="index" :class="[{current:index==curLine},'lyricLine','ellipsis']" v-for="(line,index) in currentLyric.lines">{{line.txt}}</p>
                 </div>
               </cube-scroll>
-              <div class="lyric-text" v-if="currentLyric && currentLyric.lines.length===0">{{currentLyric.lyric}}</div>
+              <div class="lyric-error" v-if="currentLyric && currentLyric.lines.length===0">{{errLyric}}</div>
             </div>
           </div>
           <!-- 指示器 -->
@@ -87,7 +87,7 @@
             </div>
           </div>
           <!-- 声音提示 -->
-          <volume @input="onVolumeInput" ref="volume"></volume>
+          <volume :radio.sync="radio" @toggleRadio="onToggleRadio" @input="onVolumeInput" @operate="onOperate" ref="volume"></volume>
         </div>
     </transition>
     <!-- 播放内核 -->
@@ -96,18 +96,23 @@
       </audio>
     </div>
     <!-- 吸底播放器 -->
-    <transition>
-      <div v-if="hasPlaylist" v-show="!fullScreen" @click="open" :class="['flex', 'mini-player' ,'border-top-1px']">
-        <div class="cd-wrap" ref="minCdWrap">
-          <img :class="['cd',{rotate:playing && !waiting}]" :key="currentSong.id" :src="currentSong.pic">
+    <transition @enter="miniEnter">
+      <div v-if="hasPlaylist" v-show="!fullScreen" @click="open" class="flex mini-player border-top-1px">
+        <div class="cd-wrap" ref="miniCdWrap">
+          <img ref="miniCd" :class="['cd',{rotate:playing && !waiting}]" :key="currentSong.id" :src="currentSong.pic">
         </div>
-          <div class="text">
-            <div class="title-wrap">
-              <p class="title">{{currentSong.name}}</p>
+          <div class="text YCenter">
+            <div class="text-wrap flex">
+              <p class="title ellipsis">{{currentSong.name}}</p> --&nbsp;
+              <!-- <div class="singer-wrap"> -->
+              <p class="singer ellipsis">{{currentSong.singer}}</p>
             </div>
-            <div class="singer-wrap">
-              <p class="singer">{{currentSong.singer}}</p>
+            <div class="curLyric-wrapper" :key="currentSong.id">
+              <transition name="current">
+                <p class="ellipsis curLyric-text" :key="curLyric">{{curLyric}}</p>
+              </transition>
             </div>
+            <!-- </div> -->
           </div>
           <div class="playing-control">
             <div class="circle-progress" @click.stop="togglePlaying">
@@ -145,7 +150,8 @@ export default {
   mixins: [mixin],
   data() {
     return {
-      // current: 'current',
+      // muted: false,
+      radio: 96,
       timeRanges: 0,
       curLyric: '',
       curLine: 0,
@@ -183,13 +189,16 @@ export default {
     percentProgress() {
       return Math.floor(this.currentTime / this.duration * 100)
     },
+    errLyric() {
+      const han = /[\u4e00-\u9fa5]+/g;
+      const ret = this.currentLyric.lrc.match(han)
+      return ret.join()
+    }
   },
   created() {
 
     this.initialed = false;
     this.touch = { blur: 40 };
-
-    this.$swiper = null;
   },
   mounted() {
     this.$nextTick(() => {
@@ -228,7 +237,7 @@ export default {
         this.lyricStop()
       }
     },
-    fullScreen() {
+    fullScreen(newVal, oldVal) {
       if (!this.showProgressBar) {
         this.showProgressBar = true
       }
@@ -245,11 +254,10 @@ export default {
       if (oldSong.id == newSong.id) {
         return
       }
+      this.radio = 96;
       this.timeRanges = 0; //缓冲进度置零
       this.currentLyric && this.currentLyric.stop()
       this.currentLyric = null;
-      // this.current = ''
-      // this.curLyric = ''
       // 获取歌词
       this.getLyric()
       // 重置
@@ -263,7 +271,20 @@ export default {
       setMiniPlayerHeight: 'SET_MINI_PLAYER_HEIGHT'
     }),
     ...playerControls,
+    onToggleRadio(item) {
+      const url = this.parse(this.currentSong.url)
+      if (!url.br) {}
+      url.br = item.value
+      const _url = this.unescape(this.stringify(url))
+      console.log(_url);
+      this.audio.src = _url
+      this.audio.currentTime = this.currentTime
+    },
+    onOperate(isMuted) {
+      this.audio.muted = isMuted
+    },
     onVolumeInput(val) {
+      this.volume = val;
       this.audio.volume = val / 100;
     },
     showVolume() {
@@ -277,41 +298,71 @@ export default {
         this.movePos = this._getPosAndScale()
       }
     },
+    async miniEnter(el, done) {
+      console.log('miniEnter');
+      setTimeout(done, 400)
+      await this.$nextTick()
+      // const wrapTransform = getComputedStyle(this.$refs.cdWrap).transform;
+      // return
+      let transform = this.playing ? this.wrapTransform.concat(' ', this.cdTransform) : this.wrapTransform
+      // }
+      // console.log(transform);
+
+      $(this.$refs.miniCdWrap).css({ transform })
+
+    },
     async enter(el, done) {
       await this.$nextTick()
+      let wrapTransform = getComputedStyle(this.$refs.miniCdWrap).transform;
+      let cdTransform = getComputedStyle(this.$refs.miniCd).transform;
+
+      wrapTransform = wrapTransform === 'none' ? '' : wrapTransform
+
+      cdTransform = cdTransform === 'none' ? '' : cdTransform
+
+      this.transform = wrapTransform.concat(' ', cdTransform)
+      $(this.$refs.cd).css({ transform: this.transform })
+      // console.log(transform);
+
       this.getMovePos()
-      const { x, y, scale } = this.movePos
+      const { x, y, scale } = this.movePos;
+      this.duration = 400;
+      let rotate = this.playing ? this.duration / 1000 / 20 * 360 : 0;
       const animation = {
         0: {
-          transform: `translate3d(${x}px,${y}px,0) scale(${scale})`
+          transform: `translate3d(${x}px,${y}px,0) scale(${scale}) rotate(0)`
         },
         60: {
           transform: `translate3d(0,0,0) scale(1.3)`
-
         },
         100: {
-          transform: `translate3d(0,0,0) scale(1)`
-
+          transform: `translate3d(0,0,0) scale(1) rotate(${rotate}deg)`
         }
       }
       Animation.registerAnimation({
         name: 'move',
         animation,
         presets: {
-          duration: 400,
+          duration: this.duration,
           easing: 'linear'
         }
       })
-      // setTimeout(done, 10000)
       Animation.runAnimation(this.$refs.cdWrap, 'move', done)
     },
     afterEnter() {
+      $(this.$refs.cd).css({ transform: '' })
+      $(this.$refs.cdWrap).css({ transform: this.transform.concat(' rotate(0deg)'), animation: '' })
+
       Animation.unregisterAnimation('move')
-      this.$refs.cdWrap.style.animation = ''
+
     },
 
     async leave(el, done) {
+      console.log('leave');
+
       await this.$nextTick()
+
+      // console.log(transform);
       if (!this.miniPlayerHeight) {
         this.miniHeight = $('.mini-player').height()
         this.setMiniPlayerHeight(this.miniHeight)
@@ -319,20 +370,23 @@ export default {
       this.getMovePos()
 
       const { x, y, scale } = this.movePos;
-      this.$refs.cdWrap.style.transition = "all .4s"
-      this.$refs.cdWrap.style[transform] = `translate3d(${x}px,${y}px,0) scale(${scale})`;
-      // this.$refs.cdWrap.style.zIndex = 500;
-      // console.dir(done)
-      this.end = () => {
-        // $('.normal-player').toggleClass('hidden')
 
-        done()
-      }
-      this.$refs.cdWrap.addEventListener('transitionend', this.end)
+      this.end = done
+      this.$refs.cdWrap.addEventListener('transitionend', done)
+
+      this.$refs.cdWrap.style.transition = `all ${this.duration}ms`
+
+      const wrapTransform = getComputedStyle(this.$refs.cdWrap).transform
+      this.cdTransform = getComputedStyle(this.$refs.cd).transform;
+      this.wrapTransform = wrapTransform === 'none' ? '' : wrapTransform
+
+      this.$refs.cdWrap.style[transform] = `translate3d(${x}px,${y}px,0) scale(${scale}) ${this.wrapTransform}`;
+
+      // this.$refs.cdWrap.style.zIndex = 500;
 
     },
     afterLeave(el, done) {
-      console.log('after-leave')
+      // console.log('after-leave')
       this.$refs.cdWrap.style.transition = ""
       // this.$refs.cdWrap.style.zIndex = 500;
       this.$refs.cdWrap.style[transform] = ""
@@ -340,7 +394,7 @@ export default {
     },
     _getPosAndScale() {
       const targetWidth = $('.mini-player .cd-wrap').width()
-      const padLeft = this.$refs.minCdWrap.getBoundingClientRect().left;
+      const padLeft = this.$refs.miniCdWrap.getBoundingClientRect().left;
       const padBot = $('.mini-player .cd-wrap').position().top;
       const offset = this.$refs.cdWrap.getBoundingClientRect()
       const padTop = offset.top;
@@ -349,34 +403,26 @@ export default {
       const x = -(window.innerWidth / 2 - targetWidth / 2 - padLeft)
       const y = window.innerHeight - padTop - padBot - width / 2 - targetWidth / 2
       const scale = targetWidth / width
-      console.log(padLeft, padTop, padBot, width, targetWidth, offset)
+      // console.log(padLeft, padTop, padBot, width, targetWidth, offset)
 
       return { x, y, scale }
     },
-    handleMore() {
-
-    },
     onScrollEnd({ y }) {
       if (y === 0) {
-        console.log(y)
-        // debugger;
+        // console.log(y)
         this.scrollToCurrentLyric()
       }
     },
     middleTouchStart(e) {
-      // $('.middle-r').css('transition-duration', '0ms');
-      // $('.middle-l').css('transition-duration', '0ms')
-      // $('.background').css('transition-duration', '0ms')
-      // this.touch = { blur: 40 };
-      this.touch.blurRadio = this.touch.blur;
       const touch = e.touches[0]
+      this.touch.blurRadio = this.touch.blur;
       this.touch.ismoved = false
 
       this.touch.initiated = true;
       this.touch.startX = touch.pageX;
       this.touch.startY = touch.pageY;
       this.touch.left = this.currentShow === 'cd' ? 0 : -window.innerWidth;
-      console.log(this.touch)
+      // console.log(this.touch)
     },
     middleTouchMove(e) {
       if (this.touch.initiated) {
@@ -399,7 +445,6 @@ export default {
 
         // 设置背景模糊
         $('.background').css(filter, `blur(${blur}px)`)
-        // this.$refs.background.style[filter] = `blur(${blur}px)`
 
       }
     },
@@ -421,10 +466,7 @@ export default {
           blur = this.touch.blur
         }
       } else {
-        // console.log()
         if (this.touch.percent < 1 - percent) {
-          // opacity = 1;
-          // offsetWidth = 0;
           opacity = 1;
           blur = this.touch.blur
 
@@ -441,7 +483,7 @@ export default {
       $('.middle-l').css({ opacity, transitionDuration: delay }).bind('transitionend', function() {
         $(this).css(transitionDuration, '').unbind('transitionend')
       })
-      console.log(transitionDuration, filter);
+      // console.log(transitionDuration, filter);
 
       $('.background').css(filter, `blur(${blur}px)`).css(transitionDuration, delay).bind('transitionend', function() {
         $(this).css(transitionDuration, '').unbind('transitionend')
@@ -458,12 +500,8 @@ export default {
       this.draging = false
       this.currentTime = currentTime
       this.seek()
-      if (this.timeRanges > currentTime) {
-        this.isBuffered = true;
-      } else {
-        this.isBuffered = false;
 
-      }
+      this.isBuffered = this.timeRanges > currentTime;
       this.audio.currentTime = currentTime
       this.play()
     },
@@ -476,24 +514,24 @@ export default {
 
     },
     onemptied() {
-      console.log('onemptied')
+      // console.log('onemptied')
       this.setPlayingState(false)
     },
     onloadstart() {
       this.isBuffered = false
       this.waiting = true;
-      console.log('onloadstart')
+      // console.log('onloadstart')
     },
     onstalled() {
       console.log('onstalled')
 
     },
     onloadeddata() {
-      console.log('onloadeddata')
+      // console.log('onloadeddata')
 
     },
     onloadedmetadata() {
-      console.log('onloadedmetadata')
+      // console.log('onloadedmetadata')
       this.duration = Math.round(this.audio.duration)
 
     },
@@ -502,10 +540,6 @@ export default {
 
         const timeRanges = this.audio.buffered
         this.timeRanges = timeRanges ? timeRanges.end(0) : 0
-        /*if (Math.ceil(this.timeRanges) >= this.duration) {
-          // this.isBuffered = true
-          console.log(timeRanges.end(0))
-        }*/
       } catch (err) {
         console.log(err);
       }
@@ -524,30 +558,26 @@ export default {
         return
       }
       this.waiting = true
-      if (this.playend) {
-        // return
-      }
-      console.log('onwaiting')
       this.setPrevTransform()
       this.lyricStop()
     },
     resetCdTransform() {
       $('.cd-wrap').css({ transform: `rotate(0)` })
-      this.$nextTick(() => {
-
-        // $('audio')[0].volume = 0.6;
-      })
-
     },
-    handleClick() {},
     setPrevTransform() {
-      var cdTransform = getComputedStyle(this.$refs.cd).transform;
+      const wrapperEl = this.fullScreen ? this.$refs.cdWrap : this.$refs.miniCdWrap;
+      const cdEl = this.fullScreen ? this.$refs.cd : this.$refs.miniCd;
       // console.log(cdTransform)
-      var wrapTransform = getComputedStyle(this.$refs.cdWrap).transform;
-      var transform = wrapTransform == 'none' ? cdTransform : wrapTransform.concat(' ', cdTransform)
+      if (!wrapperEl || !cdEl) {
+        return
+      }
+      const cdTransform = getComputedStyle(cdEl).transform;
+      const wrapTransform = getComputedStyle(wrapperEl).transform;
+      const transform = wrapTransform === 'none' ? cdTransform : wrapTransform.concat(' ', cdTransform)
+      // console.log(transform);
       this.$nextTick(() => {
 
-        $('.cd-wrap').css({ transform })
+        $(wrapperEl).css({ transform })
       })
 
 
@@ -574,8 +604,11 @@ export default {
       }
       this.currentLyric = new lyricParser(lyric, this.handleLyric);
       // this.current = 'current'
-      this.curLyric = this.currentLyric.lines[this.curLine].txt
-      this.songReady && this.currentLyric.play()
+      if (this.currentLyric.lines.length > 0) {
+
+        this.curLyric = this.currentLyric.lines[this.curLine].txt
+        this.songReady && this.currentLyric.play()
+      }
 
     },
     handleLyric({ lineNum, txt }) {
@@ -605,20 +638,12 @@ export default {
     },
     loop() {
 
-      // setTimeout(() => {
-      // this.songReady = false
-      // }, 0)
-      // this.setPrevTransform()
-      console.log('end loop')
+      // console.log('end loop')
 
-      // this.curLine = 0
-      // this.scrollToCurrentLyric()
-      // debugger;
       this.songReady = false
       this.resetStart()
       setTimeout(() => {
         this.songReady = true
-        // $('.cd').toggleClass('rotate')
 
       }, 100)
       this.audio.currentTime = 0;
@@ -636,13 +661,9 @@ export default {
       this.setMiniPlayerHeight(0)
 
       this.setPlayingState(false)
-      // this.$nextTick(() => {})
-      // }
     },
     onupdateTime(e) {
-      // if (this.touch && !this.touch.touchstart) {
       if (!this.draging) {
-
         this.currentTime = Math.round(e.target.currentTime)
       }
     },
@@ -652,17 +673,14 @@ export default {
       if (this.isBuffered) {
         return
       }
-      // console.log(`  waiting--${this.waiting}  `, `  songReady--${this.songReady}`)
 
       this.waiting = false;
       this.songReady = true;
-
-
     },
     onerror() {
 
-      console.log('onerror')
-      if (!__ON_LINE) {
+      console.log(this.audio.error)
+      if (!window.__ON_LINE) {
         return
       }
       this.songReady = true
@@ -756,12 +774,12 @@ export default {
     // height: @height;
     .middle-l {
       .cd-container {
+        width: 260px;
+        height: 260px;
+        margin: auto;
 
         // 转动光盘
         .cd-wrap {
-          margin: auto;
-          width: 260px;
-          height: 260px;
 
           img.cd {
             width: 100%;
@@ -790,7 +808,6 @@ export default {
           height: 100%;
         }
       }
-
     }
 
     .middle-r {
@@ -818,6 +835,12 @@ export default {
             color: #fff;
           }
         }
+      }
+
+      .lyric-error {
+        text-align: center;
+        margin-top: 200px;
+        color: #fff;
       }
 
     }
@@ -952,8 +975,8 @@ export default {
 
 .mini-player {
   align-items: center;
-  padding: 0 10px;
-  height: 60px !important;
+  padding: 0 8px;
+  height: 66px !important;
 
 
   .cd-wrap {
@@ -963,17 +986,35 @@ export default {
       border-radius: 50%;
     }
 
-    // margin-right: 10px;
   }
 
 
 
   .text {
-    margin-left: 12px;
+    margin: 0 10px;
+    width: 55%;
 
-    .title-wrap {
-      margin-bottom: 8px;
-      // color: #fff;
+    .text-wrap {
+      margin-bottom: 6px;
+
+      .title {
+        width: 60%;
+      }
+
+      .singer {
+        width: 32%;
+      }
+    }
+
+    .curLyric-wrapper {
+      height: 30px;
+      overflow: hidden;
+      color: gray;
+      margin-bottom: -6px;
+
+      .curLyric-text {
+        padding: 6px 0;
+      }
     }
   }
 
@@ -981,13 +1022,18 @@ export default {
     margin-left: auto;
 
     .circle-progress {
-      width: 50px !important;
-      height: 50px !important;
+      width: 42px !important;
+      height: 42px !important;
     }
   }
 
   .playlist-icon {
-    margin-left: 20px;
+    margin-left: 14px;
+
+    .iconfont {
+      font-size: 34px;
+    }
+
     // margin-right: 10px;
   }
 

@@ -24,6 +24,18 @@
   }
 }
 
+.posXY(@selector: div, @left: auto, @top: auto, @right: auto, @bottom: auto) {
+  position: relative;
+
+  &>.@{selector} {
+    position: absolute;
+    left: @left;
+    bottom: @bottom;
+    top: @top;
+    right: @right;
+  }
+}
+
 .posCenterX(@class: div) {
   position: relative;
 
@@ -140,4 +152,10 @@
 
 .mint-msgbox {
   z-index: 300;
+}
+
+.mint-msgbox-btns {
+  button {
+    .font-dpr(12Px);
+  }
 }

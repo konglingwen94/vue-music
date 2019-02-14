@@ -2,7 +2,7 @@
   <div class="categoryGroup">
     <my-loading v-if="category.length===0"></my-loading>
     <x-header class="header-nav">全部分类</x-header>
-    <div class="table-wrapper native-vertical-scroll">
+    <div :style="{paddingBottom:miniPlayerHeight+'px'}" class="table-wrapper native-vertical-scroll">
       <x-table class="categoryTable" full-bordered v-for="(categoryGroupList,key)
  in category" :key="key">
         <tbody>
@@ -37,8 +37,27 @@ export default {
     const navHeight = $('.header-nav').height();
     console.log(navHeight);
     const height = window.innerHeight - navHeight;
+    this.maxHeight = height
     $('.table-wrapper').css({ height })
   },
+  deactivated() {
+    this.scrollTop = $('.table-wrapper').scrollTop();
+  },
+  beforeRouteEnter(to, from, next) {
+    if (to.meta.index > from.meta.index) {
+      next()
+      return
+    }
+    next(vm => {
+
+      if (typeof vm.scrollTop === 'number') {
+
+        $('.table-wrapper')[0].scrollTo(0, vm.scrollTop);
+      }
+    })
+
+  },
+
   methods: {
     targetRouter(item) {
       // console.log(item)

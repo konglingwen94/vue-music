@@ -1,9 +1,6 @@
 <template>
   <div class="scroll-list-wrap">
-    <router-link tag="div" :to="{
-      name:'songList',
-      query:data,
-  }" class="swipeItem" :key="data.id" v-for="data in hotSongList" ref="swipeItem">
+    <router-link tag="div" :to="list(data)" class="swipeItem" :key="data.id" v-for="data in hotSongList" ref="swipeItem">
       <div>
         <img class="icon" v-lazy="data.imgurl">
       </div>
@@ -30,13 +27,19 @@ export default {
     }
 
   },
+  computed: {},
   updated() {
     this.$nextTick(() => {
       this.$emit('updated')
     })
   },
   methods: {
-
+    list(item) {
+      return {
+        name: 'songList',
+        query: { ...item, pic: item.imgurl }
+      }
+    }
   }
 };
 

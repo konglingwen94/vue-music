@@ -2,66 +2,111 @@
   <div>
     <my-loading v-if="detailList.length===0"></my-loading>
     <x-header class="header-navbar" ref="header">{{$route.query.categoryName}}</x-header>
-    <div ref="container" class="native-vertical-scroll panel-wrap">
-      <div class="panel-content">
-        <div @click="toDetail(item)" :key="key" v-for="(item,key) in detailList" class="panel">
-          <div class="picBox">
-            <img class="layPic" v-lazy="item.pic">
-          </div>
-            <div class="desc">
-              <p class="name ellipsis">{{item.name}}</p>
-              <p class="creator ellipsis">{{item.creator}}</p>
-            </div>
-          </div>
-        </div>
+    <div class="sort-wrap flex">
+      <div @click="sort(item)" :class="['sort-item',{current:item.id===sortId}]" :key="key" v-for="(item,key) in sorts">
+        {{item.text}}
       </div>
     </div>
+    <div :style="{paddingBottom:miniPlayerHeight+'px'}" ref="container" class="native-vertical-scroll panel-wrap">
+      <transition-group tag="div" class="panel-content">
+        <div @click="toDetail(item)" :key="item.id" v-for="(item,key) in detailList" class="panel">
+          <div class="picBox">
+            <img :key="item.id" class="layPic" v-lazy="item.pic">
+            <p class="playCount">{{format(item.playCount)}}</p>
+            <p class="createTime">{{item.createTime}}</p>
+          </div>
+          <div class="desc">
+            <p class="name ellipsis">{{item.name}}</p>
+            <p class="creator ellipsis">{{item.creator}}</p>
+          </div>
+        </div>
+      </transition-group>
+    </div>
+  </div>
 </template>
 <script type="text/javascript">
+const sorts = [{
+  text: '默认',
+  id: 0,
+  handler() {
+    this.detailList = this.sequenceList.slice()
+  }
+}, {
+  text: '最热',
+  id: 1,
+  handler() {
+    this.detailList.sort((a, b) => {
+      return Number(b.playCount) - Number(a.playCount)
+    })
+  }
+}, {
+  text: '最新',
+  id: 2,
+  handler() {
+    this.detailList.sort((a, b) => {
+      const timeA = a.createTime.split('-').join('');
+      const timeB = b.createTime.split('-').join('');
+      return Number(timeB) - Number(timeA)
+    })
+  }
+}];
 export default {
   name: 'categoryDetail',
   data() {
     return {
       detailList: [],
-      // id: null,
-      loading: true
-
+      sorts,
+      sortId: 0,
+      sequenceList: []
     };
-
   },
   created() {
-    // this.id = id;
-    this.getDetailList(this.$route.query.categoryId)
-    // console.log('created')
+    this.getSongSheetList()
+  },
+  deactivated() {
+    this.scrollTop = $('.panel-wrap').scrollTop();
+  },
+  beforeRouteEnter(to, from, next) {
+    if (to.meta.index > from.meta.index) {
+      next()
+      return
+    }
+    next(vm => {
+      if (vm.scrollTop !== undefined) {
+        $('.panel-wrap')[0].scrollTo(0, vm.scrollTop);
+      }
+    })
   },
   async mounted() {
-    // await this.$nextTick();
-    const top = this.$refs.header.$el.getBoundingClientRect().height
+    const top = this.$refs.container.getBoundingClientRect().top;
     const height = window.innerHeight - top
     console.log(top)
     $('.panel-wrap').css({ height })
   },
   methods: {
+    format(count) {
+      const num = this.__round__(count / 10000, 1);
+      return num + '万'
+    },
     toDetail(item) {
       this.$router.push({
         name: 'songList',
         query: item
       })
     },
-    async getDetailList(id) {
-      // (id)
+    sort({ handler, id }) {
+
+      handler.call(this)
+      this.sortId = id
+    },
+    async getSongSheetList() {
       var param = {
-        categoryId: id,
-        // limit: 19,
-        sortId: 3
+        categoryId: this.$route.query.categoryId,
       }
       var { code, data } = await this.__getJson(this.__HOT_SONG_LIST, param)
       if (code == 200) {
-        this.detailList = data
-        if (this.loading) {
-          // console.log(this.loading)
-          this.loading = false
-        }
+        this.sequenceList = data;
+        this.detailList = this.__clone__(data)
       }
     },
   }
@@ -69,6 +114,10 @@ export default {
 
 </script>
 <style scoped lang="less">
+.v-move {
+  transition: all .5s;
+}
+
 .my-loading {
   top: 50%;
 }
@@ -91,6 +140,18 @@ export default {
   z-index: 10
 }
 
+.sort-wrap {
+  margin: 20px;
+
+  .sort-item {
+    &.current {
+      color: red;
+    }
+
+    margin-right: 14px;
+  }
+}
+
 .panel-wrap {
   // height: calc(100vh - 50px);
 
@@ -101,8 +162,17 @@ export default {
     justify-content: space-around;
 
     .panel {
-      width: 40%;
+      width: 44%;
       margin-bottom: 20px;
+
+      .picBox {
+        color: #fff;
+
+        .posXY(playCount, 5px, auto, auto, 10px);
+        .posXY(createTime, auto, auto, 5px, 10px);
+
+        .createTime {}
+      }
 
       .layPic {
         width: 100%;

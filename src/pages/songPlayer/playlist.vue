@@ -13,7 +13,7 @@
             <i  class="cubeic-delete clear"></i>
           </div>
         </div>
-        <cube-scroll rangeHeight ref="listContent" :client-top="500" :data="playlist" class="list-content">
+        <cube-scroll :style="wrapperStyle" local ref="listContent" :data="playlist" class="list-content">
           <transition-group name="list" tag="ul">
             <li ref="songItem" @click="playItem(item,index)" :class="['song-item', 'flex',{current:currentSong.id===item.id}]" v-for="(item,index) in sequenceList" :key="item.id">
               <div class="index-wrapper">
@@ -55,6 +55,11 @@ export default {
     };
   },
   computed: {
+    wrapperStyle() {
+      return {
+        maxHeight: window.innerHeight / 1.6 + 'px'
+      }
+    },
     modeText() {
       return this.mode === playMode.loop ? '循环播放' : this.mode === playMode.random ? '随机播放' : '顺序播放'
     }
@@ -119,7 +124,7 @@ export default {
 </script>
 <style scoped lang="less">
 .list-leave-to {
-  transform: translate3d(-100%, 0, 0);
+  transform: translate3d(-100%, -100%, 0);
   // opacity: .4;
   height: 0 !important;
   margin-bottom: 0 !important;
@@ -192,7 +197,7 @@ export default {
 
 .list-wrap {
   background: #aaa;
-  position: absolute;
+  position: fixed;
   width: 100%;
   bottom: 0;
 

@@ -1,8 +1,6 @@
 <template>
-  <div class="list-wrap">
-    <!-- <cube-scroll v-bind="$attrs" v-on="$listeners" class="musicList"> -->
-    <!-- <slot name="pullDownRefresh"></slot> -->
-    <div @click="selectItem(item,index)" :class="['list-item']" :key="index" v-for="(item,index) in list">
+  <transition-group tag="div" class="list-wrap">
+    <div @click="selectItem(item,index)" :class="['list-item']" :key="keys(item.id)" v-for="(item,index) in list">
       <div :class="['sortIndex',{addItem:item.addItem}]">{{index+1}}</div>
       <div class="text-wrap">
         <div class="text-name">
@@ -13,8 +11,7 @@
         </div>
       </div>
     </div>
-  </div>
-  <!-- </cube-scroll> -->
+  </transition-group>
 </template>
 <script type="text/javascript">
 import { mapActions } from 'vuex'
@@ -33,20 +30,36 @@ export default {
   },
   methods: {
     ...mapActions(['selectPlay']),
+    keys(id) {
+      const key = this.__shuffle__(id.split('')).join('');
+      return key
+    },
     async selectItem(item, index) {
-      // console.log(item, index);
-      // await this.playPromise;
       this.selectPlay({ list: this.__cloneDeep__(this.list), index })
     },
 
   },
-  // render(h) {
-
-  // }
 };
 
 </script>
 <style scoped lang="less">
+.v-enter-active {
+  transition: all 1s;
+  // position: absolute;
+}
+
+.v-move {
+  // transition: all 1s;
+  // height: 20px;
+}
+
+.v-enter {
+  transform: translate3d(0, -80vh, 0);
+  // height: 0 !important;
+  margin-bottom: 0px !important;
+
+}
+
 .list-wrap {
   padding: 10px;
 }
