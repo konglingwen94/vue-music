@@ -2,7 +2,8 @@ export default {
   data() {
     return {
       list: [],
-      offset: 0,
+      pulldownList: [],
+      offset: 1,
       originLimit: 20,
       pulldownLimit: 0,
       options: {
@@ -36,11 +37,20 @@ export default {
     }
   },
   watch: {
+    pulldownList: {
+      handler(newList, oldList) {
+        oldList && oldList.forEach(item => delete item.newLoad)
+        if (newList) {
+
+          newList.forEach(item => { item.newLoad = true })
+        }
+
+      },
+      immediate: true
+    },
     query: {
       handler: 'coverData',
       immediate: true,
-      // console.log(newQuery);
-      // this.search()
     },
     'offset': 'addData'
   },
@@ -52,9 +62,11 @@ export default {
     },
     async search(limit = this.originLimit) {
       // console.log(limit);
-      var res = await this.__getJson(this.__SEARCH_URL, { ...this.params, limit })
-      if (res.code == this.__BERR_OK) {
-        return res.data
+      var { code, data } = await this.__getJson(this.__SEARCH_URL, { ...this.params, limit })
+      if (code == this.__BERR_OK) {
+        const vm = this;
+
+        return data
 
       }
     },
@@ -62,12 +74,13 @@ export default {
 
       this.list = []
       this.list = await this.search()
-
     },
     async addData() {
-      // console.log('addData');
+      this.pulldownList = await this.search(this.pulldownLimit);
+      this.list.unshift(...this.pulldownList)
+      // console.log(this.list);
       // var limit = this.shuffeLimit(this.limit)
-      this.list.unshift(...await this.search(this.pulldownLimit))
+      // this.list.unshift()
     },
 
   }

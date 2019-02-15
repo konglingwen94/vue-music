@@ -52,7 +52,7 @@ export default {
     })
   },
   computed: {
-
+    ...Vuex.mapGetters(['currentSong']),
     volumeCls() {
       return this.volume === 0 || this.muted ? 'cubeic-mute' : 'cubeic-volume'
     },
@@ -70,10 +70,24 @@ export default {
       this.showFlag = false
     },
     toggleRadio(item) {
+      if (this.radio === item.value) {
+        return
+      }
+      if (!this.currentSong.hasOwnProperty('time')) {
+        this.Toast({
+          message: '此音质不可用',
+          duration: 1000
+        })
+        return
+      }
       // this.brVal = this.radios.find(_item => item.value === _item.value).value;
       this.$emit('toggleRadio', item)
       this.$emit('update:radio', item.value)
       this.hide()
+      this.showToast = this.Toast({
+        message: '切换为' + item.text,
+        duration: 2000
+      })
     },
     muteVolume() {
       this.muted = !this.muted;

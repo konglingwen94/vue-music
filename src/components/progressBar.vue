@@ -1,7 +1,7 @@
 <template>
   <div v-if="initiated" class="progress-bar" @click="onProgressClick">
     <div class="bar-inner">
-      <div class="timeRanges fullBox"></div>
+      <div :style="{transition}" @transitionend.stop="transition=''" class="timeRanges fullBox"></div>
       <div :style="progressStyle" class="progress">
       </div>
       <!-- <div class="progress-container"> -->

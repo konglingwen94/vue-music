@@ -1,7 +1,7 @@
 <template>
-  <transition-group tag="div" class="list-wrap">
-    <div @click="selectItem(item,index)" :class="['list-item']" :key="keys(item.id)" v-for="(item,index) in list">
-      <div :class="['sortIndex',{addItem:item.addItem}]">{{index+1}}</div>
+  <div class="list-wrap">
+    <div @click="selectItem(item,index)" :class="['list-item']" :key="index" v-for="(item,index) in list">
+      <div :class="['sortIndex',{newLoad:item.newLoad}]">{{index+preIndex+1}}</div>
       <div class="text-wrap">
         <div class="text-name">
           <h2 v-text="item.name" class="name ellipsis"></h2>
@@ -11,7 +11,7 @@
         </div>
       </div>
     </div>
-  </transition-group>
+  </div>
 </template>
 <script type="text/javascript">
 import { mapActions } from 'vuex'
@@ -23,16 +23,28 @@ export default {
     };
   },
   props: {
+    preIndex: {
+      type: Number,
+      default: 0
+    },
+    limit: {
+      type: Number,
+      default: 0
+    },
     list: {
       type: Array,
       default: () => ([])
     }
   },
+  mounted() {
+    const height = $('.list-item').height();
+    this.$emit('hasHeight', height)
+  },
   methods: {
     ...mapActions(['selectPlay']),
-    keys(id) {
-      const key = this.__shuffle__(id.split('')).join('');
-      return key
+    keys({ id }) {
+      return id
+      // return Symbol(id)
     },
     async selectItem(item, index) {
       this.selectPlay({ list: this.__cloneDeep__(this.list), index })
@@ -43,35 +55,18 @@ export default {
 
 </script>
 <style scoped lang="less">
-.v-enter-active {
-  transition: all 1s;
-  // position: absolute;
-}
-
-.v-move {
-  // transition: all 1s;
-  // height: 20px;
-}
-
-.v-enter {
-  transform: translate3d(0, -80vh, 0);
-  // height: 0 !important;
-  margin-bottom: 0px !important;
-
-}
-
 .list-wrap {
-  padding: 10px;
+  padding: 0 10px;
 }
 
 .list-item {
 
-  padding: 12px;
-  margin-bottom: 10px;
+  padding: 0 12px;
   background: #fff;
   display: flex;
   // height: 70px;
   align-items: center;
+  height: 40px;
 
   border-radius: 3px;
 
@@ -79,7 +74,7 @@ export default {
     // width: 20px;
     margin-right: 10px;
 
-    &.addItem {
+    &.newLoad {
       color: orange;
     }
   }

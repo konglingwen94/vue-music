@@ -59,7 +59,7 @@
               <div :class="['currentTimer',{draging}]" slot="start">
                 <span>{{formatTimer(currentTime)}}</span>
               </div>
-              <progress-bar v-if="showProgressBar" :timeRanges="timeRanges" @input="oninput" @progressChange="onProgressChange" :duration="duration" :currentTime="currentTime" class="progress-bar"></progress-bar>
+              <progress-bar ref="progress" v-if="showProgressBar" :timeRanges="timeRanges" @input="oninput" @progressChange="onProgressChange" :duration="duration" :currentTime="currentTime" class="progress-bar"></progress-bar>
               <div class="totalTimer" slot="end">{{formatTimer(duration)}}
               </div>
             </div>
@@ -92,7 +92,7 @@
     </transition>
     <!-- 播放内核 -->
     <div class="playAudio">
-      <audio @error="onerror" @abort="onabort" @canplaythrough="oncanplaythrough" @stalled="onstalled" @loadstart="onloadstart" @loadeddata="onloadeddata" @emptied="onemptied" @loadedmetadata="onloadedmetadata" @waiting="onwaiting" @playing="onplaying" @progress="onprogress" @timeupdate="onupdateTime" @ended="onended" :src="currentSong.url" @canplay="oncanplay" ref="audio" autoplay>
+      <audio @emptied="onemptied" @abort="onabort" @error="onerror" @canplaythrough="oncanplaythrough" @stalled="onstalled" @loadstart="onloadstart" @loadeddata="onloadeddata" @loadedmetadata="onloadedmetadata" @waiting="onwaiting" @playing="onplaying" @progress="onprogress" @timeupdate="onupdateTime" @ended="onended" :src="currentSong.url" @canplay="oncanplay" ref="audio" autoplay>
       </audio>
     </div>
     <!-- 吸底播放器 -->
@@ -254,6 +254,11 @@ export default {
       if (oldSong.id == newSong.id) {
         return
       }
+      if (this.$refs.progress) {
+
+        this.$refs.progress.transition = 'all .2s'
+      }
+
       this.radio = 96;
       this.timeRanges = 0; //缓冲进度置零
       this.currentLyric && this.currentLyric.stop()
@@ -272,6 +277,8 @@ export default {
     }),
     ...playerControls,
     onToggleRadio(item) {
+      this.oldUrl = this.audio.src;
+      this.oldRadio = this.radio;
       const url = this.parse(this.currentSong.url)
       if (!url.br) {}
       url.br = item.value
@@ -514,24 +521,26 @@ export default {
 
     },
     onemptied() {
-      // console.log('onemptied')
+      console.log('onemptied')
       this.setPlayingState(false)
     },
     onloadstart() {
       this.isBuffered = false
       this.waiting = true;
-      // console.log('onloadstart')
+      console.log('onloadstart')
     },
     onstalled() {
-      console.log('onstalled')
-
+      console.log('onstalled', this.audio.error, this.audio.networkState)
+    },
+    onabort() {
+      console.log('onabort', this.audio.error, this.audio.networkState)
     },
     onloadeddata() {
-      // console.log('onloadeddata')
+      console.log('onloadeddata')
 
     },
     onloadedmetadata() {
-      // console.log('onloadedmetadata')
+      console.log('onloadedmetadata')
       this.duration = Math.round(this.audio.duration)
 
     },
@@ -583,9 +592,7 @@ export default {
 
     },
     lyricStop() {
-      if (this.currentLyric) {
-        this.currentLyric.stop()
-      }
+      this.currentLyric && this.currentLyric.stop()
     },
     seek() {
       this.currentLyric && this.currentLyric.seek(this.currentTime * 1000)
@@ -596,7 +603,6 @@ export default {
         param = { id: this.currentSong.id };
       if (this.currentSong.lrc !== undefined) {
         lyric = await this.__get(`http://${domain}:3000/getBLyric`, param);
-        // console.log(lyric)
 
       } else {
 
@@ -679,27 +685,29 @@ export default {
     },
     onerror() {
 
-      console.log(this.audio.error)
-      if (!window.__ON_LINE) {
+      console.log(this.audio.error, this.audio.networkState)
+      if (this.audio.networkState === 3) {
+        this.audio.src = this.oldUrl;
+        this.radio = this.oldRadio;
+        this.audio.currentTime = this.currentTime;
+        this.$refs.volume.showToast.close()
+        this.Toast({
+          message: '无此音质',
+          duration: 2000
+        })
         return
       }
       this.songReady = true
       this.oldIndex > this.currentIndex ? this.togglePrev() : this.toggleNext()
     },
-    onabort() {
-      // console.log('onabort')
-    },
+    onplay() {},
     oncanplaythrough() {
       this.play()
-
-      // console.log('oncanplaythrough')
     },
     back() {
       if (this.isShowPlaylist) {
         this.isShowPlaylist = false;
       }
-      // await this.closer;
-      // console.log('setFullScreen')
       this.setFullScreen(false)
     },
     open() {

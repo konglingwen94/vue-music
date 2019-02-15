@@ -1,8 +1,10 @@
 <template>
-  <cube-scroll :data="list" @pulling-down="onPullingDown" :options="options">
-    <my-loading v-if="showList.length===0"></my-loading>
+  <cube-scroll class="song-page" :data="list" @pulling-down="onPullingDown" :options="options">
+    <my-loading v-if="list.length===0"></my-loading>
     <pull-down-refresh :limit="pulldownLimit" :props="props" slot="pulldown" slot-scope="props"></pull-down-refresh>
-    <music-list :list="showList"></music-list>
+    <transition @enter="enter" @after-enter="afterEnter">
+      <music-list @hasHeight="getItemHeight" :key="list.length" :list="list"></music-list>
+    </transition>
   </cube-scroll>
 </template>
 <script type="text/javascript">
@@ -11,24 +13,36 @@ export default {
   name: 'song',
   mixins: [common],
   data() {
-    return {};
+    return {
+      itemHeight: 0
+    };
   },
   computed: {
-    showList() {
-      return this.list.map((item, index) => {
-        if (index < this.pulldownLimit) {
-          item.addItem = true
-        } else {
-          item.addItem = false
-
-        }
-        return item;
-      })
-    }
+    pulldownLen() {
+      return this.pulldownList.length
+    },
   },
   methods: {
+    getItemHeight(height) {
+      // this.done()
+      this.itemHeight = height
+    },
+    async enter(el, done) {
+      const len = this.pulldownLen === 0 ? this.list.length : this.pulldownLen
+      const offsetHeight = len * this.itemHeight;
+      setTimeout(async () => {
+        $(el).css({ transform: `translate3d(0,${-offsetHeight}px,0)` })
+        // console.log(offsetHeight, $(el).css('transform'));
+        await new Promise(resolve => setTimeout(resolve, 70))
+        $(el).css({ transition: `all ${offsetHeight}ms`, transform: 'translate3d(0,0,0)', }).bind('transitionend', done)
+      }, 50)
 
-  },
+    },
+    afterEnter(el) {
+      // this.transition = ''
+      $(el).css({ transition: '', transform: '' })
+    },
+  }
 };
 
 </script>
