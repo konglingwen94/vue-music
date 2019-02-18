@@ -17,6 +17,8 @@ Object.assign(Vue.prototype, { bus: new Vue() }, util, song, config, remoteUrl, 
 window.Vue = Vue
 window.Vuex = Vuex
 window.Util = util
-window.domain = '192.168.1.5'
 window.Song = song.__Song
+const ENV = process.env.NODE_ENV
+window.domain = ENV === 'development' ? '192.168.1.5' : 'localhost'
+console.log(window.domain)
 // export default {}

@@ -11,7 +11,8 @@ function getRootSize(argument) {
   let fontSize = getComputedStyle(document.documentElement).fontSize;
   return parseFloat(fontSize)
 }
-const DOMAIN = '192.168.1.5'
+const ENV = process.env.NODE_ENV
+const DOMAIN = ENV === 'development' ? '192.168.1.5' : 'localhost'
 
 export const __QERR_OK = 0 //qq音乐api状态码
 export const __NET_ERR_TEXT = '网络异常' //网络中断提示文案

@@ -3,9 +3,9 @@
     <div class="page">
       <nav-bar class="home-navbar" :navList="navList" namePrefix='home' ref="navbar"></nav-bar>
       <!-- <cube-loading class="loadingIcon" v-if="!pageLoaded"></cube-loading> -->
-      <transition :name="transitionName" @enter="enter" @after-enter="afterEnter" @leave="leave" @after-leave="afterLeave">
+      <transition :name="transitionName">
         <keep-alive>
-          <router-view :key="$route.query.id" :class="[{fullScreenFixed},pageCls]" />
+          <router-view :style="zIndex" :key="$route.query.id" :class="[{fullScreenFixed},pageCls]" />
         </keep-alive>
       </transition>
     </div>
@@ -44,6 +44,11 @@ export default {
     }
   },
   computed: {
+    zIndex() {
+      return this.$route.name ? {
+        zIndex: this.$route.matched[0].meta.index
+      } : {}
+    },
     pageCls() {
       return this.$route.name ? this.$route.matched[0].name + '-page' : ''
     },
@@ -155,7 +160,7 @@ export default {
 .forward-enter-active,
 .forward-leave-active,
   {
-  transition: all .4s;
+  transition: all .3s;
   width: 100vw;
 
   position: fixed;
