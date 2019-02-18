@@ -59,7 +59,7 @@
               <div :class="['currentTimer',{draging}]" slot="start">
                 <span>{{formatTimer(currentTime)}}</span>
               </div>
-              <progress-bar ref="progress" v-if="showProgressBar" :timeRanges="timeRanges" @input="oninput" @progressChange="onProgressChange" :duration="duration" :currentTime="currentTime" class="progress-bar"></progress-bar>
+              <progress-bar ref="progress" v-if="showProgressBar" :timeRanges="curRange.range" @input="oninput" @progressChange="onProgressChange" :duration="duration" :currentTime="currentTime" class="progress-bar"></progress-bar>
               <div class="totalTimer" slot="end">{{formatTimer(duration)}}
               </div>
             </div>
@@ -87,12 +87,12 @@
             </div>
           </div>
           <!-- 声音提示 -->
-          <volume :radio.sync="radio" @toggleRadio="onToggleRadio" @input="onVolumeInput" @operate="onOperate" ref="volume"></volume>
+          <volume :radio="curRange.radio" @toggleRadio="onToggleRadio" @input="onVolumeInput" @operate="onOperate" ref="volume"></volume>
         </div>
     </transition>
     <!-- 播放内核 -->
     <div class="playAudio">
-      <audio @emptied="onemptied" @abort="onabort" @error="onerror" @canplaythrough="oncanplaythrough" @stalled="onstalled" @loadstart="onloadstart" @loadeddata="onloadeddata" @loadedmetadata="onloadedmetadata" @waiting="onwaiting" @playing="onplaying" @progress="onprogress" @timeupdate="onupdateTime" @ended="onended" :src="currentSong.url" @canplay="oncanplay" ref="audio" autoplay>
+      <audio @pause="onpause" @play="onplay" @emptied="onemptied" @abort="onabort" @error="onerror" @canplaythrough="oncanplaythrough" @stalled="onstalled" @loadstart="onloadstart" @loadeddata="onloadeddata" @loadedmetadata="onloadedmetadata" @waiting="onwaiting" @playing="onplaying" @progress="onprogress" @timeupdate="onupdateTime" @ended="onended" :src="currentSong.url" @canplay="oncanplay" ref="audio" autoplay>
       </audio>
     </div>
     <!-- 吸底播放器 -->
@@ -144,6 +144,7 @@ import { prefixStyle } from '@/config/dom'
 const filter = prefixStyle('filter')
 const transitionDuration = prefixStyle('transition-duration')
 const transform = prefixStyle('transform')
+const curRange = { radio: 96, range: 0 }
 
 export default {
   name: '',
@@ -151,8 +152,8 @@ export default {
   data() {
     return {
       // muted: false,
-      radio: 96,
-      timeRanges: 0,
+      curRange,
+      // timeRanges: [curRange],
       curLyric: '',
       curLine: 0,
       currentLyric: null,
@@ -210,6 +211,9 @@ export default {
 
   },
   watch: {
+    curRange(newR, oldR) {
+      this.oldRange = oldR;
+    },
     volume() {
       this.audio.volume = this.volume
     },
@@ -247,7 +251,7 @@ export default {
     },
     async currentSong(newSong, oldSong) {
       if (this.__isEmptyObject(newSong)) {
-        console.log(newSong);
+        // console.log(newSong);
         this.audio.src = ''
         return
       }
@@ -259,8 +263,8 @@ export default {
         this.$refs.progress.transition = 'all .2s'
       }
 
-      this.radio = 96;
-      this.timeRanges = 0; //缓冲进度置零
+      // this.radio = 96;
+      this.curRange = { radio: 96, range: 0 } //缓冲进度置零
       this.currentLyric && this.currentLyric.stop()
       this.currentLyric = null;
       // 获取歌词
@@ -276,14 +280,17 @@ export default {
       setMiniPlayerHeight: 'SET_MINI_PLAYER_HEIGHT'
     }),
     ...playerControls,
-    onToggleRadio(item) {
+    onToggleRadio({ value: radio }) {
+      const selectItem = { range: 0, radio }
+
       this.oldUrl = this.audio.src;
-      this.oldRadio = this.radio;
+      // this.oldRadio = this.radio;
+      this.curRange = selectItem
       const url = this.parse(this.currentSong.url)
-      if (!url.br) {}
-      url.br = item.value
+
+      url.br = radio
       const _url = this.unescape(this.stringify(url))
-      console.log(_url);
+      // console.log(_url);
       this.audio.src = _url
       this.audio.currentTime = this.currentTime
     },
@@ -508,7 +515,7 @@ export default {
       this.currentTime = currentTime
       this.seek()
 
-      this.isBuffered = this.timeRanges > currentTime;
+      this.isBuffered = this.curRange.range > currentTime;
       this.audio.currentTime = currentTime
       this.play()
     },
@@ -545,10 +552,15 @@ export default {
 
     },
     onprogress(e) {
+
       try {
 
         const timeRanges = this.audio.buffered
-        this.timeRanges = timeRanges ? timeRanges.end(0) : 0
+        console.log(timeRanges)
+        if (timeRanges) {
+          this.curRange.range = timeRanges.end(timeRanges.length - 1)
+
+        }
       } catch (err) {
         console.log(err);
       }
@@ -688,7 +700,7 @@ export default {
       console.log(this.audio.error, this.audio.networkState)
       if (this.audio.networkState === 3) {
         this.audio.src = this.oldUrl;
-        this.radio = this.oldRadio;
+        this.curRange = this.oldRange;
         this.audio.currentTime = this.currentTime;
         this.$refs.volume.showToast.close()
         this.Toast({
@@ -700,7 +712,13 @@ export default {
       this.songReady = true
       this.oldIndex > this.currentIndex ? this.togglePrev() : this.toggleNext()
     },
-    onplay() {},
+    onpause() {
+      this.setPlayingState(false)
+
+    },
+    onplay() {
+      this.setPlayingState(true)
+    },
     oncanplaythrough() {
       this.play()
     },

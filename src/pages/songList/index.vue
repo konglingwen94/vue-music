@@ -18,7 +18,7 @@
       <div class="layer"></div>
       <!-- 歌曲列表 -->
       <cube-scroll :data="musicList" :options="options" @pulling-up="onPullingUp" :scroll-events="['scroll']" :probeType="2" @scroll="onScroll" class="scrollWrap" ref="scroll">
-        <music-list v-if="musicList.length" :list="musicList"></music-list>
+        <music-list :marginTop="20" v-if="musicList.length" :list="musicList"></music-list>
       </cube-scroll>
     </div>
   </div>

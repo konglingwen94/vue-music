@@ -42,10 +42,13 @@ export default {
         }
         list = this.sequenceList
       }
-      this.Toast({
-        message,
-        // duration: 2000
-      });
+      if (this.$options.name === 'song-player') {
+
+        this.Toast({
+          message,
+          // duration: 2000
+        });
+      }
       this.resetCurrentIndex(list)
       this.setPlaylist(list)
       this.setPlayMode(mode)

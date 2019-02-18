@@ -82,7 +82,7 @@ export default {
       }
       // this.brVal = this.radios.find(_item => item.value === _item.value).value;
       this.$emit('toggleRadio', item)
-      this.$emit('update:radio', item.value)
+      // this.$emit('update:radio', item.value)
       this.hide()
       this.showToast = this.Toast({
         message: '切换为' + item.text,

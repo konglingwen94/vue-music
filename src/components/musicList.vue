@@ -1,6 +1,6 @@
 <template>
   <div class="list-wrap">
-    <div @click="selectItem(item,index)" :class="['list-item']" :key="index" v-for="(item,index) in list">
+    <div :style="{marginTop:$attrs.marginTop+'px'}" @click="selectItem(item,index)" :class="['list-item']" :key="index" v-for="(item,index) in list">
       <div :class="['sortIndex',{newLoad:item.newLoad}]">{{index+preIndex+1}}</div>
       <div class="text-wrap">
         <div class="text-name">
@@ -64,7 +64,6 @@ export default {
   padding: 0 12px;
   background: #fff;
   display: flex;
-  // height: 70px;
   align-items: center;
   height: 40px;
 

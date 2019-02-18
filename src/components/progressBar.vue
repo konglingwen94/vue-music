@@ -1,7 +1,7 @@
 <template>
   <div v-if="initiated" class="progress-bar" @click="onProgressClick">
     <div class="bar-inner">
-      <div :style="{transition}" @transitionend.stop="transition=''" class="timeRanges fullBox"></div>
+      <div :style="{transition}" @transitionend.stop="transition=''" class="timeRanges"></div>
       <div :style="progressStyle" class="progress">
       </div>
       <!-- <div class="progress-container"> -->
@@ -141,6 +141,10 @@ export default {
 
   .timeRanges {
     background: #aaa;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
     // z-index: -1;
   }
 
