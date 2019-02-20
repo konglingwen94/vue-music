@@ -1,4 +1,4 @@
-# vue-music
+vue-music
 a vue mobile music project
 
 #安装依赖
@@ -29,4 +29,4 @@ npm run build
 ![playlist.png](https://github.com/konglingwen94/vue-music/blob/master/screenshot/playlist.png)
 ![mv-picker.png](https://github.com/konglingwen94/vue-music/blob/master/screenshot/mv-picker.png)
 ![videoRadio-picker.png](https://github.com/konglingwen94/vue-music/blob/master/screenshot/videoRadio-picker.png)
-![songlist.png](https://github.com/konglingwen94/vue-music/blob/master/screenshot/songlist.png)
+![videoRadio-picker.png](https://github.com/konglingwen94/vue-music/blob/master/screenshot/videoRadio-picker.png)
