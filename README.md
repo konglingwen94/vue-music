@@ -1,4 +1,5 @@
-vue-music a vue mobile music project
+#vue-music
+a vue mobile music project
 
 #安装依赖
 npm install
