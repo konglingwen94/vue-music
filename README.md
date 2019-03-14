@@ -10,7 +10,7 @@ npm run server
 #启动项目
 npm start
 
-#打包项目
+#build setup
 npm run build
 
 #页面截图  
