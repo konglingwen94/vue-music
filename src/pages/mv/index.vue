@@ -41,7 +41,7 @@
               :class="setClass(label,item.id)"
               :key="index"
               v-for="(item,index) in category"
-            >{{ item.name }}</li>
+            >{{ item.title }}</li>
           </ul>
         </cube-scroll>
       </div>
@@ -243,21 +243,30 @@ export default {
     async getMvListCategory() {
       var { mv_tag, code } = await this.__getJson(this.__MV_LIST_CATEGORY_URL)
       if (code == this.__QERR_OK) {
-        this.categoryMvData = mv_tag.data
-        this.getLabel(mv_tag.data)
+        const data = {}
+        for (let key in mv_tag.data) {
+          data[key] = mv_tag.data[key].map(item => {
+            return {
+              title: item.name,
+              id: item.id
+            }
+          })
+        }
+        this.categoryMvData = data
+        this.getLabel(this.categoryMvData)
       }
     },
     getLabel() {
       var i = 0
-      console.log('this.categoryMvData', this.categoryMvData)
+      
       for (var key in this.categoryMvData) {
         var items = this.categoryMvData[key]
-        console.log('items', items)
+        
         this.$set(this.label, key, { ...items[0], text: labelText[i++] })
       }
     },
     closeTip(key) {
-      console.log(key)
+     
       this.label[key].id = 0
       this.label[key].title = '全部'
     }
