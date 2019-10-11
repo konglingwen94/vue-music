@@ -10,7 +10,7 @@ const path = require('path')
 const app = express()
 app
   .use(history({}))
-  .use(compress())
+  .use(compress({ level: 8 }))
   .use(express.static(path.join(__dirname, '../dist')))
 
 app.all('*', function(req, res, next) {
