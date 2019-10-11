@@ -32,7 +32,7 @@ export class __Song {
             // resolve(body);
             _this.lyric = normalizeLyric(JSON.parse(body).lyric)
             resolve(_this.lyric)
-            console.log(_this.lyric)
+            
           } else {
             reject('no lyric')
           }

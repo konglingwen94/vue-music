@@ -46,7 +46,7 @@
         </cube-scroll>
       </div>
       <!-- mv列表 -->
-      <div v-if="0" class="mvlist-wrapper">
+      <div v-if="1" class="mvlist-wrapper">
         <keep-alive :max="3">
           <list-view @created="onCreate" ref="listView" :query="query" :key="key"></list-view>
         </keep-alive>
