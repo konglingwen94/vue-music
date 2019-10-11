@@ -21,9 +21,9 @@ export const __BERR_OK = 200 //鼻子亲了脸音乐api状态码
 export const __ROOT_SIZE = getRootSize()
 
 // api url
-export const __SEARCH_URL = 'http://localhost:3000/getSongSearchResult'
-export const __MV_LIST_CATEGORY_URL = 'http://localhost:3000/getMvTagList'
-export const __HOT_MV_LIST_URL = 'http://localhost:3000/getHotMvList'
+export const __SEARCH_URL = '/getSongSearchResult'
+export const __MV_LIST_CATEGORY_URL = '/getMvTagList'
+export const __HOT_MV_LIST_URL = '/getHotMvList'
 export const __SONG_LIST =
   'https://api.bzqll.com/music/tencent/songList?key=579621905' //歌单
 export const __HOT_KEY = `http://${DOMAIN}:3000/getHotKey` //热门搜索
