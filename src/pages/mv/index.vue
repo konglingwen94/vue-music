@@ -14,6 +14,7 @@
       </div>
     </transition>
     <cube-scroll
+      v-if="1"
       :scroll-events="['scroll','scroll-end','before-scroll-start']"
       @before-scroll-start="onScrollStart"
       @scroll="onScroll"
@@ -40,12 +41,12 @@
               :class="setClass(label,item.id)"
               :key="index"
               v-for="(item,index) in category"
-            >{{ item.title }}</li>
+            >{{ item.name }}</li>
           </ul>
         </cube-scroll>
       </div>
       <!-- mv列表 -->
-      <div class="mvlist-wrapper">
+      <div v-if="0" class="mvlist-wrapper">
         <keep-alive :max="3">
           <list-view @created="onCreate" ref="listView" :query="query" :key="key"></list-view>
         </keep-alive>
@@ -58,7 +59,7 @@
 </template>
 <script type="text/javascript">
 import ListView from './children/ListView.vue'
-const labelText = ['地区', '类别']
+const labelText = ['地区', '版本']
 export default {
   components: { ListView },
   provide() {
@@ -155,6 +156,7 @@ export default {
     this.$refs.scroll.scroll.stop()
   },
   async mounted() {
+    return
     this.$nextTick(() => {
       this.clientTop = this.$el.getBoundingClientRect().top
     })
@@ -241,15 +243,16 @@ export default {
     async getMvListCategory() {
       var { mv_tag, code } = await this.__getJson(this.__MV_LIST_CATEGORY_URL)
       if (code == this.__QERR_OK) {
-        console.log('mv_tag.data', mv_tag.data)
         this.categoryMvData = mv_tag.data
-        this.getLabel(data)
+        this.getLabel(mv_tag.data)
       }
     },
     getLabel() {
       var i = 0
+      console.log('this.categoryMvData', this.categoryMvData)
       for (var key in this.categoryMvData) {
         var items = this.categoryMvData[key]
+        console.log('items', items)
         this.$set(this.label, key, { ...items[0], text: labelText[i++] })
       }
     },
