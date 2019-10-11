@@ -1,11 +1,11 @@
 export default (Vue) => {
   Vue.directive("hidden", {
     bind() {
-      console.log('bind')
+      // console.log('bind')
     },
     update(el, binding) {
       // el.focus();
-      console.log('inserted')
+      // console.log('inserted')
       var value = binding.value;
       var oldValue = binding.oldValue;
       if (value == oldValue) {
@@ -21,10 +21,10 @@ export default (Vue) => {
     },
 
     inserted() {
-      console.log('update')
+      // console.log('update')
     },
     componentUpdated() {
-      console.log('componentUpdated')
+      // console.log('componentUpdated')
 
     }
 

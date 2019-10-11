@@ -12,7 +12,7 @@ export default {
     };
   },
   mounted() {
-    console.log(this.$el.clientHeight)
+    // console.log(this.$el.clientHeight)
   },
   methods: {
 

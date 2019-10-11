@@ -129,7 +129,7 @@ export default {
       this.showType = item.type
     },
     onPullingDown() {
-      console.log('onPullingDown')
+      // console.log('onPullingDown')
       this.params.offset++
       this.search({ type: this.TYPE })
     },

@@ -80,7 +80,7 @@ export default {
         // setTimeout(() => {
 
         var top = $('.hotSearch')[0].getBoundingClientRect().top
-        console.log(top)
+        // console.log(top)
         // }, 10)
         this.scrollWrapHeight = innerHeight - top;
       })

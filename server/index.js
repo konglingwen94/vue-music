@@ -10,8 +10,19 @@ const express = require('express')
 const path = require('path')
 const app = express()
 app
-  .use(history({}))
-  .use(compress({ level: 8 }))
+.use(compress({ level: 8 }))
+.use(
+    history({
+      rewrites: [
+        {
+          from: '/get',
+          to(ctx) {
+            return ctx.parsedUrl.pathname
+          },
+        },
+      ],
+    })
+  )
   .use(express.static(path.join(__dirname, '../dist')))
 
 app.all('*', function(req, res, next) {

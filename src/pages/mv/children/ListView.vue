@@ -64,7 +64,7 @@ export default {
       'fullscreenchange webkitfullscreenchange mozfullscreenchange',
       function() {
         //todo code
-        console.log(document.webkitIsFullScreen)
+        // console.log(document.webkitIsFullScreen)
       }
     )
   },
@@ -74,17 +74,17 @@ export default {
         this.__HOT_MV_LIST_URL,
         this.query
       ).catch(err => {
-        console.log(err)
+        console.error(err)
         this.error = true
       })
       if (code == this.__QERR_OK) {
-        console.log(mv_list)
+        // console.log(mv_list)
         return mv_list.data.list.map(item => {
           item.videoType = this.__clone__(videoType)
           return item
         })
       } else {
-        console.log(data)
+        // console.log(data)
       }
     },
     async initData() {

@@ -27,7 +27,7 @@ export default {
       $wrapper.css({ height });
       $wrapper.attr('data-mHeight', height);
       var $scroll = $wrapper.find('.cube-scroll-wrapper')
-      console.log($scroll.prop('__vue__'))
+      // console.log($scroll.prop('__vue__'))
       $wrapper.find('.cube-scroll-wrapper').prop('__vue__').refresh()
       // this.$refs.scroll.refresh()
       // $($el)

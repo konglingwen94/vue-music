@@ -1,7 +1,7 @@
 <template>
-  <div @click.once="initPlay" id="app" style="">
+  <div @click.once="initPlay" id="app" style>
     <div class="page">
-      <nav-bar class="home-navbar" :navList="navList" namePrefix='home' ref="navbar"></nav-bar>
+      <nav-bar class="home-navbar" :navList="navList" namePrefix="home" ref="navbar"></nav-bar>
       <!-- <cube-loading class="loadingIcon" v-if="!pageLoaded"></cube-loading> -->
       <transition :name="transitionName">
         <keep-alive>
@@ -18,54 +18,60 @@
 <script>
 import SongPlayer from '@/pages/songPlayer'
 export default {
-
   data() {
     return {
       transitionName: '',
       navbarHeight: 0,
       duration: 400,
-      navList: [{
-        label: '歌手',
-        name: 'singer',
-        // link: '/singer'
-      }, {
-        label: '歌单',
-        name: 'songSheet',
-        // link: '/songSheet'
-      }, {
-        label: '视频',
-        name: 'mv',
-        link: '/mv'
-      }, {
-        label: '搜索',
-        name: 'search',
-        link: '/search'
-      }],
+      navList: [
+        {
+          label: '歌手',
+          name: 'singer'
+          // link: '/singer'
+        },
+        {
+          label: '歌单',
+          name: 'songSheet'
+          // link: '/songSheet'
+        },
+        {
+          label: '视频',
+          name: 'mv',
+          link: '/mv'
+        },
+        {
+          label: '搜索',
+          name: 'search',
+          link: '/search'
+        }
+      ]
     }
   },
   computed: {
     zIndex() {
-      return this.$route.name ? {
-        zIndex: this.$route.matched[0].meta.index
-      } : {}
+      return this.$route.name
+        ? {
+            zIndex: this.$route.matched[0].meta.index
+          }
+        : {}
     },
     pageCls() {
       return this.$route.name ? this.$route.matched[0].name + '-page' : ''
     },
     fullScreenFixed() {
       // console.log(this.$route);
-      var matchRoutes = this.$route.matched;
+      var matchRoutes = this.$route.matched
       return matchRoutes[0] && matchRoutes[0].meta.fullScreenFixed
-    },
+    }
   },
   watch: {
-    '$route': function(to, from) {
+    $route: function(to, from) {
       if (!to.name || !from.name) {
         return
       }
       this.oldRoute = from
-      // console.log('route changed');
-      this.setTransitionName(to, from);
+      // ('route changed');
+      this.setTransitionName(to, from)
     }
   },
   components: { SongPlayer },
@@ -84,12 +90,10 @@ export default {
       el.style.zIndex = this.oldRoute.matched[0].meta.index
 
       setTimeout(done, this.duration)
-
     },
     afterLeave(el) {
       // console.log('after-leave');
       el.style.removeProperty('z-index')
-
     },
     setTransitionName(to, from) {
       to = to.matched[0]
@@ -100,29 +104,24 @@ export default {
       if (toIndex < fromIndex) {
         this.transitionName = 'prev'
         if (fromIndex >= 4) {
-
           this.transitionName = 'back'
-
         }
       } else {
         this.transitionName = 'next'
         if (!to.meta.isHome) {
           this.transitionName = 'forward'
-
         }
-
       }
-
     },
     initPlay() {
-      $('audio')[0].play().catch(err => {
-        console.error(err);
-      })
-
+      $('audio')[0]
+        .play()
+        .catch(err => {
+          console.error(err)
+        })
     }
   }
 }
-
 </script>
 <style scoped lang="less">
 #app {
@@ -149,8 +148,6 @@ export default {
   z-index: 10;
 }
 
-
-
 .next-enter-active,
 .next-leave-active,
 .prev-leave-active,
@@ -158,25 +155,23 @@ export default {
 .back-enter-active,
 .back-leave-active,
 .forward-enter-active,
-.forward-leave-active,
-  {
-  transition: all .3s;
+.forward-leave-active {
+  transition: all 0.3s;
   width: 100vw;
 
   position: fixed;
-
 }
 
 .next-enter,
 .prev-leave-to,
 .back-leave-to,
 .forward-enter {
-  transform: translate3d(100vw, 0, 0)
+  transform: translate3d(100vw, 0, 0);
 }
 
 .next-leave-to,
 .prev-enter {
-  transform: translate3d(-100vw, 0, 0)
+  transform: translate3d(-100vw, 0, 0);
 }
 
 .next-enter-to,
@@ -186,7 +181,6 @@ export default {
 
 .back-enter,
 .forward-leave-to {
-  transform: translate3d(-20vw, 0, 0)
+  transform: translate3d(-20vw, 0, 0);
 }
-
 </style>

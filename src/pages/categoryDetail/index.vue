@@ -91,7 +91,7 @@ export default {
   async mounted() {
     const top = this.$refs.container.getBoundingClientRect().top
     const height = window.innerHeight - top
-    console.log(top)
+    // console.log(top)
     $('.panel-wrap').css({ height })
   },
   methods: {

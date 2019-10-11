@@ -29,5 +29,5 @@ window.Util = util
 window.Song = song.__Song
 const ENV = process.env.NODE_ENV
 window.domain = ENV === 'development' ? 'localhost' : '106.54.230.205'
-console.log(window.domain)
+// console.log(window.domain)
 // export default {}

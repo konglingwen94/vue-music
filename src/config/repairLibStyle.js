@@ -36,7 +36,7 @@ function eachStyleSheets(sheets) {
         eachCssRules(sheet.cssRules)
       }
     } catch (err) {
-      console.log(err)
+      console.error(err)
     }
   })
 }

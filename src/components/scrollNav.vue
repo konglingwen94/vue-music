@@ -30,7 +30,7 @@ export default {
   },
   methods: {
     selectItem(id, key) {
-      console.log(id, key);
+      // console.log(id, key);
       this[key] = id;
       // this[e.target.dataset.label] = e.target.dataset.id
       // $(e.target).toggleClass('active')
@@ -38,7 +38,7 @@ export default {
     getMvListCategory() {
       this.__getJson('https://api.bzqll.com/music/tencent/mvListCategory?key=579621905').then(data => {
         if (data.code == 200) {
-          console.log(data);
+          // console.log(data);
           this.categoryMvData = data.data
         }
       })

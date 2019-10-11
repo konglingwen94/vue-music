@@ -47,7 +47,7 @@ Vue.mixin({
 
       }
       // this.hasPlaylist
-      console.log(this.wrapperEl, newVal, oldVal)
+      // console.log(this.wrapperEl, newVal, oldVal)
       this.refresh()
     }
   },
@@ -69,7 +69,7 @@ Vue.mixin({
 
 
       this.setWrapHeight(newVal, oldVal)
-      console.log(' watch immediate')
+      // console.log(' watch immediate')
 
     }, { immediate })
   }

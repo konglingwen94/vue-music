@@ -12,22 +12,27 @@ export class __Song {
     this.albummid = albummid
     this.albumid = albumid
   }
-  getLyric(musicid) {
+  getLyric() {
     if (this.lyric) {
       return Promise.resolve(this.lyric)
     }
     var _this = this
     return new Promise((resolve, reject) => {
+      console.log(process.env.NODE_ENV)
       var req = request(
         {
-          url: `http://${domain}:3000/getLyric`,
+          url:
+            process.env.NODE_ENV === 'production'
+              ? 'http://106.54.230.205:3000/getLyric'
+              : 'http://localhost:3000/getLyric',
           qs: { musicid: this.id },
         },
         function(error, response, body) {
-          if (!error && response.statusCode == 200) {
+          if (!error && response.statusCode === 200) {
             // resolve(body);
             _this.lyric = normalizeLyric(JSON.parse(body).lyric)
             resolve(_this.lyric)
+            console.log(_this.lyric)
           } else {
             reject('no lyric')
           }
