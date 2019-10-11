@@ -3,15 +3,22 @@
     <my-loading v-if="detailList.length===0"></my-loading>
     <x-header class="header-navbar" ref="header">{{$route.query.categoryName}}</x-header>
     <div class="sort-wrap flex">
-      <div @click="sort(item)" :class="['sort-item',{current:item.id===sortId}]" :key="key" v-for="(item,key) in sorts">
-        {{item.text}}
-      </div>
+      <div
+        @click="sort(item)"
+        :class="['sort-item',{current:item.id===sortId}]"
+        :key="key"
+        v-for="(item,key) in sorts"
+      >{{item.text}}</div>
     </div>
-    <div :style="{paddingBottom:miniPlayerHeight+'px'}" ref="container" class="native-vertical-scroll panel-wrap">
+    <div
+      :style="{paddingBottom:miniPlayerHeight+'px'}"
+      ref="container"
+      class="native-vertical-scroll panel-wrap"
+    >
       <transition-group tag="div" class="panel-content">
-        <div @click="toDetail(item)" :key="item.id" v-for="(item,key) in detailList" class="panel">
+        <div @click="toDetail(item)" :key="item.id" v-for="(item) in detailList" class="panel">
           <div class="picBox">
-            <img :key="item.id" class="layPic" v-lazy="item.pic">
+            <img :key="item.id" class="layPic" v-lazy="item.pic" />
             <p class="playCount">{{format(item.playCount)}}</p>
             <p class="createTime">{{item.createTime}}</p>
           </div>
@@ -25,31 +32,35 @@
   </div>
 </template>
 <script type="text/javascript">
-const sorts = [{
-  text: '默认',
-  id: 0,
-  handler() {
-    this.detailList = this.sequenceList.slice()
+const sorts = [
+  {
+    text: '默认',
+    id: 0,
+    handler() {
+      this.detailList = this.sequenceList.slice()
+    }
+  },
+  {
+    text: '最热',
+    id: 1,
+    handler() {
+      this.detailList.sort((a, b) => {
+        return Number(b.playCount) - Number(a.playCount)
+      })
+    }
+  },
+  {
+    text: '最新',
+    id: 2,
+    handler() {
+      this.detailList.sort((a, b) => {
+        const timeA = a.createTime.split('-').join('')
+        const timeB = b.createTime.split('-').join('')
+        return Number(timeB) - Number(timeA)
+      })
+    }
   }
-}, {
-  text: '最热',
-  id: 1,
-  handler() {
-    this.detailList.sort((a, b) => {
-      return Number(b.playCount) - Number(a.playCount)
-    })
-  }
-}, {
-  text: '最新',
-  id: 2,
-  handler() {
-    this.detailList.sort((a, b) => {
-      const timeA = a.createTime.split('-').join('');
-      const timeB = b.createTime.split('-').join('');
-      return Number(timeB) - Number(timeA)
-    })
-  }
-}];
+]
 export default {
   name: 'categoryDetail',
   data() {
@@ -58,13 +69,13 @@ export default {
       sorts,
       sortId: 0,
       sequenceList: []
-    };
+    }
   },
   created() {
     this.getSongSheetList()
   },
   deactivated() {
-    this.scrollTop = $('.panel-wrap').scrollTop();
+    this.scrollTop = $('.panel-wrap').scrollTop()
   },
   beforeRouteEnter(to, from, next) {
     if (to.meta.index > from.meta.index) {
@@ -73,19 +84,19 @@ export default {
     }
     next(vm => {
       if (vm.scrollTop !== undefined) {
-        $('.panel-wrap')[0].scrollTo(0, vm.scrollTop);
+        $('.panel-wrap')[0].scrollTo(0, vm.scrollTop)
       }
     })
   },
   async mounted() {
-    const top = this.$refs.container.getBoundingClientRect().top;
+    const top = this.$refs.container.getBoundingClientRect().top
     const height = window.innerHeight - top
     console.log(top)
     $('.panel-wrap').css({ height })
   },
   methods: {
     format(count) {
-      const num = this.__round__(count / 10000, 1);
+      const num = this.__round__(count / 10000, 1)
       return num + '万'
     },
     toDetail(item) {
@@ -95,27 +106,25 @@ export default {
       })
     },
     sort({ handler, id }) {
-
       handler.call(this)
       this.sortId = id
     },
     async getSongSheetList() {
       var param = {
-        categoryId: this.$route.query.categoryId,
+        categoryId: this.$route.query.categoryId
       }
       var { code, data } = await this.__getJson(this.__HOT_SONG_LIST, param)
       if (code == 200) {
-        this.sequenceList = data;
+        this.sequenceList = data
         this.detailList = this.__clone__(data)
       }
-    },
+    }
   }
-};
-
+}
 </script>
 <style scoped lang="less">
 .v-move {
-  transition: all .5s;
+  transition: all 0.5s;
 }
 
 .my-loading {
@@ -130,14 +139,13 @@ export default {
   background: pink;
   overflow: auto;
   padding-top: 50px;
-
 }
 
 .header-navbar {
   position: fixed;
   top: 0;
   width: 100%;
-  z-index: 10
+  z-index: 10;
 }
 
 .sort-wrap {
@@ -171,7 +179,8 @@ export default {
         .posXY(playCount, 5px, auto, auto, 10px);
         .posXY(createTime, auto, auto, 5px, 10px);
 
-        .createTime {}
+        .createTime {
+        }
       }
 
       .layPic {
@@ -184,5 +193,4 @@ export default {
     }
   }
 }
-
 </style>

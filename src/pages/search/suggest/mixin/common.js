@@ -10,10 +10,10 @@ export default {
         pullDownRefresh: {
           threshold: 60,
           // stop: 40,
-          txt: '更新成功'
-        }
-      }
-    };
+          txt: '更新成功',
+        },
+      },
+    }
   },
   computed: {
     params() {
@@ -21,67 +21,71 @@ export default {
         type: this.type,
         limit: this.originLimit,
         offset: this.offset,
-        s: this.query
+        w: this.query,
       }
-    }
+    },
   },
   props: {
-
     query: {
       type: String,
-      default: ''
+      default: '',
     },
     type: {
       type: String,
-      default: ''
-    }
+      default: '',
+    },
   },
   watch: {
     pulldownList: {
       handler(newList, oldList) {
         oldList && oldList.forEach(item => delete item.newLoad)
         if (newList) {
-
-          newList.forEach(item => { item.newLoad = true })
+          newList.forEach(item => {
+            item.newLoad = true
+          })
         }
-
       },
-      immediate: true
+      immediate: true,
     },
     query: {
       handler: 'coverData',
       immediate: true,
     },
-    'offset': 'addData'
+    offset: 'addData',
   },
   methods: {
     onPullingDown() {
       // console.log('onPullingDown');
-      this.pulldownLimit = this.randomFrom(this.originLimit / 3, this.originLimit)
-      this.offset++;
+      this.pulldownLimit = this.randomFrom(
+        this.originLimit / 3,
+        this.originLimit
+      )
+      this.offset++
     },
     async search(limit = this.originLimit) {
       // console.log(limit);
-      var { code, data } = await this.__getJson(this.__SEARCH_URL, { ...this.params, limit })
-      if (code == this.__BERR_OK) {
-        const vm = this;
+      var { code, data } = await this.__getJson(this.__SEARCH_URL, {
+        ...this.params,
+        limit,
+      })
+      if (code == this.__QERR_OK) {
+        const vm = this
 
-        return data
-
+        return data.song.list.map(item => {
+          return {
+            name: item.songname,
+            singer: vm.__format(item.singer),
+          }
+        })
       }
     },
     async coverData() {
-
       this.list = []
       this.list = await this.search()
     },
     async addData() {
-      this.pulldownList = await this.search(this.pulldownLimit);
+      this.pulldownList = await this.search(this.pulldownLimit)
       this.list.unshift(...this.pulldownList)
-      // console.log(this.list);
-      // var limit = this.shuffeLimit(this.limit)
-      // this.list.unshift()
     },
-
-  }
+  },
 }

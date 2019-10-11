@@ -1,7 +1,12 @@
 <template>
-  <div class="">
-    <x-search ref="search" :class="[{isSearch_:$refs.search && $refs.search.isFixed},'searchBox']" v-model.trim="query" :auto-fixed="true" placeholder="请输入歌曲、专辑...">
-    </x-search>
+  <div class>
+    <x-search
+      ref="search"
+      :class="[{isSearch_:$refs.search && $refs.search.isFixed},'searchBox']"
+      v-model.trim="query"
+      :auto-fixed="true"
+      placeholder="请输入歌曲、专辑..."
+    ></x-search>
     <cube-scroll v-show="!query">
       <!-- 热门搜索 -->
       <div class="hotkey">
@@ -9,7 +14,12 @@
           <p class="title">热门搜索</p>
         </div>
         <ul class="hotkey-list flexWrap">
-          <li @click="addQuery(item.k.trim())" class="hotkey-item" :key="key" v-for="(item,key) in hotkeyList">
+          <li
+            @click="addQuery(item.k.trim())"
+            class="hotkey-item"
+            :key="key"
+            v-for="(item,key) in hotkeyList"
+          >
             <p>{{item.k}}</p>
           </li>
         </ul>
@@ -19,7 +29,13 @@
       <div class="navScrollWrap horizontal-scroll">
         <!-- <horizontal-scroll direction="horizontal"> -->
         <ul class="nav-list">
-          <li :class="{active:item.type==showType}" @click="selectType(item.id)" class="nav-item" :key="key" v-for="(item,key) in navList">{{item.label}}</li>
+          <li
+            :class="{active:item.type==showType}"
+            @click="selectType(item.id)"
+            class="nav-item"
+            :key="key"
+            v-for="(item,key) in navList"
+          >{{item.label}}</li>
         </ul>
         <!-- </horizontal-scroll> -->
       </div>
@@ -45,8 +61,8 @@ let navList = [
   { type: 'list', label: '歌单' },
   { type: 'mv', label: '视频' },
   { type: 'user', label: '用户' },
-  { type: 'lrc', label: '歌词' },
-];
+  { type: 'lrc', label: '歌词' }
+]
 navList.forEach((item, index) => {
   item.id = index
 })
@@ -67,9 +83,8 @@ export default {
       clientTop: 0,
       // isCancel: true,
       y: 0,
-      hotkeyList: [],
-
-    };
+      hotkeyList: []
+    }
   },
   computed: {
     isSearch_() {
@@ -80,7 +95,7 @@ export default {
     this.getHotkeyList()
   },
   mounted() {
-    this.$search = this.$refs.search;
+    this.$search = this.$refs.search
     this.$watch('$search.isFixed', () => {
       this.showType = TYPE
     })
@@ -89,11 +104,9 @@ export default {
     })
   },
   watch: {
-    isSearch_() {
-
-    },
+    isSearch_() {},
     query(newQuery) {
-      this.isSearch = Boolean(newQuery);
+      this.isSearch = Boolean(newQuery)
     }
   },
   methods: {
@@ -102,13 +115,13 @@ export default {
       this.$search.isFixed = true
     },
     async getHotkeyList() {
+       
       var { code, data } = await this.__getJson(this.__HOT_KEY)
       if (code == this.__QERR_OK) {
         this._normalizeHotkey(data)
       }
     },
     _normalizeHotkey(data) {
-
       this.hotkeyList = data.hotkey.splice(0, 10)
     },
     selectType(id) {
@@ -123,13 +136,9 @@ export default {
     onScroll({ y }) {
       this.y = y
       // console.log(y);
-    },
-
-
-
+    }
   }
-};
-
+}
 </script>
 <style lang="less">
 .isSearch_ {
@@ -183,7 +192,7 @@ export default {
     padding-bottom: 8px;
 
     &.active {
-      border-bottom: 2Px solid green;
+      border-bottom: 2px solid green;
     }
 
     // padding: 10px;
@@ -191,5 +200,4 @@ export default {
 
   // }
 }
-
 </style>

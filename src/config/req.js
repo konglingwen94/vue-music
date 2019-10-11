@@ -4,7 +4,6 @@ import $ from 'zepto'
 function __getJson(url, option = {}) {
   // debugger
   return new Promise((resolve, reject) => {
-
     $.ajax({
       url,
       dataType: 'json',
@@ -27,7 +26,6 @@ function __getJson(url, option = {}) {
 function __get(url, option = {}) {
   // debugger
   return new Promise((resolve, reject) => {
-
     $.ajax({
       url,
       method: 'get',
@@ -47,11 +45,10 @@ function __get(url, option = {}) {
   })
 }
 
-
 function __jsonp(url, option = {}) {
+   
   return new Promise((resolve, reject) => {
-    // var _url = url;
-    // debugger
+     
     $.ajax({
       url,
       dataType: 'jsonp',
@@ -61,7 +58,6 @@ function __jsonp(url, option = {}) {
       success(res) {
         if (res.code == 0) {
           resolve(res)
-
         } else {
           reject('data error')
         }
@@ -69,20 +65,15 @@ function __jsonp(url, option = {}) {
       error(xhr, errType, err) {
         reject(err)
       },
-      // complete: 
-
+      // complete:
     })
   })
 }
-
-
-
-
 
 export default {
   __getJson,
   __jsonp,
   // __getSingerPicUrl,
-  __get
+  __get,
 }
 // console.dir(_$)

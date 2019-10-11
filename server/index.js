@@ -2,22 +2,21 @@ const Callback = require('./callback.js')
 const singerCallback = require('./singerCallback.js')
 const searchCb = require('./searchCb.js')
 const musicPlayDataCb = require('./musicPlayData.js')
-const IP = require('../config/local.js').IP
+// const IP = require('../config/local.js').IP
 
 const express = require('express')
 const path = require('path')
 const app = express()
 app.use(express.static(path.join(__dirname, '../dist')))
 
-
 app.all('*', function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "X-Requested-With");
-  res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
-  res.header("X-Powered-By", ' 3.2.1')
-  res.header("Content-Type", "application/json;charset=utf-8");
-  next();
-});
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Headers', 'X-Requested-With')
+  res.header('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE,OPTIONS')
+  res.header('X-Powered-By', ' 3.2.1')
+  res.header('Content-Type', 'application/json;charset=utf-8')
+  next()
+})
 
 app.get('/getCategoryTags', Callback.getCategoryTags)
 app.get('/getHotSongList', Callback.getHotSongList)
@@ -31,7 +30,8 @@ app.get('/getLyric', musicPlayDataCb.getLyric)
 app.get('/getBLyric', musicPlayDataCb.getBLyric)
 // 获取搜索热词
 app.get('/getHotKey', searchCb.getHotKey)
+app.get('/getSongSearchResult', searchCb.getSongSearchResult)
 // 开启服务
 app.listen(3000, () => {
-  console.log(IP + ' 3000 is running')
+  console.log('Server listening on http://localhost:3000')
 })

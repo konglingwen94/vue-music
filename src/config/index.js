@@ -13,12 +13,21 @@ require('./watchNet.js')
 // 修复第三方库样式font-size
 require('./repairLibStyle.js')
 // Object.assign(Vue.prototype, util, { _zetpo: util }, util, config)
-Object.assign(Vue.prototype, { bus: new Vue() }, util, song, config, remoteUrl, Vuex, Dom)
+Object.assign(
+  Vue.prototype,
+  { bus: new Vue() },
+  util,
+  song,
+  config,
+  remoteUrl,
+  Vuex,
+  Dom
+)
 window.Vue = Vue
 window.Vuex = Vuex
 window.Util = util
 window.Song = song.__Song
 const ENV = process.env.NODE_ENV
-window.domain = ENV === 'development' ? '192.168.1.5' : 'localhost'
+window.domain = ENV === 'development' ? 'localhost' : '106.54.230.205'
 console.log(window.domain)
 // export default {}

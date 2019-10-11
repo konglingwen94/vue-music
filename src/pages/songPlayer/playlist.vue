@@ -4,18 +4,30 @@
       <div class="list-wrap" @click.stop>
         <div class="list-head flex YCenter">
           <div class="playmode-wrapper flex YCenter">
-            <p @click="changeMode" class="mode flex Center ">
+            <p @click="changeMode" class="mode flex Center">
               <i :class="[modeCls,'iconfont']"></i>
             </p>
             <p class="mode-text">{{modeText}}</p>
           </div>
           <div @click="clearList" class="clear-wrapper">
-            <i  class="cubeic-delete clear"></i>
+            <i class="cubeic-delete clear"></i>
           </div>
         </div>
-        <cube-scroll :style="wrapperStyle" local ref="listContent" :data="playlist" class="list-content">
+        <cube-scroll
+          :style="wrapperStyle"
+          local
+          ref="listContent"
+          :data="playlist"
+          class="list-content"
+        >
           <transition-group name="list" tag="ul">
-            <li ref="songItem" @click="playItem(item,index)" :class="['song-item', 'flex',{current:currentSong.id===item.id}]" v-for="(item,index) in sequenceList" :key="item.id">
+            <li
+              ref="songItem"
+              @click="playItem(item,index)"
+              :class="['song-item', 'flex',{current:currentSong.id===item.id}]"
+              v-for="(item,index) in sequenceList"
+              :key="item.id"
+            >
               <div class="index-wrapper">
                 <p class="text">{{index+1}}</p>
               </div>
@@ -52,7 +64,7 @@ export default {
   data() {
     return {
       showFlag: false
-    };
+    }
   },
   computed: {
     wrapperStyle() {
@@ -61,7 +73,11 @@ export default {
       }
     },
     modeText() {
-      return this.mode === playMode.loop ? '循环播放' : this.mode === playMode.random ? '随机播放' : '顺序播放'
+      return this.mode === playMode.loop
+        ? '循环播放'
+        : this.mode === playMode.random
+        ? '随机播放'
+        : '顺序播放'
     }
   },
   methods: {
@@ -82,18 +98,16 @@ export default {
     },
     clearList() {
       try {
-
         this.MessageBox.confirm('确定清空列表?').then(action => {
           this.deleteSongList()
           this.hide()
         })
       } catch (err) {
-        console.log(err);
+        console.log(err)
       }
-
     },
     deleteOne(item) {
-      this.deleteSong(item);
+      this.deleteSong(item)
       if (!this.playlist.length) {
         this.hide()
       }
@@ -105,10 +119,11 @@ export default {
       this.setCurrentIndex(index)
     },
     scrollToCurrent() {
-      const index = this.sequenceList.findIndex(item => item.id === this.currentSong.id);
+      const index = this.sequenceList.findIndex(
+        item => item.id === this.currentSong.id
+      )
       this.$refs.listContent.scrollToElement(this.$refs.songItem[index], 300)
-
-    },
+    }
   },
   watch: {
     currentSong(newSong, oldSong) {
@@ -116,11 +131,9 @@ export default {
         return
       }
       this.$nextTick(this.scrollToCurrent)
-
     }
   }
-};
-
+}
 </script>
 <style scoped lang="less">
 .list-leave-to {
@@ -131,16 +144,14 @@ export default {
 }
 
 .list-leave-active {
-  transition: all .3s;
+  transition: all 0.3s;
 }
 
 .v-enter-active,
 .v-leave-active {
-
-  transition: all .3s;
+  transition: all 0.3s;
 
   .list-wrap {
-
     transition: inherit;
   }
 }
@@ -150,18 +161,16 @@ export default {
   background: transparent !important;
 
   .list-wrap {
-
     transform: translate3d(0, 100%, 0);
   }
 }
-
 
 .playlist {
   position: fixed;
   width: 100vw;
   height: 100vh;
   z-index: 130;
-  background: rgba(0, 0, 0, .2);
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .list-head {
@@ -178,7 +187,6 @@ export default {
       .iconfont {
         font-size: 26px;
       }
-
     }
 
     .mode-text {
@@ -204,7 +212,6 @@ export default {
   .list-content {
     padding: 10px;
   }
-
 }
 
 .song-item {
@@ -224,5 +231,4 @@ export default {
     font-size: 1.5em;
   }
 }
-
 </style>
