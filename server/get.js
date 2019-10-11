@@ -24,7 +24,7 @@ let params = {
 }
 let search = qs.stringify(params)
 url = `https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg?_=1544870274280&${search}`
-console.log(url)
+ 
 request({
   url,
   // method: "POST",

@@ -2,6 +2,7 @@ const Callback = require('./callback.js')
 const singerCallback = require('./singerCallback.js')
 const searchCb = require('./searchCb.js')
 const musicPlayDataCb = require('./musicPlayData.js')
+const mvCb = require('./mv.js')
 
 const compress = require('compression')
 const history = require('connect-history-api-fallback')
@@ -35,6 +36,11 @@ app.get('/getBLyric', musicPlayDataCb.getBLyric)
 // 获取搜索热词
 app.get('/getHotKey', searchCb.getHotKey)
 app.get('/getSongSearchResult', searchCb.getSongSearchResult)
+// 获取热门MV 列表
+
+app.get('/getHotMvList', mvCb.getHotMvList)
+app.get('/getMvTagList', mvCb.getMvTagList)
+
 // 开启服务
 app.listen(3000, () => {
   console.log('Server listening on http://localhost:3000')

@@ -4,18 +4,43 @@
     <transition name="picker">
       <div @click="showMutiPicker" v-show="isShow" class="select-wrapper">
         <cube-button class="select-list iflex around" outline primary>
-          <span class="select-item" :key="key" v-for="(item,key) in showSelect">{{item.text}}--{{item.title}}</span>
+          <span
+            class="select-item"
+            :key="key"
+            v-for="(item,key) in showSelect"
+          >{{item.text}}--{{item.title}}</span>
           <i class="cubeic-select"></i>
         </cube-button>
       </div>
     </transition>
-    <cube-scroll :scroll-events="['scroll','scroll-end','before-scroll-start']" @before-scroll-start="onScrollStart" @scroll="onScroll" @scroll-end="onScrollEnd
-" :data="$refs.listView? $refs.listView.mvList:[]" ref="scroll" :options="options" @pulling-up="onPullingUp">
+    <cube-scroll
+      :scroll-events="['scroll','scroll-end','before-scroll-start']"
+      @before-scroll-start="onScrollStart"
+      @scroll="onScroll"
+      @scroll-end="onScrollEnd
+"
+      :data="$refs.listView? $refs.listView.mvList:[]"
+      ref="scroll"
+      :options="options"
+      @pulling-up="onPullingUp"
+    >
       <!-- 滚动导航 -->
       <div class="scrollNav">
-        <cube-scroll ref="scrollNavList" :key="key" v-for="(category,label,key) in categoryMvData" direction="horizontal" class="horizontal-scroll-list-wrap">
+        <cube-scroll
+          ref="scrollNavList"
+          :key="key"
+          v-for="(category,label,key) in categoryMvData"
+          direction="horizontal"
+          class="horizontal-scroll-list-wrap"
+        >
           <ul :class="['list-wrapper',label]">
-            <li ref="navItem" v-tap="{methods:selectItem,label,item,key}" :class="setClass(label,item.id)" :key="index" v-for="(item,index) in category">{{ item.title }}</li>
+            <li
+              ref="navItem"
+              v-tap="{methods:selectItem,label,item,key}"
+              :class="setClass(label,item.id)"
+              :key="index"
+              v-for="(item,index) in category"
+            >{{ item.title }}</li>
           </ul>
         </cube-scroll>
       </div>
@@ -33,11 +58,11 @@
 </template>
 <script type="text/javascript">
 import ListView from './children/ListView.vue'
-const labelText = ['地区', '类别', '年代']
+const labelText = ['地区', '类别']
 export default {
   components: { ListView },
   provide() {
-    let reactive = {};
+    let reactive = {}
     Object.defineProperty(reactive, 'scrollY', {
       get: () => this.scrollY,
       enumerable: true
@@ -70,7 +95,7 @@ export default {
       navHeight: 0,
       // isShow: false,
       showToTop: false
-    };
+    }
   },
   computed: {
     key() {
@@ -87,7 +112,6 @@ export default {
     },
     showSelect() {
       return this.obData.filter(item => this.__isPlainObject__(item))
-
     },
     obData() {
       return this.__values__({ ...this.label, ...this.queryNum })
@@ -96,10 +120,10 @@ export default {
       return -this.scrollY > this.navHeight
     },
     keyCode() {
-      var query = {};
+      var query = {}
 
       for (var key in this.label) {
-        query[key] = this.label[key].id;
+        query[key] = this.label[key].id
       }
       return query
     },
@@ -123,7 +147,6 @@ export default {
   },
   activated() {
     if (this.$refs.scroll && this.$refs.scroll.scroll) {
-
       this.scrollY = this.$refs.scroll.scroll.y
     }
   },
@@ -134,16 +157,13 @@ export default {
   async mounted() {
     this.$nextTick(() => {
       this.clientTop = this.$el.getBoundingClientRect().top
-
     })
     this.$mvList = this.$refs.listView.mvList
-    await this.catePromise;
+    await this.catePromise
 
     this.navHeight = await this.getNextTickElHeight('.scrollNav')
   },
-  watch: {
-
-  },
+  watch: {},
   methods: {
     onScrollStart() {
       // console.log('onScrollStart');
@@ -160,48 +180,44 @@ export default {
           data: this.mutiPickerData,
           onSelect: this.selectHandle,
           $props: {
-
-            selectedIndex: 'selectedIndex',
+            selectedIndex: 'selectedIndex'
           },
           // onCancel: this.cancelHandle,
           alias: {
             value: 'id',
             text: 'title'
-          },
+          }
         })
       }
       this.mutiPicker.show()
     },
     selectHandle(selectedVal, selectedIndex, selectedText) {
-      var i = 0;
+      var i = 0
       for (var key in this.label) {
         this.label[key].id = selectedVal[i]
         this.label[key].title = selectedText[i]
-        var scrollNavList = this.$refs.scrollNavList[i];
+        var scrollNavList = this.$refs.scrollNavList[i]
 
         var selectItem = $(scrollNavList.$el).find('li')[selectedIndex[i]]
         // console.log(selectItem, );
         scrollNavList.scrollToElement(selectItem, 0, true)
-        i++;
+        i++
       }
       this.$refs.scroll.scrollTo(0, 0, 300)
       setTimeout(() => {
-
         this.scrollY = 0
       }, 300)
-
     },
     onScrollEnd({ y }) {
       // console.log('onScrollEnd');
       const wrapperHeight = this.$refs.scroll.scroll.wrapperHeight
-      this.showToTop = Math.abs(y) > wrapperHeight * 3;
+      this.showToTop = Math.abs(y) > wrapperHeight * 3
     },
     onScroll({ y }) {
       this.scrollY = y
-
     },
     setClass(label, id) {
-      var _class = ['list-item', label, {}];
+      var _class = ['list-item', label, {}]
       _class[2].active = this.label[label].id == id
       return _class
     },
@@ -213,32 +229,29 @@ export default {
       this.$refs.listView.addData().catch(console.log)
     },
     getKey(keys) {
-      console.log(keys);
+      console.log(keys)
     },
     selectItem({ item, label, key, event }) {
       console.log(item)
-      this.label[label].id = item.id;
-      this.label[label].title = item.title;
-      const scrollNavList = this.$refs.scrollNavList[key];
+      this.label[label].id = item.id
+      this.label[label].title = item.title
+      const scrollNavList = this.$refs.scrollNavList[key]
       scrollNavList.scrollToElement(event.currentTarget, 300, true)
-
     },
     async getMvListCategory() {
-
-      var { data, code } = await this.__getJson(this.__MV_LIST_CATEGORY_URL)
-      if (code == 200) {
-        // console.log(data);
-        this.categoryMvData = data;
+      var { mv_tag, code } = await this.__getJson(this.__MV_LIST_CATEGORY_URL)
+      if (code == this.__QERR_OK) {
+        console.log('mv_tag.data', mv_tag.data)
+        this.categoryMvData = mv_tag.data
         this.getLabel(data)
       }
     },
     getLabel() {
-      var i = 0;
+      var i = 0
       for (var key in this.categoryMvData) {
         var items = this.categoryMvData[key]
         this.$set(this.label, key, { ...items[0], text: labelText[i++] })
       }
-
     },
     closeTip(key) {
       console.log(key)
@@ -246,8 +259,7 @@ export default {
       this.label[key].title = '全部'
     }
   }
-};
-
+}
 </script>
 <style lang="less">
 .mv-page {
@@ -263,16 +275,14 @@ export default {
     z-index: 10;
     width: 100%;
     color: #fff;
-    background: rgba(255, 255, 255, .5);
+    background: rgba(255, 255, 255, 0.5);
 
     backdrop-filter: blur(10px);
 
-
     .select-list {
-
       .select-item {
         width: 100px;
-        .font-dpr(12Px);
+        .font-dpr(12px);
       }
 
       .cubeic-close {
@@ -297,7 +307,7 @@ export default {
 
 .horizontal-scroll-list-wrap {
   padding-top: 8px;
-  border-bottom: 1Px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   // border-radius: 5px;
 
   .cube-scroll-content {
@@ -318,19 +328,18 @@ export default {
   .list-item {
     // width: 200px;
     padding: 0 20px;
-    display: inline-block
+    display: inline-block;
   }
-
 }
 
 .cube-picker-confirm,
 .cube-picker-cancel {
-  .font-dpr(13Px);
+  .font-dpr(13px);
 }
 
 .picker-enter-active,
 .picker-leave-active {
-  transition: all .4s;
+  transition: all 0.4s;
 }
 
 .picker-enter,
@@ -338,5 +347,4 @@ export default {
   transform: translate3d(0, -100%, 0);
   // opacity: 0;
 }
-
 </style>
