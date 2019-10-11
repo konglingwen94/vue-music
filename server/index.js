@@ -3,11 +3,11 @@ const singerCallback = require('./singerCallback.js')
 const searchCb = require('./searchCb.js')
 const musicPlayDataCb = require('./musicPlayData.js')
 // const IP = require('../config/local.js').IP
-
+const history = require('connect-history-api-fallback')
 const express = require('express')
 const path = require('path')
 const app = express()
-app.use(express.static(path.join(__dirname, '../dist')))
+app.use(history({})).use(express.static(path.join(__dirname, '../dist')))
 
 app.all('*', function(req, res, next) {
   res.header('Access-Control-Allow-Origin', '*')
