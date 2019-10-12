@@ -16,15 +16,15 @@
       class="native-vertical-scroll panel-wrap"
     >
       <transition-group tag="div" class="panel-content">
-        <div @click="toDetail(item)" :key="item.id" v-for="(item) in detailList" class="panel">
+        <div @click="toDetail(item)" :key="item.dissid" v-for="(item) in detailList" class="panel">
           <div class="picBox">
-            <img :key="item.id" class="layPic" v-lazy="item.pic" />
-            <p class="playCount">{{format(item.playCount)}}</p>
+            <img :key="item.id" class="layPic" v-lazy="item.imgurl" />
+            <p class="playCount">{{format(item.listennum)}}</p>
             <p class="createTime">{{item.createTime}}</p>
           </div>
           <div class="desc">
-            <p class="name ellipsis">{{item.name}}</p>
-            <p class="creator ellipsis">{{item.creator}}</p>
+            <p class="name ellipsis">{{item.dissname}}</p>
+            <p class="creator ellipsis">{{item.creator.name}}</p>
           </div>
         </div>
       </transition-group>
@@ -110,13 +110,15 @@ export default {
       this.sortId = id
     },
     async getSongSheetList() {
+      const { categoryId } = this.$route.query
       var param = {
-        categoryId: this.$route.query.categoryId
+        categoryId
       }
-      var { code, data } = await this.__getJson(this.__HOT_SONG_LIST, param)
-      if (code == 200) {
-        this.sequenceList = data
-        this.detailList = this.__clone__(data)
+      var { code, data } = await this.__getJson(this.__SONG_SHEET_LIST, param)
+        console.log(data)
+      if (code == 0) {
+        this.sequenceList = data.list
+        this.detailList = this.__clone__(data.list)
       }
     }
   }

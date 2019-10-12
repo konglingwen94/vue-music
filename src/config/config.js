@@ -24,11 +24,9 @@ export const __ROOT_SIZE = getRootSize()
 export const __SEARCH_URL = '/getSongSearchResult'
 export const __MV_LIST_CATEGORY_URL = '/getMvTagList'
 export const __HOT_MV_LIST_URL = '/getHotMvList'
-export const __SONG_LIST =
-  'https://api.bzqll.com/music/tencent/songList?key=579621905' //歌单
+export const __SONG_LIST = '/getSongList' //歌单
 export const __HOT_KEY = `/getHotKey` //热门搜索
-export const __HOT_SONG_LIST =
-  'https://api.bzqll.com/music/tencent/hotSongList?key=579621905'
+export const __SONG_SHEET_LIST = '/getSongSheetList'
 export const __SINGER_LIST =
   'https://c.y.qq.com/v8/fcg-bin/v8.fcg?page=list&key=all_all_all'
 

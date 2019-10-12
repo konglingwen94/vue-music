@@ -11,9 +11,9 @@ function setFontSize(style) {
   // 获取像素实际偶数值
   var size = getEvenNum(rem * __ROOT_SIZE)
   // 设置元素字体大小
-  console.log(style.fontSize)
+  // console.log(style.fontSize)
   style.fontSize = `${size}px`
-  console.log('set font-size:', size, 'px')
+  // console.log('set font-size:', size, 'px')
 }
 
 function setBorderWidth(style) {

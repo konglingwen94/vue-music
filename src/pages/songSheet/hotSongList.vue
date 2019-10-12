@@ -1,14 +1,21 @@
 <template>
   <div class="scroll-list-wrap">
-    <router-link tag="div" :to="list(data)" class="swipeItem" :key="data.id" v-for="data in hotSongList" ref="swipeItem">
+    <router-link
+      tag="div"
+      :to="list(data)"
+      class="swipeItem"
+      :key="data.id"
+      v-for="data in hotSongList"
+      ref="swipeItem"
+    >
       <div>
-        <img class="icon" v-lazy="data.imgurl">
+        <img class="icon" v-lazy="data.imgurl" />
       </div>
-        <div class="text">
-          <h2 class="item-name" v-html="data.creator.name
+      <div class="text">
+        <h2 class="item-name" v-html="data.creator.name
 "></h2>
-          <p class="item-desc line2" v-html="data.dissname"></p>
-        </div>
+        <p class="item-desc line2" v-html="data.dissname"></p>
+      </div>
     </router-link>
   </div>
 </template>
@@ -17,15 +24,14 @@ export default {
   name: 'hotSongList',
   data() {
     return {
-      lasttime: '',
-    };
+      lasttime: ''
+    }
   },
   props: {
     hotSongList: {
       type: Array,
-      default: [],
+      default: []
     }
-
   },
   computed: {},
   updated() {
@@ -41,13 +47,11 @@ export default {
       }
     }
   }
-};
-
+}
 </script>
 <style scoped lang="less">
-.scroll-list-wrap {}
-
-
+.scroll-list-wrap {
+}
 
 .swipeItem {
   display: flex;
@@ -70,5 +74,4 @@ export default {
     }
   }
 }
-
 </style>

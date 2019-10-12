@@ -8,7 +8,7 @@
         <mt-button icon="more" slot="right"></mt-button>
       </mt-header>
       <!-- 背景图片 -->
-      <div class="themePic" v-lazy:background-image="$route.query.pic">
+      <div class="themePic" v-lazy:background-image="$route.query.imgurl">
         <div v-show="Math.abs(scrollY)<picHeight-reserved" class="playBtn">
           <mt-button class="mt-button-play" :light="true" :primary="true" :outline="true">播放全部</mt-button>
         </div>
@@ -17,7 +17,16 @@
       <!-- 滚动遮罩 -->
       <div class="layer"></div>
       <!-- 歌曲列表 -->
-      <cube-scroll :data="musicList" :options="options" @pulling-up="onPullingUp" :scroll-events="['scroll']" :probeType="2" @scroll="onScroll" class="scrollWrap" ref="scroll">
+      <cube-scroll
+        :data="musicList"
+        :options="options"
+        @pulling-up="onPullingUp"
+        :scroll-events="['scroll']"
+        :probeType="2"
+        @scroll="onScroll"
+        class="scrollWrap"
+        ref="scroll"
+      >
         <music-list :marginTop="20" v-if="musicList.length" :list="musicList"></music-list>
       </cube-scroll>
     </div>
@@ -28,7 +37,7 @@ import MusicList from '../../components/musicList.vue'
 export default {
   name: 'songList',
   components: {
-    MusicList,
+    MusicList
   },
   data() {
     return {
@@ -43,7 +52,7 @@ export default {
       scrollY: 0,
       picHeight: 0,
       reserved: 0
-    };
+    }
   },
   props: ['mid'],
   created() {
@@ -56,7 +65,6 @@ export default {
       this.picHeight = $('.themePic').height()
       $('.scrollWrap').css('top', this.picHeight)
       this.minTranslateY = this.reserved - this.picHeight
-
     })
   },
   methods: {
@@ -68,7 +76,6 @@ export default {
       var scale = 0
       var blur = Math.min(30, 30 * percent)
       if (y > 0) {
-
         scale = 1 + percent
         $('.themePic').css({
           transform: `scale(${scale})`,
@@ -79,7 +86,7 @@ export default {
           $('.scrollWrap').css('overflow', 'visible')
         }
         $('.bg-layer').css({
-          '-webkit-backdrop-filter': `blur(${blur}px)`,
+          '-webkit-backdrop-filter': `blur(${blur}px)`
         })
       }
       $('.layer').css('transform', `translate3d(0,${translateY}px,0)`)
@@ -88,16 +95,15 @@ export default {
       } else if (y < 0 && y > this.minTranslateY) {
         // (33)
         $('.themePic').css({ 'z-index': 0, height: this.picHeight })
-
       }
     },
     onPullingUp() {
       // 加载更多数据
       this.song_begin += this.song_num
-      if (this.musicList.length >= this.total_song_num) {}
+      if (this.musicList.length >= this.total_song_num) {
+      }
 
-      this.getSongList();
-
+      this.getSongList()
     },
     initCd(cd) {
       this.$set(this.cd, 'dissname', cd.dissname)
@@ -110,16 +116,25 @@ export default {
     },
     async getSongList() {
       var params = {
-        id: this.$route.query.id,
-      };
-      var { data, code } = await this.__getJson(this.__SONG_LIST, params)
-      if (code === this.__BERR_OK) {
-        this.musicList = data.songs
+        dissid: this.$route.query.dissid
       }
-    },
+      var { cdlist: data, code } = await this.__getJson(
+        this.__SONG_LIST,
+        params
+      )
+      if (code === this.__QERR_OK) {
+        this.musicList = data[0].songlist.map(item => {
+          return {
+            songid: item.songid,
+            songmid: item.songmid,
+            name: item.songname,
+            singer: this.__format(item.singer)
+          }
+        })
+      }
+    }
   }
-};
-
+}
 </script>
 <style scoped lang="less">
 .my-loading {
@@ -154,7 +169,7 @@ export default {
   .bg-layer {
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, .3);
+    background: rgba(0, 0, 0, 0.3);
     position: absolute;
   }
 
@@ -167,20 +182,19 @@ export default {
   background-position: top center;
   position: relative;
 
-  .coverImg {}
+  .coverImg {
+  }
 }
-
 
 .layer {
   height: 1000px;
   background: #eee;
   position: absolute;
   width: 100%;
-  z-index: 1
+  z-index: 1;
 }
 
 .scrollWrap {
-
   height: 60vh;
   position: absolute;
   background: #eee;
@@ -188,11 +202,8 @@ export default {
   // padding: 10px;
   // padding-top: 18px;
 
-
-
   .loadTip {
     text-align: center;
   }
 }
-
 </style>

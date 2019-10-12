@@ -49,7 +49,7 @@ export default {
         option.lasttime = this.lasttime
       }
 
-      var { code, data } = await this.__getJson(`/getHotSongList`, option)
+      var { code, data } = await this.__getJson(this.__SONG_SHEET_LIST, option)
       // (data)
       let list = data.list
       list.forEach(item => {

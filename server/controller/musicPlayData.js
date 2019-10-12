@@ -1,36 +1,18 @@
 const request = require('request')
 const qs = require('querystring')
-const commonParams = require('./commonParams.js')
+const commonParams = require('../commonParams.js')
 
 exports.getMusicPlayData = function(req, res) {
-  // let query = req._parsedUrl.query;
-  let query = req._parsedUrl.query
-  query = qs.parse(query).mid
-  query = query.split(',')
-  // console.log(query)
+  const songmid = req.query.mid.split(',')
+
+   
   const songParams = {
     req: {
       module: 'vkey.GetVkeyServer',
       method: 'CgiGetVkey',
       param: {
         guid: '5165714425',
-        songmid: [
-          '000Qepff3UyUWO',
-          '001Qu4I30eVFYb',
-          '001TXSYu1Gwuwv',
-          '004VBMk71TdUuR',
-          '004dADLe4ec8RG',
-          '001CG3wA3QkuJS',
-          '000QwTVo0YHdcP',
-          '003v4UL61IYlTY',
-          '002BWGZQ2UKjKn',
-          '004PTqgl1ctBPM',
-          '001hUNRP0P8g7x',
-          '0032ZOkm0LBgHW',
-          '003TfyNp47dm7E',
-          '001RlxZp1xwoNK',
-          '000QCwge3B6Ad1',
-        ],
+        songmid,
         songtype: [],
         uin: '0',
         loginflag: 0,
@@ -46,7 +28,7 @@ exports.getMusicPlayData = function(req, res) {
       cv: 0,
     },
   }
-  songParams.req.param.songmid = query
+
   request(
     {
       method: 'POST',
@@ -87,22 +69,22 @@ exports.getLyric = function(req, res) {
     }
   })
 }
-exports.getBLyric = function(req, res) {
-  // body...
-  var query = req._parsedUrl.query
-  var id = qs.parse(query).id
-  // console.log(id)
-  var options = {
-    url: 'https://api.bzqll.com/music/tencent/lrc?key=579621905',
-    headers: {
-      // 'referer': 'http://y.qq.com'
-    },
-    qs: { id },
-  }
-  request(options, function(error, response, body) {
-    if (!error && response.statusCode == 200) {
-      res.end(body)
-      // console.log(body)
-    }
-  })
-}
+// exports.getBLyric = function(req, res) {
+//   // body...
+//   var query = req._parsedUrl.query
+//   var id = qs.parse(query).id
+//   // console.log(id)
+//   var options = {
+//     url: 'https://api.bzqll.com/music/tencent/lrc?key=579621905',
+//     headers: {
+//       // 'referer': 'http://y.qq.com'
+//     },
+//     qs: { id },
+//   }
+//   request(options, function(error, response, body) {
+//     if (!error && response.statusCode == 200) {
+//       res.end(body)
+//       // console.log(body)
+//     }
+//   })
+// }
