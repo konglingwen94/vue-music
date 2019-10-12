@@ -227,8 +227,8 @@ export default {
       this.$refs.scroll.scrollTo(0, 0, 400)
     },
     onPullingUp() {
-      this.queryNum.offset++
-      this.$refs.listView.addData().catch(console.log)
+      this.queryNum.offset += this.queryNum.limit
+      this.$refs.listView.addData().catch(console.error)
     },
     getKey(keys) {
       console.log(keys)
@@ -258,15 +258,14 @@ export default {
     },
     getLabel() {
       var i = 0
-      
+
       for (var key in this.categoryMvData) {
         var items = this.categoryMvData[key]
-        
+
         this.$set(this.label, key, { ...items[0], text: labelText[i++] })
       }
     },
     closeTip(key) {
-     
       this.label[key].id = 0
       this.label[key].title = '全部'
     }

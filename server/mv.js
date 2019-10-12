@@ -4,8 +4,7 @@ const request = require('request')
 const qs = require('querystring')
 
 exports.getHotMvList = function(req, res) {
-  let query = req._parsedUrl.query
-  query = qs.parse(query)
+  let query = req.query
 
   let data = {
     comm: { ct: 24 },
@@ -15,8 +14,8 @@ exports.getHotMvList = function(req, res) {
       param: {
         start: parseInt(query.offset),
         size: parseInt(query.limit),
-        version_id: 7,
-        area_id: 15,
+        version_id: query.version,
+        area_id: query.area,
         order: 1,
       },
     },
@@ -25,7 +24,6 @@ exports.getHotMvList = function(req, res) {
   let params = Object.assign(commonParams, {
     data: JSON.stringify(data),
   })
-
   var options = {
     method: 'GET',
     url: 'https://u.y.qq.com/cgi-bin/musicu.fcg',
@@ -35,6 +33,7 @@ exports.getHotMvList = function(req, res) {
       referer: 'https://y.qq.com',
     },
   }
+  console.log(query)
 
   request(options, function(error, response, body) {
     if (error) throw new Error(error)
@@ -58,7 +57,7 @@ exports.getMvTagList = function(req, res) {
   let params = Object.assign(commonParams, {
     data: JSON.stringify(data),
   })
-   
+
   var options = {
     method: 'GET',
     url: 'https://u.y.qq.com/cgi-bin/musicu.fcg',
@@ -76,8 +75,8 @@ exports.getMvTagList = function(req, res) {
 }
 
 exports.getMvData = function(req, res) {
-  let query = req._parsedUrl.query
-  query = qs.parse(query)
+  let query = req.query
+
   let params = Object.assign(
     commonParams,
     {

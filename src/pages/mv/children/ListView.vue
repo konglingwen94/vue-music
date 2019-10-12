@@ -81,6 +81,7 @@ export default {
         // console.log(mv_list)
         return mv_list.data.list.map(item => {
           item.videoType = this.__clone__(videoType)
+          item.singer = this.__format(item.singers)
           return item
         })
       } else {
