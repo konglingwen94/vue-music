@@ -717,11 +717,11 @@ export default {
     async getLyric() {
       var lyric = '',
         param = { id: this.currentSong.id }
-      if (this.currentSong.lrc !== undefined) {
-        lyric = await this.__get(`http://${domain}:3000/getBLyric`, param)
-      } else {
-        lyric = await this.currentSong.getLyric()
-      }
+      // if (this.currentSong.lrc !== undefined) {
+      // lyric = await this.__get(`/getBLyric`, param)
+      // } else {
+      lyric = await this.currentSong.getLyric()
+      // }
       this.currentLyric = new lyricParser(lyric, this.handleLyric)
       // this.current = 'current'
       if (this.currentLyric.lines.length > 0) {
@@ -900,7 +900,7 @@ export default {
 
       // 当前歌词
       .curLyric-wrapper {
-        .font-dpr(12px);
+        .font-dpr(12Px);
         height: 26px;
         overflow: hidden;
         text-align: center;
@@ -933,7 +933,7 @@ export default {
         .lyricLine {
           padding: 0 30px;
           margin-bottom: 16px;
-          .font-dpr(14px);
+          .font-dpr(14Px);
           color: hsla(130, 30%, 100%, 0.5);
 
           &:first-child {

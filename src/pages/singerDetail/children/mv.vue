@@ -33,7 +33,7 @@ export default {
   methods: {
     async getData() {
 
-      var { data } = await this.__getJson(`http://${domain}:3000/getMvData`, this.query)
+      var { data } = await this.__getJson(`/getMvData`, this.query)
       if (!this.total) {
         this.total = data.total; //记录数据总个数
       }

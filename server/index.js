@@ -9,20 +9,12 @@ const history = require('connect-history-api-fallback')
 const express = require('express')
 const path = require('path')
 const app = express()
+const router = express.Router()
+
 app
-.use(compress({ level: 8 }))
-.use(
-    history({
-      rewrites: [
-        {
-          from: '/get',
-          to(ctx) {
-            return ctx.parsedUrl.pathname
-          },
-        },
-      ],
-    })
-  )
+  .use(compress({ level: 8 }))
+  .use('/api', router)
+  .use(history())
   .use(express.static(path.join(__dirname, '../dist')))
 
 app.all('*', function(req, res, next) {
@@ -34,23 +26,23 @@ app.all('*', function(req, res, next) {
   next()
 })
 
-app.get('/getCategoryTags', Callback.getCategoryTags)
-app.get('/getHotSongList', Callback.getHotSongList)
-app.get('/getSongList', Callback.getSongList)
+router.get('/getCategoryTags', Callback.getCategoryTags)
+router.get('/getHotSongList', Callback.getHotSongList)
+router.get('/getSongList', Callback.getSongList)
 // 获取歌手数据
-app.get('/getMusicData', singerCallback.getMusicData)
-app.get('/getAlbumData', singerCallback.getAlbumData)
-app.get('/getMvData', singerCallback.getMvData)
-app.get('/getMusicPlayData', musicPlayDataCb.getMusicPlayData)
-app.get('/getLyric', musicPlayDataCb.getLyric)
-app.get('/getBLyric', musicPlayDataCb.getBLyric)
+router.get('/getMusicData', singerCallback.getMusicData)
+router.get('/getAlbumData', singerCallback.getAlbumData)
+router.get('/getMvData', singerCallback.getMvData)
+router.get('/getMusicPlayData', musicPlayDataCb.getMusicPlayData)
+router.get('/getLyric', musicPlayDataCb.getLyric)
+router.get('/getBLyric', musicPlayDataCb.getBLyric)
 // 获取搜索热词
-app.get('/getHotKey', searchCb.getHotKey)
-app.get('/getSongSearchResult', searchCb.getSongSearchResult)
+router.get('/getHotKey', searchCb.getHotKey)
+router.get('/getSongSearchResult', searchCb.getSongSearchResult)
 // 获取热门MV 列表
 
-app.get('/getHotMvList', mvCb.getHotMvList)
-app.get('/getMvTagList', mvCb.getMvTagList)
+router.get('/getHotMvList', mvCb.getHotMvList)
+router.get('/getMvTagList', mvCb.getMvTagList)
 
 // 开启服务
 app.listen(3000, () => {

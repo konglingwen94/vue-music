@@ -5,7 +5,7 @@ function __getJson(url, option = {}) {
   // debugger
   return new Promise((resolve, reject) => {
     $.ajax({
-      url,
+      url:`/api${url}`,
       dataType: 'json',
       method: 'get',
       data: option,

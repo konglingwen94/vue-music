@@ -4,9 +4,9 @@
       <nav-bar class="home-navbar" :navList="navList" namePrefix="home" ref="navbar"></nav-bar>
       <!-- <cube-loading class="loadingIcon" v-if="!pageLoaded"></cube-loading> -->
       <transition :name="transitionName">
-        <keep-alive>
+        <!-- <keep-alive> -->
           <router-view :style="zIndex" :key="$route.query.id" :class="[{fullScreenFixed},pageCls]" />
-        </keep-alive>
+        <!-- </keep-alive> -->
       </transition>
     </div>
     <!-- 音乐播放器 -->

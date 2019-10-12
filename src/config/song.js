@@ -1,5 +1,5 @@
+import request from './req'
 import remoteUrl from './remoteUrl.js'
-import request from 'request'
 
 export class __Song {
   constructor({ songid, songmid, albumid, albummid, songname, singer }) {
@@ -17,51 +17,37 @@ export class __Song {
       return Promise.resolve(this.lyric)
     }
     var _this = this
-    return new Promise((resolve, reject) => {
-      console.log(process.env.NODE_ENV)
-      var req = request(
-        {
-          url:
-            process.env.NODE_ENV === 'production'
-              ? 'http://106.54.230.205:3000/getLyric'
-              : 'http://localhost:3000/getLyric',
-          qs: { musicid: this.id },
-        },
-        function(error, response, body) {
-          if (!error && response.statusCode === 200) {
-            // resolve(body);
-            _this.lyric = normalizeLyric(JSON.parse(body).lyric)
-            resolve(_this.lyric)
-            
-          } else {
-            reject('no lyric')
-          }
-        }
-      )
-    })
+
+    return request
+      .__getJson('/getLyric', { musicid: this.id })
+      .then(function(body) {
+        return normalizeLyric(body.lyric)
+      })
+      .catch(() => 'No Lyric')
   }
 }
-export const getPlayUrl = async function(mids) {
-  // var mids
-  return new Promise((resolve, reject) => {
-    request(
-      {
-        method: 'POST',
-        url: remoteUrl.__SONG_URL,
-        headers: {
-          referer: 'http://u.y.qq.com',
-        },
-        body: songParams,
-      },
-      function(error, response, body) {
-        if (!error && response.statusCode == 200) {
-          resolve(body)
-        } else {
-        }
-      }
-    )
-  })
-}
+// export const getPlayUrl = async function(mids) {
+//   // var mids
+
+//   return new Promise((resolve, reject) => {
+//     request(
+//       {
+//         method: 'POST',
+//         url: remoteUrl.__SONG_URL,
+//         headers: {
+//           referer: 'http://u.y.qq.com',
+//         },
+//         body: songParams,
+//       },
+//       function(error, response, body) {
+//         if (!error && response.statusCode == 200) {
+//           resolve(body)
+//         } else {
+//         }
+//       }
+//     )
+//   })
+// }
 
 function format(singer_arr) {
   // body...

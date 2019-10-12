@@ -14,8 +14,8 @@ exports.getHotMvList = function(req, res) {
       param: {
         start: parseInt(query.offset),
         size: parseInt(query.limit),
-        version_id: query.version,
-        area_id: query.area,
+        version_id: parseInt(query.version),
+        area_id: parseInt(query.area),
         order: 1,
       },
     },
@@ -33,7 +33,7 @@ exports.getHotMvList = function(req, res) {
       referer: 'https://y.qq.com',
     },
   }
-  console.log(query)
+ 
 
   request(options, function(error, response, body) {
     if (error) throw new Error(error)

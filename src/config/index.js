@@ -2,8 +2,8 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import util from './util.js'
-import song from './song.js'
 import * as config from './config.js'
+import song from './song.js'
 import remoteUrl from './remoteUrl.js'
 import * as Dom from './dom.js'
 // 监测网络变化

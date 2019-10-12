@@ -2,12 +2,10 @@ import { getEvenNum } from './methods.js'
 import { __ROOT_SIZE } from './config.js'
 
 window.onload = function(argument) {
-  // body...
   eachStyleSheets(findRepairStyleSheets())
 }
 
 function setFontSize(style) {
-  // body...
   // 获取字体rem
   var rem = parseFloat(style.fontSize)
   // 获取像素实际偶数值
@@ -19,7 +17,6 @@ function setFontSize(style) {
 }
 
 function setBorderWidth(style) {
-  // body...
   // 获取字体rem
   var rem = parseFloat(style.fontSize)
   // 获取像素实际偶数值
@@ -29,7 +26,6 @@ function setBorderWidth(style) {
 }
 
 function eachStyleSheets(sheets) {
-  // body...
   Array.from(sheets).forEach(sheet => {
     try {
       if (sheet.cssRules) {
@@ -42,7 +38,6 @@ function eachStyleSheets(sheets) {
 }
 
 function eachCssRules(cssRules) {
-  // body...
   Array.from(cssRules).forEach(rule => {
     if (rule && rule.style) {
       findFontSize(rule.style)
@@ -51,9 +46,7 @@ function eachCssRules(cssRules) {
 }
 
 function findFontSize(style) {
-  // body...
   if (style.fontSize && style.fontSize.endsWith('rem')) {
-    // console.log(style.fontSize);
     setFontSize(style)
   }
 }

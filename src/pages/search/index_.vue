@@ -87,7 +87,7 @@ export default {
 
     },
     async getHotKey() {
-      var res = await this.__getJson(`http://${domain}:3000/getHotKey`);
+      var res = await this.__getJson(`/getHotKey`);
       if (res.code == this.__QERR_OK) {
         var { hotkey } = res.data
         this.hotkey = hotkey.slice(0, 10)

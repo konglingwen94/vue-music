@@ -16,7 +16,13 @@
     <!-- 偏移容器 -->
     <div class="offsetBody" :style="offsetBodyStyle">
       <!-- 导航栏 -->
-      <nav-bar @on-has-height="h=>navbarHeight=h" :style="[translateYStyle]" :query="$route.query" :navList="navList" class="navbar"></nav-bar>
+      <nav-bar
+        @on-has-height="h=>navbarHeight=h"
+        :style="[translateYStyle]"
+        :query="$route.query"
+        :navList="navList"
+        class="navbar"
+      ></nav-bar>
       <!-- 偏移遮罩 -->
       <div :style="[translateYStyle,layerStyle]" class="layer">
         <!-- 子页面初始化状态提示 -->
@@ -32,7 +38,15 @@
         <!-- 子页面保持状态 -->
         <keep-alive>
           <!-- 子页面载体 -->
-          <router-view ref="child" :pageState.sync="pageState" :offsetToTop="offsetToTop" :translateY="translateY" :scrollY.sync="scrollY" class="scroll-wrapper" :style="scrollStyle"></router-view>
+          <router-view
+            ref="child"
+            :pageState.sync="pageState"
+            :offsetToTop="offsetToTop"
+            :translateY="translateY"
+            :scrollY.sync="scrollY"
+            class="scroll-wrapper"
+            :style="scrollStyle"
+          ></router-view>
         </keep-alive>
       </div>
     </div>
@@ -61,7 +75,7 @@ export default {
         isAbort: false //加载中断
       },
       navbarHeight: 0 //导航列表高度
-    };
+    }
   },
   computed: {
     // 偏移主体
@@ -85,12 +99,11 @@ export default {
     // 实时偏移
     translateYStyle() {
       return {
-
         transform: `translateY(${this.translateY}px)`
       }
     },
     themeBgStyle() {
-      var height = '40vh';
+      var height = '40vh'
       height = this.offsetToTop ? this.topNavHeight + 'px' : height
       return {
         height,
@@ -102,10 +115,9 @@ export default {
       return {
         'backdrop-filter': `blur(${this.scrollY < 0 ? this.blur : 0}px)`
       }
-    },
+    }
   },
   watch: {
-
     scrollY(y) {
       // 设置向上滚动实际偏移距离
       this.translateY = Math.max(y, this.scrollMinY)
@@ -117,49 +129,47 @@ export default {
       // 设置图片模糊值
       this.blur = Math.min(30, 30 * percent)
       // 如果容器向下滚动，放大图片
-      this.zIndex = 0;
+      this.zIndex = 0
       // 判断是否滚动到顶部
       if (y <= this.scrollMinY) {
-        this.zIndex = 10;
+        this.zIndex = 10
         this.offsetToTop = true
       } else {
         this.offsetToTop = false
-
       }
       if (y > 0) {
         this.zIndex = 10
       }
-    },
+    }
   },
   created() {
-
     // 获取当前歌手列表信息总数
     this.getSingerTotal()
     // 获取歌手子路由信息
     // console.log(this.$options.__file);
     var name = this.$route.matched[0].name
-    var curRoute = this.$router.options.routes.find(item => item.name == _.camelCase(name))
+    var curRoute = this.$router.options.routes.find(
+      item => item.name == _.camelCase(name)
+    )
     // 获取当前列表导航项列表名称
     // console.log(curRoute.children);
-    this.navList = curRoute.children.map((item) => {
-      delete item.component;
-      delete item.path;
-      return item;
+    this.navList = curRoute.children.map(item => {
+      delete item.component
+      delete item.path
+      return item
     })
-
   },
   mounted() {
-
     this.$nextTick(() => {
       // 获取顶部导航栏高度
       this.topNavHeight = $('.mt-header').height()
       // 获取背景图片高度
-      this.picHeight = $('.themeBg').height();
+      this.picHeight = $('.themeBg').height()
       // 获取滚动容器高度
-      this.scrollWrapHeight = innerHeight - this.picHeight - this.navbarHeight;
+      this.scrollWrapHeight = innerHeight - this.picHeight - this.navbarHeight
 
       // 设置向上滚动最小偏移距离
-      this.scrollMinY = this.topNavHeight - this.picHeight;
+      this.scrollMinY = this.topNavHeight - this.picHeight
     })
   },
   methods: {
@@ -169,39 +179,37 @@ export default {
     },
 
     getSingerTotal() {
-      let singermid = this.$route.query.mid;
-      let num = 1;
-      Promise.all([this.__getJson(`http://${domain}:3000/getMusicData`, {
-        singermid,
-        num,
-      }), this.__getJson(`http://${domain}:3000/getAlbumData`, {
-        singermid,
-        num,
-      }), this.__getJson(`http://${domain}:3000/getMvData`, {
-        singermid,
-        num,
-      })]).then(res => {
-
+      let singermid = this.$route.query.mid
+      let num = 1
+      Promise.all([
+        this.__getJson(`/getMusicData`, {
+          singermid,
+          num
+        }),
+        this.__getJson(`/getAlbumData`, {
+          singermid,
+          num
+        }),
+        this.__getJson(`/getMvData`, {
+          singermid,
+          num
+        })
+      ]).then(res => {
         res.forEach((item, key) => {
           if (!item.singerAlbum) {
-            Vue.set(this.navList[key], 'total', item.data.total);
+            Vue.set(this.navList[key], 'total', item.data.total)
             // totalInfo.push(item.data.total)
-
           } else {
             Vue.set(this.navList[key], 'total', item.singerAlbum.data.total)
             // totalInfo.push(item.singerAlbum.data.total)
 
-            // this.navList[key].total = 
-
+            // this.navList[key].total =
           }
         })
-
       })
-
-    },
+    }
   }
-};
-
+}
 </script>
 <style scoped lang="less">
 .mt-header {
@@ -217,7 +225,7 @@ export default {
   transform-origin: top;
 
   .themeFilter {
-    background: rgba(0, 0, 0, .2);
+    background: rgba(0, 0, 0, 0.2);
     position: absolute;
     width: 100%;
     height: 100%;
@@ -243,7 +251,6 @@ export default {
 
 // 遮罩
 .layer {
-
   .posCenter(sonPageState);
 
   .sonPageState {
@@ -272,14 +279,12 @@ export default {
   // padding-top: 40px;
   // position: absolute;
   width: 100%;
-
 }
 
 .scroll-wrapper {
   // height: 350px;
   overflow: visible;
   background-color: #eee;
-  border: 1Px solid red;
+  border: 1px solid red;
 }
-
 </style>

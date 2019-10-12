@@ -31,7 +31,7 @@ export default {
 
     async getData() {
       // 获取响应数据
-      var res = await this.__getJson(`http://${domain}:3000/getAlbumData`, this.query) //等待响应完成
+      var res = await this.__getJson(`/getAlbumData`, this.query) //等待响应完成
       // 判断响应数据状态码
       if (res.code == 0) {
         // 获取专辑数据

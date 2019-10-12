@@ -2,13 +2,19 @@
   <div class="categoryGroup">
     <my-loading v-if="category.length===0"></my-loading>
     <x-header class="header-nav">全部分类</x-header>
-    <div :style="{paddingBottom:miniPlayerHeight+'px'}" class="table-wrapper native-vertical-scroll">
-      <x-table class="categoryTable" full-bordered v-for="(categoryGroupList,key)
- in category" :key="key">
+    <div
+      :style="{paddingBottom:miniPlayerHeight+'px'}"
+      class="table-wrapper native-vertical-scroll"
+    >
+      <x-table
+        class="categoryTable"
+        full-bordered
+        v-for="(categoryGroupList,key)
+ in category"
+        :key="key"
+      >
         <tbody>
-          <td valign="middle" class="categoryGroupName">
-            {{categoryGroupList.categoryGroupName}}
-          </td>
+          <td valign="middle" class="categoryGroupName">{{categoryGroupList.categoryGroupName}}</td>
           <tr class="categoryGroupList">
             <td width="33%" :key="key" v-for="(item,key) in categoryGroupList.items">
               <router-link tag="div" :to="targetRouter(item)">{{item.categoryName}}</router-link>
@@ -26,22 +32,21 @@ export default {
     return {
       category: [],
       loading: true
-    };
+    }
   },
 
   created() {
-
     this.getCategoryOriginData()
   },
   mounted() {
-    const navHeight = $('.header-nav').height();
-    console.log(navHeight);
-    const height = window.innerHeight - navHeight;
+    const navHeight = $('.header-nav').height()
+    console.log(navHeight)
+    const height = window.innerHeight - navHeight
     this.maxHeight = height
     $('.table-wrapper').css({ height })
   },
   deactivated() {
-    this.scrollTop = $('.table-wrapper').scrollTop();
+    this.scrollTop = $('.table-wrapper').scrollTop()
   },
   beforeRouteEnter(to, from, next) {
     if (to.meta.index > from.meta.index) {
@@ -49,36 +54,32 @@ export default {
       return
     }
     next(vm => {
-
       if (typeof vm.scrollTop === 'number') {
-
-        $('.table-wrapper')[0].scrollTo(0, vm.scrollTop);
+        $('.table-wrapper')[0].scrollTo(0, vm.scrollTop)
       }
     })
-
   },
 
   methods: {
     targetRouter(item) {
       // console.log(item)
-      var query = { id: item.categoryId, ...item };
+      var query = { id: item.categoryId, ...item }
       return {
         name: 'categoryDetail',
         query
       }
     },
     async getCategoryOriginData() {
-      const { data, code } = await this.__getJson(`http://${domain}:3000/getCategoryTags`)
+      const { data, code } = await this.__getJson(`/getCategoryTags`)
       if (code == 0) {
         // (data.data)
         this.category = data.categories
         // this.getRecommendCategory()
         this.loading = false
       }
-    },
+    }
   }
-};
-
+}
 </script>
 <style scoped lang="less">
 .my-loading {
@@ -111,7 +112,6 @@ export default {
 
 .categoryGroupName {
   width: 100px;
-  vertical-align: middle
+  vertical-align: middle;
 }
-
 </style>
