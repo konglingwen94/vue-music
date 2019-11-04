@@ -326,7 +326,6 @@ export default {
     },
     async currentSong(newSong, oldSong) {
       if (this.__isEmptyObject(newSong)) {
-         
         this.audio.src = ''
         return
       }
@@ -788,9 +787,9 @@ export default {
       this.songReady = true
     },
     onerror() {
-      console.log(this.audio.error, this.audio.networkState)
+      // console.log(this.audio.error, this.audio.networkState)
       if (this.audio.networkState === 3) {
-        this.audio.src = this.oldUrl
+        // this.audio.src = this.oldUrl
         this.curRange = this.oldRange
         this.audio.currentTime = this.currentTime
         this.$refs.volume.showToast.close()
@@ -900,7 +899,8 @@ export default {
 
       // 当前歌词
       .curLyric-wrapper {
-        .font-dpr(12Px);
+        .font-dpr(12Px); /* no  */
+
         height: 26px;
         overflow: hidden;
         text-align: center;
@@ -933,7 +933,8 @@ export default {
         .lyricLine {
           padding: 0 30px;
           margin-bottom: 16px;
-          .font-dpr(14Px);
+          .font-dpr(14Px); /* no  */
+
           color: hsla(130, 30%, 100%, 0.5);
 
           &:first-child {

@@ -140,11 +140,11 @@ export default {
       )
       if (code === this.__QERR_OK) {
         this.musicList = data[0].songlist.map(item => {
-          return new this.__createSong({
+          return new this.__Song({
             songid: item.songid,
             songmid: item.songmid,
-            name: item.songname,
-            singer: this.__format(item.singer)
+            songname: item.songname,
+            singer: item.singer
           })
         })
         this.playPromise = this.getSongUrl(this.musicList)
