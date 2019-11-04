@@ -25,16 +25,15 @@ import store from './store/index.js'
 import Vue from 'vue'
 
 // 引入调试工具
-import vconsole from 'vconsole'
+// import vconsole from 'vconsole'
 
 import App from './App'
-// import App from './App'
 import router from './router'
 import FastClick from 'fastclick'
 import VueLazyLoad from 'vue-lazyload'
 
 // import Cube from 'cube-ui'
-import vueTap from 'v-tap';
+import vueTap from 'v-tap'
 
 // 全局设置mixin
 import './common/mixins/global.js'
@@ -42,7 +41,7 @@ import './common/mixins/global.js'
 // require('es6-promise').polyfill();
 // require('es6-promise/auto');
 
-Vue.use(vueTap);
+Vue.use(vueTap)
 
 // Vue.use(Resource)
 
@@ -50,32 +49,32 @@ Vue.use(vueTap);
 
 // new vconsole()
 
-
 Vue.use(VueLazyLoad, {
   // preLoad: 1,
   error: require('./assets/logo.png'),
-  loading: require('./assets/logo.png')
+  loading: require('./assets/logo.png'),
 })
 
-
-
 if ('addEventListener' in document) {
-  document.addEventListener('DOMContentLoaded', function() {
-    FastClick.attach(document.body);
-  }, false);
+  document.addEventListener(
+    'DOMContentLoaded',
+    function() {
+      FastClick.attach(document.body)
+    },
+    false
+  )
 }
 
-
 Vue.config.productionTip = false
+Vue.config.devtools = true
 
 /* eslint-disable no-new */
-window.store = store
-
+// window.store = store
 
 new Vue({
   el: '#app',
   router,
   store,
   template: '<App/>',
-  components: { App }
+  components: { App },
 })

@@ -326,7 +326,7 @@ export default {
     },
     async currentSong(newSong, oldSong) {
       if (this.__isEmptyObject(newSong)) {
-        // console.log(newSong);
+         
         this.audio.src = ''
         return
       }

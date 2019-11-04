@@ -40,7 +40,7 @@ export default {
   },
   mounted() {
     const navHeight = $('.header-nav').height()
-    console.log(navHeight)
+     
     const height = window.innerHeight - navHeight
     this.maxHeight = height
     $('.table-wrapper').css({ height })

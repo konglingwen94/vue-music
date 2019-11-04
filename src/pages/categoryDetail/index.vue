@@ -68,7 +68,8 @@ export default {
       detailList: [],
       sorts,
       sortId: 0,
-      sequenceList: []
+      sequenceList: [],
+      pagination: { sin: 0, ein: 20 }
     }
   },
   created() {
@@ -93,6 +94,12 @@ export default {
     const height = window.innerHeight - top
     // console.log(top)
     $('.panel-wrap').css({ height })
+    const threshold = 30
+    this.$refs.container.onscroll = function() {
+      if (this.scrollTop + this.clientHeight + threshold > this.scrollHeight) {
+        console.log('scroll to bottom')
+      }
+    }
   },
   methods: {
     format(count) {
@@ -112,10 +119,12 @@ export default {
     async getSongSheetList() {
       const { categoryId } = this.$route.query
       var param = {
-        categoryId
+        categoryId,
+        sin: this.pagination.sin,
+        ein: this.pagination.ein
       }
       var { code, data } = await this.__getJson(this.__SONG_SHEET_LIST, param)
-        console.log(data)
+      console.log(data)
       if (code == 0) {
         this.sequenceList = data.list
         this.detailList = this.__clone__(data.list)

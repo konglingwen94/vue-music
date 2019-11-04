@@ -4,10 +4,12 @@
   "description": "vue-music app",
   "author": "konglingwen <794430774@qq.com>",
   "private": true,
-  "keywords": "vue-music app",
+  "keywords": [
+    "vue-music app"
+  ],
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
-    "start": "npm run dev",
+    "start": "npm run server & npm run dev",
     "server": "node server",
     "server:dev": "nodemon server",
     "unit": "jest --config test/unit/jest.conf.js --coverage",

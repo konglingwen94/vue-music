@@ -114,6 +114,22 @@ export default {
         this.musicList.push(new this.__Song(item))
       })
     },
+    async getSongUrl(list) {
+      var mids = list.map(song => {
+        return song.mid
+      })
+      const songParams = {
+        mid: mids.join(',')
+      }
+      var { code, req } = await this.__getJson(`/getMusicPlayData`, songParams)
+      if (code == this.__QERR_OK && req.code == this.__QERR_OK) {
+        var { midurlinfo } = req.data
+        midurlinfo.forEach((mid, index) => {
+          list[index].url = `${this.SONG_SOURCE}${mid.purl}`
+        })
+        // console.log(list)
+      }
+    },
     async getSongList() {
       var params = {
         dissid: this.$route.query.dissid
@@ -124,13 +140,16 @@ export default {
       )
       if (code === this.__QERR_OK) {
         this.musicList = data[0].songlist.map(item => {
-          return {
+          return new this.__createSong({
             songid: item.songid,
             songmid: item.songmid,
             name: item.songname,
             singer: this.__format(item.singer)
-          }
+          })
         })
+        this.playPromise = this.getSongUrl(this.musicList)
+
+        console.log(this.musicList)
       }
     }
   }
