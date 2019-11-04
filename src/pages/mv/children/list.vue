@@ -87,7 +87,10 @@ export default {
   watch: {
     'currentMv.videoType.index': function(index) {
       // body...
-      this.currentVdo.src = this.currentMv.urls[index]
+      if(index){
+
+        this.currentVdo.src = this.currentMv.urls[index]
+      }
     },
     // body...
     currentVdo(newVdo, oldVdo) {

@@ -6,7 +6,7 @@ const qs = require('querystring')
 module.exports.getMusicData = function(req, res) {
   let query = req._parsedUrl.query
   query = qs.parse(query)
-  let params = Object.assign(
+  let params = Object.assign({},
     commonParams,
     {
       format: 'json',
@@ -49,7 +49,7 @@ module.exports.getAlbumData = function(req, res) {
       module: 'music.web_singer_info_svr',
     },
   }
-  let params = Object.assign(commonParams, {
+  let params = Object.assign({},commonParams, {
     data: JSON.stringify(data),
   })
   // console.log(JSON.stringify(params))
@@ -71,7 +71,7 @@ module.exports.getAlbumData = function(req, res) {
 
 module.exports.getMvData = function(req, res) {
   const query = req.query
-  let params = Object.assign(
+  let params = Object.assign({},
     commonParams,
     {
       order: 'listen',
