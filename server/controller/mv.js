@@ -21,7 +21,7 @@ exports.getHotMvList = function(req, res) {
     },
   }
 
-  let params = Object.assign(commonParams, {
+  let params = Object.assign({},commonParams, {
     data: JSON.stringify(data),
   })
   var options = {
@@ -33,7 +33,6 @@ exports.getHotMvList = function(req, res) {
       referer: 'https://y.qq.com',
     },
   }
- 
 
   request(options, function(error, response, body) {
     if (error) throw new Error(error)
@@ -54,7 +53,7 @@ exports.getMvTagList = function(req, res) {
       param: {},
     },
   }
-  let params = Object.assign(commonParams, {
+  let params = Object.assign({},commonParams, {
     data: JSON.stringify(data),
   })
 
@@ -74,10 +73,40 @@ exports.getMvTagList = function(req, res) {
   })
 }
 
+exports.getMvPlayUrl = (req, res) => {
+  const vids = req.query.vids
+
+  const data = {
+    getMvUrl: {
+      module: 'gosrf.Stream.MvUrlProxy',
+      method: 'GetMvUrls',
+      param: { vids, request_typet: 10001 },
+    },
+  }
+
+  var options = {
+    method: 'GET',
+    url: 'https://u.y.qq.com/cgi-bin/musicu.fcg',
+    qs: {
+      data: JSON.stringify(data),
+      ...commonParams,
+    },
+    headers: {
+      'cache-control': 'no-cache',
+    },
+  }
+
+  request(options, function(error, response, body) {
+    if (error) throw new Error(error)
+    res.end(body)
+  })
+}
+
 exports.getMvData = function(req, res) {
   let query = req.query
 
   let params = Object.assign(
+    {},
     commonParams,
     {
       order: 'listen',

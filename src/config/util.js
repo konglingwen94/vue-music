@@ -86,5 +86,5 @@ export default {
 
     return eval('this.get' + matrix)
   },
-  ...querystring,
+  querystring,
 }

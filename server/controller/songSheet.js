@@ -56,7 +56,7 @@ exports.getSongList = function(req, res) {
       json: 1,
       utf8: 1,
       onlysong: 0,
-      disstid: req.query.dissid,
+      ...req.query
     }
     // req.query
   )

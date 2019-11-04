@@ -3,12 +3,13 @@
     <!-- 悬浮 -->
     <transition name="picker">
       <div @click="showMutiPicker" v-show="isShow" class="select-wrapper">
-        <cube-button class="select-list iflex around" outline primary>
-          <span
-            class="select-item"
-            :key="key"
-            v-for="(item,key) in showSelect"
-          >{{item.text}}--{{item.title}}</span>
+        <cube-button class="iflex around" outline primary>
+          <div class="select-list">
+            <div class="select-item" :key="key" v-for="(item,key) in showSelect">
+              <label for>{{item.text}}</label>--
+              <span>{{item.title}}</span>
+            </div>
+          </div>
           <i class="cubeic-select"></i>
         </cube-button>
       </div>
@@ -291,9 +292,13 @@ export default {
     backdrop-filter: blur(10px);
 
     .select-list {
+      display: flex;
+      width: 100%;
+      justify-content: space-around;
       .select-item {
         width: 100px;
-        .font-dpr(12px);
+        .font-dpr(12Px);
+        /* no */
       }
 
       .cubeic-close {

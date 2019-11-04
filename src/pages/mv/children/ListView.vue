@@ -16,15 +16,15 @@ const pickerData = [
   { text: '超清', value: '1080' }
 ]
 const videoParams = [
-  { index: 0, r: 1 },
-  { index: 1, r: 2 },
-  { index: 2, r: 3 },
-  { index: 3, r: 4 }
+  { index: 0,  },
+  { index: 1,  },
+  { index: 2,  },
+  { index: 3,  }
 ]
 
 const r = 1
 const merge = _.merge([], pickerData, videoParams)
-const videoType = merge.find(item => item.r === r)
+const videoType = merge[0]
 
 export default {
   name: '',
@@ -79,9 +79,20 @@ export default {
       })
       if (code == this.__QERR_OK) {
         // console.log(mv_list)
-        return mv_list.data.list.map(item => {
+
+        const { list } = mv_list.data
+        const vids = list.map(item => item.vid)
+        const {
+          getMvUrl: { data: urlData }
+        } = await this.__getJson('/getMvPlayUrl', { vids })
+
+        return list.map(item => {
           item.videoType = this.__clone__(videoType)
           item.singer = this.__format(item.singers)
+          item.url = urlData[item.vid].mp4[1].freeflow_url[0]
+          item.urls = urlData[item.vid].mp4
+            .filter((item, index) => index > 0)
+            .map(item => item.freeflow_url[0])
           return item
         })
       } else {

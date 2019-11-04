@@ -71,7 +71,6 @@ export default {
         midurlinfo.forEach((mid, index) => {
           list[index].url = `${this.SONG_SOURCE}${mid.purl}`
         })
-        // console.log(list)
       }
     }
   }

@@ -12,6 +12,7 @@ export class __Song {
     this.albummid = albummid
     this.albumid = albumid
   }
+
   getLyric() {
     if (this.lyric) {
       return Promise.resolve(this.lyric)

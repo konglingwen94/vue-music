@@ -22,5 +22,6 @@ router.get('/getSongSearchResult', searchCb.getSongSearchResult)
 
 router.get('/getHotMvList', mvCb.getHotMvList)
 router.get('/getMvTagList', mvCb.getMvTagList)
+router.get('/getMvPlayUrl', mvCb.getMvPlayUrl)
 
 module.exports = router

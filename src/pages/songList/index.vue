@@ -19,8 +19,8 @@
       <!-- 歌曲列表 -->
       <cube-scroll
         :data="musicList"
-        :options="options"
-        @pulling-up="onPullingUp"
+         
+         
         :scroll-events="['scroll']"
         :probeType="2"
         @scroll="onScroll"
@@ -41,7 +41,7 @@ export default {
   },
   data() {
     return {
-      options: this.options,
+     
       isLoading: true,
       loadEnd: false,
       total_song_num: 0,
@@ -132,7 +132,9 @@ export default {
     },
     async getSongList() {
       var params = {
-        dissid: this.$route.query.dissid
+        disstid: this.$route.query.dissid,
+        begin: this.song_begin,
+        num: this.song_num
       }
       var { cdlist: data, code } = await this.__getJson(
         this.__SONG_LIST,
@@ -140,16 +142,18 @@ export default {
       )
       if (code === this.__QERR_OK) {
         this.musicList = data[0].songlist.map(item => {
-          return new this.__Song({
-            songid: item.songid,
-            songmid: item.songmid,
-            songname: item.songname,
-            singer: item.singer
-          })
+          return new this.__Song(
+            this.__pick__(item, [
+              'songid',
+              'songmid',
+              'albummid',
+              'albumid',
+              'singer',
+              'songname'
+            ])
+          )
         })
         this.playPromise = this.getSongUrl(this.musicList)
-
-        console.log(this.musicList)
       }
     }
   }

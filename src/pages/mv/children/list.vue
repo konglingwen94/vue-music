@@ -85,11 +85,9 @@ export default {
     )
   },
   watch: {
-    'currentMv.videoType.r': function(newR) {
+    'currentMv.videoType.index': function(index) {
       // body...
-      if (newR) {
-        this.reloadVideo()
-      }
+      this.currentVdo.src = this.currentMv.urls[index]
     },
     // body...
     currentVdo(newVdo, oldVdo) {
@@ -128,12 +126,7 @@ export default {
       return this.currentMv ? this.currentMv.videoType : null
     },
     selected() {
-      return this.currentMv
-        ? { r: this.currentMv.videoType.r, index: this.selectedIndex[0] }
-        : null
-    },
-    r() {
-      return this.currentMv ? this.currentMv.videoType.r : -1
+      return this.currentMv ? { index: this.selectedIndex[0] } : null
     },
     selectedIndex() {
       return this.currentMv ? [this.currentMv.videoType.index] : [-1]
@@ -151,9 +144,9 @@ export default {
           $props: {
             selectedIndex: 'selectedIndex'
           },
-          alias: {
-            value: 'r'
-          },
+          // alias: {
+          //   value: 'r'
+          // },
           data: [this.$attrs.pickerData],
           onSelect: this.selectHandle
           // onCancel: this.cancelHandle
@@ -164,13 +157,7 @@ export default {
     selectHandle(selectedVal, selectedIndex, selectedText) {
       this.currentMv.videoType.index = selectedIndex[0]
       this.currentMv.videoType.text = selectedText[0]
-      this.currentMv.videoType.r = selectedVal[0]
-    },
-    reloadVideo() {
-      let _urlObj = this.parse(this.currentMv.url)
-      _urlObj.r = this.currentMv.videoType.r
-      let url = this.unescape(this.stringify(_urlObj))
-      this.currentVdo.src = url
+      // this.currentMv.videoType.r = selectedVal[0]
     },
 
     onloadstart(e) {
@@ -207,11 +194,7 @@ export default {
       if (this.currentVdo === e.target) {
         return
       }
-      let _urlObj = this.parse(mv.url)
-      _urlObj.r = mv.videoType.r
-      let url = this.unescape(this.stringify(_urlObj))
-      mv._url = url
-      e.target.src = url
+      e.target.src = mv.urls[mv.videoType.index]
 
       this.currentVdo = e.target
       this.currentMv = mv
@@ -220,10 +203,6 @@ export default {
 }
 </script>
 <style>
-video::-webkit-media-controls-overlay-enclosure {
-  /*background: blue !important;*/
-}
-
 video:-webkit-full-screen div {
   padding-right: 40px !important;
   color: red !important;
