@@ -1,7 +1,20 @@
 <template>
   <!-- <div class="album-page"> -->
-  <cube-scroll @click.native="!inited && refreshPage()" @pulling-up="onPullingUp" ref="scroll" :scroll-events="['scroll','scroll-end']" @scroll="onScroll" :options="options">
-    <list-view name="music-list" hasImg :list="list" :keyInfo="{picUrl:'albumImg',desc:'creator',title:'name'}" />
+  <cube-scroll
+    @click.native="!inited && refreshPage()"
+    @pulling-up="onPullingUp"
+    ref="scroll"
+    :scroll-events="['scroll','scroll-end']"
+    @scroll="onScroll"
+    :options="options"
+  >
+    <list-view
+      @album-selected="onSelected"
+      name="album-list"
+      hasImg
+      :list="list"
+      :keyInfo="{picUrl:'albumImg',desc:'creator',title:'name'}"
+    />
     <!-- <album-list :albumList="list"></album-list> -->
   </cube-scroll>
   <!-- </div> -->
@@ -18,9 +31,9 @@ export default {
   data() {
     return {
       list: [],
-      onloaded: false,
+      onloaded: false
       // first: true,
-    };
+    }
   },
   computed: {},
   created() {
@@ -28,14 +41,25 @@ export default {
   },
 
   methods: {
-
+    onSelected(item) {
+      this.$router.push({
+        name: 'songList',
+        query: {
+          ...item,
+          disstid: item.id,
+          type: 'album',
+          imgurl: item.albumImg
+        }
+      })
+      console.log('on-selected', item)
+    },
     async getData() {
       // 获取响应数据
       var res = await this.__getJson(`/getAlbumData`, this.query) //等待响应完成
       // 判断响应数据状态码
       if (res.code == 0) {
         // 获取专辑数据
-        let albumData = res.singerAlbum.data;
+        let albumData = res.singerAlbum.data
         // 判断首次加载
         if (this.total == 0) {
           // 获取总数
@@ -43,7 +67,7 @@ export default {
         }
         // 标记网络正常
 
-        this.netNormal = true;
+        this.netNormal = true
 
         // 格式化新数据
         return this.normalizeData(albumData.list)
@@ -68,14 +92,13 @@ export default {
       return this.forceUpdated()
     }
   }
-};
-
+}
 </script>
 <style scoped lang="less">
-.album-page {}
+.album-page {
+}
 
 .loading-wrap {
   // height: 700px;
 }
-
 </style>

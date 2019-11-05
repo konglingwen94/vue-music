@@ -5,7 +5,7 @@
       <nav-bar class="home-navbar" :navList="navList" namePrefix="home" ref="navbar"></nav-bar>
       <!-- <cube-loading class="loadingIcon" v-if="!pageLoaded"></cube-loading> -->
       <transition :name="transitionName">
-        <keep-alive max="10">
+        <keep-alive max="1">
           <router-view :style="zIndex" :key="$route.query.id" :class="[{fullScreenFixed},pageCls]" />
         </keep-alive>
       </transition>

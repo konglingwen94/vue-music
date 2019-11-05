@@ -1,6 +1,9 @@
 <template>
   <div>
-    <my-loading v-if="musicList.length===0"></my-loading>
+    <my-loading v-if="loading"></my-loading>
+    <div class="no-data-wrap" v-if="!loading && musicList.length===0">
+      <span class="text">暂无数据</span>
+    </div>
     <div>
       <!-- 顶部导航 -->
       <mt-header class="mt-header" fixed :title="cd.dissname">
@@ -31,14 +34,13 @@
   </div>
 </template>
 <script type="text/javascript">
-import MusicList from '../../components/musicList.vue'
 export default {
   name: 'songList',
-  components: {
-    MusicList
-  },
+
   data() {
     return {
+      loading: false,
+      type: this.$route.query.type,
       isLoading: true,
       loadEnd: false,
       total_song_num: 0,
@@ -131,18 +133,45 @@ export default {
       }
     },
     async getSongList() {
-      var params = {
-        disstid: this.$route.query.dissid,
-        begin: this.song_begin,
-        num: this.song_num
-      }
-      var { cdlist: data, code } = await this.__getJson(
-        this.__SONG_LIST,
-        params
-      )
-      await this.getSongUrl(data[0].songlist)
+      const commonParams = { begin: this.song_begin, num: this.song_num }
+      this.loading = true
+      const action =
+        this.type === 'album'
+          ? this.__getJson('/getAlbumSongList', {
+              ...commonParams,
+              albumMid: this.$route.query.mid,
+              albumID: this.$route.query.id
+            })
+          : this.__getJson(this.__SONG_LIST, {
+              disstid: this.$route.query.dissid,
+              ...commonParams
+            })
+      let songlist = [],
+        code
+      await action
+        .then(response => {
+          // console.log('response', response.albumSonglist.data.songList.map(item => item.songInfo),)
+          code = response.code
+          songlist =
+            this.type === 'album'
+              ? response.albumSonglist.data.songList.map(item => {
+                  item.songInfo.songmid = item.songInfo.mid
+                  item.songInfo.songid = item.songInfo.id
+                  item.songInfo.songname = item.songInfo.name
+                  item.songInfo.albumid = item.songInfo.album.id
+                  item.songInfo.albummid = item.songInfo.album.mid
+
+                  return item.songInfo
+                })
+              : response.cdlist[0].songlist
+        })
+        .catch(console.error)
+      await this.getSongUrl(songlist).catch(console.error)
+      this.loading = false
+
       if (code === this.__QERR_OK) {
-        this.musicList = data[0].songlist
+        console.log(songlist, code)
+        this.musicList = songlist
           .filter(item => item.purl)
           .map(item => {
             return new this.__Song(
@@ -207,9 +236,6 @@ export default {
   background-size: cover;
   background-position: top center;
   position: relative;
-
-  .coverImg {
-  }
 }
 
 .layer {
@@ -231,5 +257,14 @@ export default {
   .loadTip {
     text-align: center;
   }
+}
+
+.no-data-wrap {
+  position: fixed;
+  top: 70%;
+  text-align: center;
+  width: 100%;
+  z-index: 100;
+  .font-dpr(12Px)
 }
 </style>

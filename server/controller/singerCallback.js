@@ -1,19 +1,17 @@
 const commonParams = require('../config/commonParams.js')
 const path = require('path')
 const request = require('request')
-const qs = require('querystring')
 
-module.exports.getMusicData = function(req, res) {
-  let query = req._parsedUrl.query
-  query = qs.parse(query)
-  let params = Object.assign({},
+exports.getMusicData = function(req, res) {
+  let params = Object.assign(
+    {},
     commonParams,
     {
       format: 'json',
       order: 'listen',
       songstatus: '1',
     },
-    query
+    req.query
   )
 
   var options = {
@@ -32,7 +30,7 @@ module.exports.getMusicData = function(req, res) {
   })
 }
 
-module.exports.getAlbumData = function(req, res) {
+exports.getAlbumData = function(req, res) {
   const query = req.query
   // query = qs.stringify(query)
   let data = {
@@ -49,7 +47,7 @@ module.exports.getAlbumData = function(req, res) {
       module: 'music.web_singer_info_svr',
     },
   }
-  let params = Object.assign({},commonParams, {
+  let params = Object.assign({}, commonParams, {
     data: JSON.stringify(data),
   })
   // console.log(JSON.stringify(params))
@@ -69,9 +67,10 @@ module.exports.getAlbumData = function(req, res) {
   })
 }
 
-module.exports.getMvData = function(req, res) {
+exports.getMvData = function(req, res) {
   const query = req.query
-  let params = Object.assign({},
+  let params = Object.assign(
+    {},
     commonParams,
     {
       order: 'listen',
@@ -92,6 +91,43 @@ module.exports.getMvData = function(req, res) {
   request(options, function(error, response, body) {
     if (error) throw new Error(error)
 
+    res.end(body)
+  })
+}
+
+exports.getAlbumSongList = (req, res) => {
+  const { albumMid, albumID, begin, num } = req.query
+
+  const data = {
+    comm: { ct: 24, cv: 10000 },
+    albumSonglist: {
+      method: 'GetAlbumSongList',
+      param: {
+        albumMid,
+        albumID:parseInt(albumID),
+        begin: parseInt(begin),
+        // num: parseInt(num),
+        order: 2,
+      },
+      module: 'music.musichallAlbum.AlbumSongList',
+    },
+  }
+
+  const qs = Object.assign({}, commonParams, {
+    data: JSON.stringify(data),
+  })
+
+  const options = {
+    url: 'https://u.y.qq.com/cgi-bin/musicu.fcg',
+    qs,
+    headers: {
+      referer: 'https://y.qq.com',
+    },
+  }
+   
+
+  request(options, (err, response, body) => {
+    if (err) return
     res.end(body)
   })
 }

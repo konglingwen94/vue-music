@@ -3,11 +3,16 @@
     <!-- 列表容器 -->
     <ul :class="['list-wrapper',{twoColumn}]">
       <!-- 列表项 -->
-      <li @click="selectPlay(item,key)" :class="['list-item',{twoColumn}]" v-for="(item,key) in list" :key="key">
+      <li
+        @click="selectPlay(item,key)"
+        :class="['list-item',{twoColumn}]"
+        v-for="(item,key) in list"
+        :key="key"
+      >
         <!-- 图片插槽 -->
         <div :style="picWrapStyle" :class="['pic-wrap',{twoColumn}]" v-if="hasImg">
           <slot name="img">
-            <img class="pic" v-lazy="item[bind_key.picUrl]">
+            <img class="pic" v-lazy="item[bind_key.picUrl]" />
           </slot>
         </div>
         <!-- 文案内容 -->
@@ -26,9 +31,7 @@
 <script type="text/javascript">
 export default {
   data() {
-    return {
-
-    };
+    return {}
   },
   props: {
     hasIndex: {
@@ -41,7 +44,7 @@ export default {
     },
     list: {
       type: Array,
-      default: () => ([])
+      default: () => []
     },
     twoColumn: {
       type: Boolean,
@@ -71,7 +74,7 @@ export default {
         title: 'title',
         desc: 'desc',
         picUrl: 'picUrl',
-        ...this.keyInfo,
+        ...this.keyInfo
       }
     }
   },
@@ -80,11 +83,17 @@ export default {
   },
   methods: {
     selectPlay(item, index) {
-      this.$emit('selectPlay', item, index)
+      switch (this.name) {
+        case 'album-list':
+          this.$emit('album-selected', item)
+          break
+        case 'mv-list':
+          this.$emit('mvSelected', item)
+      }
+
     }
   }
-};
-
+}
 </script>
 <style scoped lang="less">
 .list {
@@ -92,7 +101,6 @@ export default {
 
   .list-wrapper {
     &.twoColumn {
-
       display: flex;
       flex-wrap: wrap;
     }
@@ -101,14 +109,12 @@ export default {
 
 // 列表项
 .list-item {
-
   &.twoColumn {
     width: 50%;
     margin-bottom: 14px;
     display: block;
 
     &:nth-child(odd) {
-
       padding-right: 10px;
     }
   }
@@ -162,7 +168,6 @@ export default {
       }
     }
 
-
     // 竖向布局
     &.isVertical {
       display: block;
@@ -177,5 +182,4 @@ export default {
     }
   }
 }
-
 </style>
