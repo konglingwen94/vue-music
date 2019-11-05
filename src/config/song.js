@@ -2,12 +2,14 @@ import request from './req'
 import remoteUrl from './remoteUrl.js'
 
 export class __Song {
-  constructor({ songid, songmid, albumid, albummid, songname, singer }) {
+  constructor({ url='', songid, songmid, albumid, albummid, songname, singer }) {
     this.id = songid
     this.mid = songmid
     this.name = songname
     this.singer = format(singer)
-    // this.url = url;
+    if (url) {
+      this.url = url
+    }
     this.pic = remoteUrl.__albumImg(albummid)
     this.albummid = albummid
     this.albumid = albumid

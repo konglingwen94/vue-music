@@ -1,4 +1,4 @@
-const commonParams = require('../commonParams.js')
+const commonParams = require('../config/commonParams.js')
 const path = require('path')
 const request = require('request')
 const qs = require('querystring')

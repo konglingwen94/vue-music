@@ -70,12 +70,34 @@ export default {
       })
       if (code == this.__QERR_OK) {
         const vm = this
-
+        this.playPromise = await this.getSongUrl(data.song.list)
         return data.song.list.map(item => {
-          return {
-            name: item.songname,
-            singer: vm.__format(item.singer),
-          }
+          return new this.__Song(
+            this.__pick__(item, [
+              'songid',
+              'songmid',
+              'albummid',
+              'albumid',
+              'singer',
+              'url',
+              'songname',
+            ])
+          )
+        })
+      }
+    },
+    async getSongUrl(list) {
+      var mids = list.map(song => {
+        return song.songmid
+      })
+      const songParams = {
+        mid: mids.join(','),
+      }
+      var { code, req } = await this.__getJson(`/getMusicPlayData`, songParams)
+      if (code == this.__QERR_OK && req.code == this.__QERR_OK) {
+        var { midurlinfo } = req.data
+        midurlinfo.forEach((mid, index) => {
+          list[index].url = `${this.SONG_SOURCE}${mid.purl}`
         })
       }
     },

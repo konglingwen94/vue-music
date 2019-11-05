@@ -33,8 +33,8 @@
             :class="{active:item.type==showType}"
             @click="selectType(item.id)"
             class="nav-item"
-            :key="key"
             v-for="(item,key) in navList"
+            :key="key"
           >{{item.label}}</li>
         </ul>
         <!-- </horizontal-scroll> -->

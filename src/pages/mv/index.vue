@@ -5,7 +5,7 @@
       <div @click="showMutiPicker" v-show="isShow" class="select-wrapper">
         <cube-button class="iflex around" outline primary>
           <div class="select-list">
-            <div class="select-item" :key="key" v-for="(item,key) in showSelect">
+            <div class="select-item font-dpr" :key="key" v-for="(item,key) in showSelect">
               <label for>{{item.text}}</label>--
               <span>{{item.title}}</span>
             </div>
@@ -17,7 +17,6 @@
     <cube-scroll
       v-if="1"
       :scroll-events="['scroll','scroll-end','before-scroll-start']"
-      @before-scroll-start="onScrollStart"
       @scroll="onScroll"
       @scroll-end="onScrollEnd
 "
@@ -166,11 +165,8 @@ export default {
 
     this.navHeight = await this.getNextTickElHeight('.scrollNav')
   },
-  watch: {},
+
   methods: {
-    onScrollStart() {
-      // console.log('onScrollStart');
-    },
     onCreate() {
       // this.isShow = false;
       this.$refs.scroll && this.$refs.scroll.scrollTo(0, 0)
@@ -229,13 +225,13 @@ export default {
     },
     onPullingUp() {
       this.queryNum.offset += this.queryNum.limit
-      this.$refs.listView.addData().catch(console.error)
+
+      this.$nextTick(() => {
+        this.$refs.listView.addData().catch(console.error)
+      })
     },
-    getKey(keys) {
-      console.log(keys)
-    },
+
     selectItem({ item, label, key, event }) {
-      console.log(item)
       this.label[label].id = item.id
       this.label[label].title = item.title
       const scrollNavList = this.$refs.scrollNavList[key]
@@ -298,7 +294,6 @@ export default {
       .select-item {
         width: 100px;
         .font-dpr(12Px);
-        /* no */
       }
 
       .cubeic-close {

@@ -1,6 +1,6 @@
 const request = require('request')
 const qs = require('querystring')
-const commonParams = require('../config/commonParams.js/index.js')
+const commonParams = require('../config/commonParams')
 
 exports.getMusicPlayData = function(req, res) {
   const songmid = req.query.mid.split(',')

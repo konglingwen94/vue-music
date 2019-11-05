@@ -5,6 +5,12 @@ const searchCb = require('./controller/searchCb.js')
 const musicPlayDataCb = require('./controller/musicPlayData.js')
 const mvCb = require('./controller/mv.js')
 
+router.use(function(req, res, next) {
+  // .. some logic here .. like any other middleware
+  next()
+  res.append('content-type', 'application/json;charset=utf8')
+})
+
 router.get('/getCategoryTags', Callback.getCategoryTags)
 router.get('/getSongSheetList', Callback.getSongSheetList)
 router.get('/getSongList', Callback.getSongList)
