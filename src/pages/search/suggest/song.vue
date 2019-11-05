@@ -1,7 +1,7 @@
 <template>
   <cube-scroll class="song-page" :data="list" @pulling-down="onPullingDown" :options="options">
     <my-loading v-if="list.length===0"></my-loading>
-    <pull-down-refresh :limit="pulldownLimit" :props="props" slot="pulldown" slot-scope="props"></pull-down-refresh>
+    <pull-down-refresh :limit="pulldownList.length" :props="props" slot="pulldown" slot-scope="props"></pull-down-refresh>
     
     <transition @enter="enter" @after-enter="afterEnter">
       <music-list @hasHeight="getItemHeight" :key="list.length" :list="list"></music-list>

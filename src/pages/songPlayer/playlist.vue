@@ -26,7 +26,7 @@
               @click="playItem(item,index)"
               :class="['song-item', 'flex',{current:currentSong.id===item.id}]"
               v-for="(item,index) in sequenceList"
-              :key="item.id"
+              :key="item.id*Math.random()"
             >
               <div class="index-wrapper">
                 <p class="text">{{index+1}}</p>

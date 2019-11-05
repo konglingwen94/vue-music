@@ -87,8 +87,7 @@ export default {
   watch: {
     'currentMv.videoType.index': function(index) {
       // body...
-      if(index){
-
+      if (index) {
         this.currentVdo.src = this.currentMv.urls[index]
       }
     },
@@ -194,6 +193,11 @@ export default {
       // this.
     },
     selectItem(e, mv) {
+      
+      if (this.$store.state.playlist.length) {
+        this.$store.dispatch('deleteSongList')
+      }
+
       if (this.currentVdo === e.target) {
         return
       }

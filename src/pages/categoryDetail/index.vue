@@ -124,10 +124,13 @@ export default {
         ein: this.pagination.ein
       }
       var { code, data } = await this.__getJson(this.__SONG_SHEET_LIST, param)
-      console.log(data)
+
       if (code == 0) {
         this.sequenceList = data.list
-        this.detailList = this.__clone__(data.list)
+        this.detailList = data.list.map(item => {
+          item.id = item.dissid
+          return item
+        })
       }
     }
   }

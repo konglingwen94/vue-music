@@ -1,12 +1,22 @@
 import Vue from 'vue'
+import { mapGetters } from 'vuex'
 Vue.mixin({
   computed: {
-    ...Vuex.mapGetters(['miniPlayerHeight', 'hasPlaylist'])
+    miniPlayerHeight() {
+      if (this.$store) {
+        return mapGetters(['miniPlayerHeight']).miniPlayerHeight.bind(this)()
+      }
+    },
+    hasPlaylist() {
+      if (this.$store) {
+        return mapGetters(['hasPlaylist']).hasPlaylist.bind(this)()
+      }
+    },
+    // ...mapGetters(['miniPlayerHeight', 'hasPlaylist']),
   },
   data() {
     return {
       // y: 0,
-
     }
   },
   created() {
@@ -34,43 +44,45 @@ Vue.mixin({
   },
   methods: {
     async setWrapHeight(newVal, oldVal) {
-
       await this.$nextTick()
 
       var maxHeight = parseFloat($(this.wrapperEl).attr('maxHeight')),
-        minHeight = 0;
+        minHeight = 0
       if (newVal > 0) {
-        minHeight = maxHeight - this.miniPlayerHeight;
-        $(this.wrapperEl).css({ height: minHeight }).attr('minHeight', minHeight)
+        minHeight = maxHeight - this.miniPlayerHeight
+        $(this.wrapperEl)
+          .css({ height: minHeight })
+          .attr('minHeight', minHeight)
       } else {
         $(this.wrapperEl).css({ height: maxHeight })
-
       }
       // this.hasPlaylist
       // console.log(this.wrapperEl, newVal, oldVal)
       this.refresh()
-    }
+    },
   },
   async activated() {
-
     if (this.$attrs.hasOwnProperty('local') || !this.hasVerticalScroll) {
       return
     }
-    // this.$scroll = this.findVerticalScroll();
+  
     await this.$nextTick()
-    var immediate = false;
+
+     
+
+    var immediate = false
     if (!this.wrapperEl) {
       return
-
     }
     immediate = this.hasPlaylist !== this.flagLeave
-    // console.log(this.wrapperEl);
-    this.unwatch = this.$watch('miniPlayerHeight', (newVal, oldVal) => {
-
-
-      this.setWrapHeight(newVal, oldVal)
-      // console.log(' watch immediate')
-
-    }, { immediate })
-  }
+    
+    this.unwatch = this.$watch(
+      'miniPlayerHeight',
+      (newVal, oldVal) => {
+        this.setWrapHeight(newVal, oldVal)
+        // console.log(' watch immediate')
+      },
+      { immediate }
+    )
+  },
 })

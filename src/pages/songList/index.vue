@@ -19,8 +19,6 @@
       <!-- 歌曲列表 -->
       <cube-scroll
         :data="musicList"
-         
-         
         :scroll-events="['scroll']"
         :probeType="2"
         @scroll="onScroll"
@@ -41,7 +39,6 @@ export default {
   },
   data() {
     return {
-     
       isLoading: true,
       loadEnd: false,
       total_song_num: 0,
@@ -115,17 +112,20 @@ export default {
       })
     },
     async getSongUrl(list) {
-      var mids = list.map(song => {
-        return song.mid
+      var mid = list
+        .map(song => {
+          return song.songmid
+        })
+        .join(',')
+
+      var { code, req } = await this.__getJson(`/getMusicPlayData`, {
+        mid
       })
-      const songParams = {
-        mid: mids.join(',')
-      }
-      var { code, req } = await this.__getJson(`/getMusicPlayData`, songParams)
       if (code == this.__QERR_OK && req.code == this.__QERR_OK) {
         var { midurlinfo } = req.data
         midurlinfo.forEach((mid, index) => {
           list[index].url = `${this.SONG_SOURCE}${mid.purl}`
+          list[index].purl = mid.purl
         })
         // console.log(list)
       }
@@ -140,20 +140,23 @@ export default {
         this.__SONG_LIST,
         params
       )
+      await this.getSongUrl(data[0].songlist)
       if (code === this.__QERR_OK) {
-        this.musicList = data[0].songlist.map(item => {
-          return new this.__Song(
-            this.__pick__(item, [
-              'songid',
-              'songmid',
-              'albummid',
-              'albumid',
-              'singer',
-              'songname'
-            ])
-          )
-        })
-        this.playPromise = this.getSongUrl(this.musicList)
+        this.musicList = data[0].songlist
+          .filter(item => item.purl)
+          .map(item => {
+            return new this.__Song(
+              this.__pick__(item, [
+                'songid',
+                'songmid',
+                'albummid',
+                'albumid',
+                'singer',
+                'songname',
+                'url'
+              ])
+            )
+          })
       }
     }
   }

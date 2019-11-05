@@ -20,8 +20,11 @@ exports.getHotKey = function(req, res) {
 }
 
 exports.getSongSearchResult = function(req, res) {
-  let query = req._parsedUrl.query
-  query = qs.parse(query)
+  const query = {
+    ...req.query,
+    p: req.query.offset,
+    n: req.query.limit,
+  }
   let params = Object.assign({}, commonParams, query)
 
   var options = {
