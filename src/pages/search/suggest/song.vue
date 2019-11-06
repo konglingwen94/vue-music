@@ -1,33 +1,154 @@
 <template>
   <cube-scroll class="song-page" :data="list" @pulling-down="onPullingDown" :options="options">
     <my-loading v-if="list.length===0"></my-loading>
-    <pull-down-refresh :limit="pulldownList.length" :props="props" slot="pulldown" slot-scope="props"></pull-down-refresh>
-    
+    <pull-down-refresh
+      :limit="pulldownList.length"
+      :props="props"
+      slot="pulldown"
+      slot-scope="props"
+    ></pull-down-refresh>
+
     <transition @enter="enter" @after-enter="afterEnter">
       <music-list @hasHeight="getItemHeight" :key="list.length" :list="list"></music-list>
     </transition>
   </cube-scroll>
 </template>
 <script type="text/javascript">
-import common from './mixin/common.js'
 export default {
   name: 'song',
-  mixins: [common],
   data() {
     return {
-      itemHeight: 0
+      itemHeight: 0,
+      list: [],
+      pulldownList: [],
+      offset: 1,
+      originLimit: 20,
+      pulldownLimit: 0,
+      options: {
+        pullDownRefresh: {
+          threshold: 60,
+          // stop: 40,
+          txt: '更新成功'
+        }
+      }
     }
   },
+  props: {
+    query: {
+      type: String,
+      default: ''
+    },
+    type: {
+      type: String,
+      default: ''
+    }
+  },
+
   computed: {
+    params() {
+      return {
+        type: this.type,
+        limit: this.originLimit,
+        offset: this.offset,
+        w: this.query
+      }
+    },
     pulldownLen() {
       return this.pulldownList.length
     }
+  },
+  watch: {
+    pulldownList: {
+      handler(newList, oldList) {
+        oldList && oldList.forEach(item => delete item.newLoad)
+        if (newList) {
+          newList.forEach(item => {
+            item.newLoad = true
+          })
+        }
+      },
+      immediate: true
+    },
+    query: {
+      handler: (() => {
+        let timer
+        return function() {
+          if (timer) {
+            clearTimeout(timer)
+          }
+
+          timer = setTimeout(this.coverData, 300)
+        }
+      })(),
+      immediate: true
+    },
+    offset: 'addData'
   },
   methods: {
     getItemHeight(height) {
       // this.done()
       this.itemHeight = height
     },
+    onPullingDown() {
+      // console.log('onPullingDown');
+      this.pulldownLimit = this.randomFrom(
+        this.originLimit / 3,
+        this.originLimit
+      )
+      this.offset++
+    },
+    async search(limit = this.originLimit) {
+      // console.log(limit);
+      var { code, data } = await this.__getJson(this.__SEARCH_URL, {
+        ...this.params,
+        limit
+      })
+      if (code == this.__QERR_OK) {
+        const vm = this
+        await this.getSongUrl(data.song.list)
+        return data.song.list
+          .filter(item => item.purl)
+          .map(item => {
+            return new this.__Song(
+              this.__pick__(item, [
+                'songid',
+                'songmid',
+                'albummid',
+                'albumid',
+                'singer',
+                'url',
+                'songname'
+              ])
+            )
+          })
+      }
+    },
+    async getSongUrl(list) {
+      var mids = list.map(song => {
+        return song.songmid
+      })
+      const songParams = {
+        mid: mids.join(',')
+      }
+      var { code, req } = await this.__getJson(`/getMusicPlayData`, songParams)
+      if (code == this.__QERR_OK && req.code == this.__QERR_OK) {
+        var { midurlinfo } = req.data
+        midurlinfo.forEach((mid, index) => {
+          list[index].url = `${this.SONG_SOURCE}${mid.purl}`
+          list[index].purl = mid.purl
+        })
+      }
+    },
+    async coverData() {
+      this.list = []
+      this.list = await this.search()
+      this.$emit('search', this.query)
+    },
+    async addData() {
+      this.pulldownList = await this.search(this.pulldownLimit)
+      this.list.unshift(...this.pulldownList)
+    },
+
     async enter(el, done) {
       const len = this.pulldownLen === 0 ? this.list.length : this.pulldownLen
       const offsetHeight = len * this.itemHeight

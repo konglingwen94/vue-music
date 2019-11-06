@@ -268,7 +268,7 @@ export default {
     errLyric() {
       const han = /[\u4e00-\u9fa5]+/g
       const ret = this.currentLyric.lrc.match(han)
-      return ret.join()
+      return ret && ret.join && ret.join()
     }
   },
   created() {
@@ -389,7 +389,7 @@ export default {
       }
     },
     async miniEnter(el, done) {
-      console.log('miniEnter')
+      // console.log('miniEnter')
       setTimeout(done, 400)
       await this.$nextTick()
       // const wrapTransform = getComputedStyle(this.$refs.cdWrap).transform;
@@ -716,16 +716,20 @@ export default {
     async getLyric() {
       var lyric = '',
         param = { id: this.currentSong.id }
-      // if (this.currentSong.lrc !== undefined) {
-      // lyric = await this.__get(`/getBLyric`, param)
-      // } else {
+
       lyric = await this.currentSong.getLyric()
-      // }
+
       this.currentLyric = new lyricParser(lyric, this.handleLyric)
-      // this.current = 'current'
+
       if (this.currentLyric.lines.length > 0) {
         this.curLyric = this.currentLyric.lines[this.curLine].txt
         this.songReady && this.currentLyric.play()
+      } else if (lyric.split('\n').length > 2) {
+        this.currentLyric.lines = lyric.split('\n').map(txt => ({ txt }))
+        this.$nextTick(() => {
+          this.lyricStop()
+          this.curLine = -1
+        })
       }
     },
     handleLyric({ lineNum, txt }) {
@@ -899,7 +903,7 @@ export default {
 
       // 当前歌词
       .curLyric-wrapper {
-        .font-dpr(12Px); /* no  */
+        .font-dpr(12px); /* no  */
 
         height: 26px;
         overflow: hidden;
@@ -933,7 +937,7 @@ export default {
         .lyricLine {
           padding: 0 30px;
           margin-bottom: 16px;
-          .font-dpr(14Px); /* no  */
+          .font-dpr(14px); /* no  */
 
           color: hsla(130, 30%, 100%, 0.5);
 
