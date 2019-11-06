@@ -6,7 +6,7 @@
     </div>
     <div>
       <!-- 顶部导航 -->
-      <mt-header class="mt-header" fixed :title="cd.dissname">
+      <mt-header class="mt-header" fixed :title="$route.query.dissname || $route.query.name">
         <mt-button @click="$router.back()" slot="left" icon="back">返回</mt-button>
         <mt-button icon="more" slot="right"></mt-button>
       </mt-header>
@@ -265,6 +265,6 @@ export default {
   text-align: center;
   width: 100%;
   z-index: 100;
-  .font-dpr(12Px)
+  .font-dpr(12px);
 }
 </style>

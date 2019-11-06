@@ -25,9 +25,9 @@
         </ul>
       </div>
     </cube-scroll>
-    <div v-show="query" class="search-content" :style="`top:${clientTop}px`">
+    <!-- <div v-show="query" class="search-content" :style="`top:${clientTop}px`">
       <div class="navScrollWrap horizontal-scroll">
-        <!-- <horizontal-scroll direction="horizontal"> -->
+        
         <ul class="nav-list">
           <li
             :class="{active:item.type==showType}"
@@ -37,8 +37,8 @@
             :key="key"
           >{{item.label}}</li>
         </ul>
-        <!-- </horizontal-scroll> -->
-      </div>
+        
+      </div> -->
       <div v-if="query">
         <keep-alive>
           <component :query="query" :type="showType" :is="showType">
@@ -104,7 +104,7 @@ export default {
     })
   },
   watch: {
-    isSearch_() {},
+     
     query(newQuery) {
       this.isSearch = Boolean(newQuery)
     }

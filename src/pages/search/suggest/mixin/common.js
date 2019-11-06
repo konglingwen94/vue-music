@@ -1,3 +1,5 @@
+import { throttle } from 'lodash'
+
 export default {
   data() {
     return {
@@ -48,7 +50,9 @@ export default {
       immediate: true,
     },
     query: {
-      handler: 'coverData',
+      handler: throttle(function() {
+        this.coverData()
+      }, 400),
       immediate: true,
     },
     offset: 'addData',
