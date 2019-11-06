@@ -1,6 +1,12 @@
 <template>
-  <div class="list-wrap">
-    <div :style="{marginTop:$attrs.marginTop+'px'}" @click="selectItem(item,index)" :class="['list-item']" :key="index" v-for="(item,index) in list">
+  <div class="list-wrap" >
+    <div
+      :style="{marginTop:$attrs.marginTop+'px'}"
+      @click="selectItem(item,index)"
+      :class="['list-item']"
+      :key="index"
+      v-for="(item,index) in list"
+    >
       <div :class="['sortIndex',{newLoad:item.newLoad}]">{{index+preIndex+1}}</div>
       <div class="text-wrap">
         <div class="text-name">
@@ -18,9 +24,7 @@ import { mapActions } from 'vuex'
 export default {
   name: 'music-list',
   data() {
-    return {
-
-    };
+    return {}
   },
   props: {
     preIndex: {
@@ -33,26 +37,26 @@ export default {
     },
     list: {
       type: Array,
-      default: () => ([])
+      default: () => []
     }
   },
   mounted() {
-    const height = $('.list-item').height();
+    const height = $('.list-item').height()
     this.$emit('hasHeight', height)
   },
   methods: {
     ...mapActions(['selectPlay']),
+    
     keys({ id }) {
       return id
-      // return Symbol(id)
+       
     },
     async selectItem(item, index) {
+      console.log('selectItem')
       this.selectPlay({ list: this.__cloneDeep__(this.list), index })
-    },
-
-  },
-};
-
+    }
+  }
+}
 </script>
 <style scoped lang="less">
 .list-wrap {
@@ -60,7 +64,6 @@ export default {
 }
 
 .list-item {
-
   padding: 0 12px;
   background: #fff;
   display: flex;
@@ -90,7 +93,7 @@ export default {
 
       .name {
         color: #333;
-        .font-dpr(14Px)
+        .font-dpr(14Px);
       }
     }
 
@@ -105,9 +108,7 @@ export default {
       .singer {
         // color: #ccc;
       }
-
     }
   }
 }
-
 </style>

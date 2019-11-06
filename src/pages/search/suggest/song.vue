@@ -145,7 +145,12 @@ export default {
       this.$emit('search', this.query)
     },
     async addData() {
-      this.pulldownList = await this.search(this.pulldownLimit)
+      this.pulldownList = (await this.search(this.pulldownLimit)).filter(
+        newItem => {
+          return !this.list.find(item => item.id === newItem.id)
+        }
+      )
+
       this.list.unshift(...this.pulldownList)
     },
 

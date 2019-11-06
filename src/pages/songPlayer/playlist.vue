@@ -26,13 +26,13 @@
               @click="playItem(item,index)"
               :class="['song-item', 'flex',{current:currentSong.id===item.id}]"
               v-for="(item,index) in sequenceList"
-              :key="item.id*Math.random()"
+              :key="item.id"
             >
               <div class="index-wrapper">
                 <p class="text">{{index+1}}</p>
               </div>
-              <div class="name-wrappper">
-                <p class="name">{{item.name}}</p>
+              <div class="name-wrapper">
+                <p class="name ellipsis">{{item.name}}</p>
               </div>
               <div @click.stop="deleteOne(item)" class="delete-wrapper">
                 <i class="cubeic-close"></i>
@@ -85,6 +85,7 @@ export default {
       setCurrentIndex: 'SET_CURRENT_INDEX'
     }),
     ...mapActions(['deleteSong', 'deleteSongList']),
+
     hide() {
       this.showFlag = false
     },
@@ -221,7 +222,9 @@ export default {
   .index-wrapper {
     margin-right: 10px;
   }
-
+  .name-wrapper {
+    width: 70%;
+  }
   &.current {
     color: red;
   }
