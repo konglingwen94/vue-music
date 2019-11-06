@@ -12,7 +12,7 @@
         <!-- 图片插槽 -->
         <div :style="picWrapStyle" :class="['pic-wrap',{twoColumn}]" v-if="hasImg">
           <slot name="img">
-            <img class="pic" v-lazy="item[bind_key.picUrl]" />
+            <img class="pic"  v-lazy="item[bind_key.picUrl]" />
           </slot>
         </div>
         <!-- 文案内容 -->
@@ -84,13 +84,15 @@ export default {
   methods: {
     selectPlay(item, index) {
       switch (this.name) {
+        case 'music-list':
+          this.$emit('music-selected', item, index)
+          break
         case 'album-list':
           this.$emit('album-selected', item)
           break
         case 'mv-list':
           this.$emit('mvSelected', item)
       }
-
     }
   }
 }

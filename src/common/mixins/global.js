@@ -4,21 +4,17 @@ Vue.mixin({
   computed: {
     miniPlayerHeight() {
       if (this.$store) {
-        return mapGetters(['miniPlayerHeight']).miniPlayerHeight.bind(this)()
+        return this.$store.state.miniPlayerHeight
       }
     },
     hasPlaylist() {
       if (this.$store) {
-        return mapGetters(['hasPlaylist']).hasPlaylist.bind(this)()
+        return this.$store.state.hasPlaylist
       }
     },
-    // ...mapGetters(['miniPlayerHeight', 'hasPlaylist']),
+     
   },
-  data() {
-    return {
-      // y: 0,
-    }
-  },
+  
   created() {
     // 设置自定义组件name
     this.setCompName()
@@ -80,7 +76,7 @@ Vue.mixin({
       'miniPlayerHeight',
       (newVal, oldVal) => {
         this.setWrapHeight(newVal, oldVal)
-        // console.log(' watch immediate')
+        console.log(' watch immediate')
       },
       { immediate }
     )

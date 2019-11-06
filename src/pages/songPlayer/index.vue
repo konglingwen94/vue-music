@@ -34,7 +34,7 @@
                     ref="cd"
                     :class="['cd',{rotate:playing && !waiting && songReady}]"
                     :key="currentSong.pic"
-                    v-lazy="currentSong.pic"
+                    v-lazy="{src:currentSong.pic,error:currentSong.errorPic}"
                   />
                 </div>
               </div>
@@ -168,7 +168,7 @@
             ref="miniCd"
             :class="['cd',{rotate:playing && !waiting}]"
             :key="currentSong.id"
-            :src="currentSong.pic"
+            v-lazy="{src:currentSong.pic,error:currentSong.errorPic}"
           />
         </div>
         <div class="text YCenter">
@@ -268,6 +268,11 @@ export default {
     errLyric() {
       const han = /[\u4e00-\u9fa5]+/g
       const ret = this.currentLyric.lrc.match(han)
+      console.log(ret)
+      if (!ret) {
+        return '暂无歌词'
+      }
+
       return ret && ret.join && ret.join()
     }
   },
@@ -796,7 +801,7 @@ export default {
         // this.audio.src = this.oldUrl
         this.curRange = this.oldRange
         this.audio.currentTime = this.currentTime
-        this.$refs.volume.showToast.close()
+
         this.Toast({
           message: '无此音质',
           duration: 2000

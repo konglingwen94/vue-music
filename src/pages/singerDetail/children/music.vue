@@ -8,7 +8,7 @@
     :options="options"
   >
     <list-view
-      @selectPlay="selectItem"
+      @music-selected="selectItem "
       hasIndex
       name="music-list"
       :list="list"
@@ -27,10 +27,27 @@ export default {
   components: { ListView },
   data() {
     return {
-      list: []
+      list: [],
+      loading: false
     }
   },
-  async created() {},
+  computed: {
+    query() {
+      var num = 50
+      switch (true) {
+        case this.total >= 500:
+          num = 70
+          break
+        case this.total > 200:
+          num = 40
+      }
+      return {
+        singermid: this.$route.query.mid,
+        begin: this.begin,
+        num // 设置数据加载个数
+      }
+    }
+  },
   methods: {
     ...Vuex.mapActions(['selectPlay']),
     async selectItem(item, index) {
@@ -39,7 +56,13 @@ export default {
       this.selectPlay({ list: this.__cloneDeep__(this.list), index })
     },
     async getData() {
+      if (this.loading) {
+        return
+      }
+
+      this.loading = true
       var { data, code } = await this.__getJson(`/getMusicData`, this.query)
+      this.loading = false
       if (!this.total) {
         this.total = data.total
       }
@@ -51,16 +74,19 @@ export default {
       }
     },
     async getListViewData(list) {
-      list.forEach(item => {
-        this.list.push(new Song(item.musicData))
+      const playlist = await this.getSongUrl(list.map(item => item.musicData))
+
+      playlist.forEach(item => {
+        this.list.push(new Song(item))
       })
+
+      this.list = this.__uniqBy__(this.list, 'id')
       // this.checkMore()
-      this.playPromise = this.getSongUrl(this.list)
       return this.forceUpdated()
     },
     async getSongUrl(list) {
       var mids = list.map(song => {
-        return song.mid
+        return song.songmid
       })
       const songParams = {
         mid: mids.join(',')
@@ -70,7 +96,11 @@ export default {
         var { midurlinfo } = req.data
         midurlinfo.forEach((mid, index) => {
           list[index].url = `${this.SONG_SOURCE}${mid.purl}`
+          list[index].purl = mid.purl
+          list[index].errorPic=this.$route.query.picUrl
         })
+
+        return list.filter(item => item.purl)
       }
     }
   }

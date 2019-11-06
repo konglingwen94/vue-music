@@ -1,7 +1,6 @@
 export default {
   data() {
     return {
-
       scroll: {},
       // 设置数据加载索引
       begin: 0,
@@ -25,7 +24,7 @@ export default {
       // 记录当前网络状态
       // netNormal: true,
       layoutColumnCount: 1,
-      y: 0
+      y: 0,
     }
   },
   // inject: ['onLine'],
@@ -39,27 +38,26 @@ export default {
         pullUpLoad: {
           // 设置上拉加载文案
           txt: {
-
             noMore: '没有更多数据了',
             // 根据页面加载状态设置加载更多文案
-            more: !this.inited ? '' : '加载更多数据'
+            more: !this.inited ? '' : '加载更多数据',
           },
           // 设置距离底部阈值触发上拉功能
           threshold: -60,
         },
         // 设置滚动条
-        scrollbar: true
+        scrollbar: true,
       }
     },
     query() {
-      var num = 0;
+      var num = 0
       switch (true) {
         case this.total >= 500:
-          num = 30;
-          break;
+          num = 40
+          break
         case this.total > 200:
-          num = 20;
-          break;
+          num = 30
+          break
         default:
           num = 20
       }
@@ -68,42 +66,27 @@ export default {
         begin: this.begin,
         num: this.layoutColumnCount * num, // 设置数据加载个数
       }
-    }
-
+    },
   },
   props: {
     // 滚动容器实际偏移位置
     translateY: {
       type: Number,
-      default: 0
+      default: 0,
     },
     // 当期容器是否滚动到顶部
     offsetToTop: {
       type: Boolean,
-      default: false
+      default: false,
     },
-    /*// 页面加载状态
-    isLoading: {
-      type: Boolean,
-      default: false
-    },
-    // 网络中断
-    isAbort: {
-      type: Boolean,
 
-      default: false
-
-    },*/
     // 实时滚动位置
     scrollY: {
       type: Number,
-      default: 0
+      default: 0,
     },
     // 页面加载状态
-    pageState: {}
-  },
-  watch: {
-
+    pageState: {},
   },
   created() {
     // 设置页面初始化状态
@@ -111,7 +94,7 @@ export default {
     this.$emit('update:pageState', { isLoading: true, isAbort: false })
     // 获取页面初始数据
     this.updatedPromise = this.getData()
-    // 捕获请求错误处理 
+    // 捕获请求错误处理
     this.updatedPromise.catch(errType => {
       // 判断错误类型
       var isAbort = errType == 'abort'
@@ -126,7 +109,6 @@ export default {
       // 页面加载时禁用滚动
       this.$refs.scroll.disable()
     })
-
   },
   updated() {
     this.$nextTick(() => {
@@ -142,20 +124,13 @@ export default {
         // 设置页面初始化完成
         this.inited = true
       }
-
     })
-
   },
   activated() {
     if (this.inited && this.pageState.isLoading) {
       this.$emit('update:pageState', { isLoading: false, isAbort: false })
-      // this.$refs.scroll.scroll.stop()
     }
 
-    /*if (this.inited && this.y != this.translateY) {
-      this.$refs.scroll.scrollTo(0, this.translateY)
-
-    }*/
     // 判断子页面是否初始化完成，是否禁用滚动
     !this.inited && this.$refs.scroll.disable()
     // 判断滚动容器切换时不在顶部
@@ -166,7 +141,6 @@ export default {
     } else if (this.offsetToTop && this.scroll.y > this.translateY) {
       // 滚动到离开时位置
       this.$refs.scroll.scrollTo(0, this.translateY)
-
     }
     // 页面切回时刷新滚动
     this.$refs && this.$refs.scroll.refresh()
@@ -176,7 +150,7 @@ export default {
     // 标记页面是否在上拉状态中
     var isPullUpLoad = this.$refs.scroll.isPullUpLoad
     if ((isPullUpLoad || this.isLoading) && this.isDelayToggle) {
-      await this.updatedPromise;
+      await this.updatedPromise
       // console.log(this.updatedPromise)
     }
     // 停止滚动
@@ -193,7 +167,7 @@ export default {
 
   methods: {
     ...Vuex.mapMutations({
-      addList: 'ADD_PLAY_LIST'
+      addList: 'ADD_PLAY_LIST',
     }),
     refreshPage() {
       // this.$off()
@@ -208,7 +182,7 @@ export default {
       // 没有更多数据时
       if (!this.hasMore) {
         // 设置上拉次数递增
-        this.noMorepullUpCount++;
+        this.noMorepullUpCount++
         //标记上拉结束
         setTimeout(this.forceUpdated, 500)
         // 判断上拉次数
@@ -221,20 +195,21 @@ export default {
         // 有更多数据时
       } else {
         // 获取页面更新状态实例
-        this.updatedPromise = this.getData();
+        this.updatedPromise = this.getData()
         // 错误处理
-        this.updatedPromise.then(() => {
-
-          // 捕获到错误
-        }).catch(errType => {
-          // 错误类型是否为网络错误
-          if (errType == 'abort') {
-            // 标记网络错误
-            // this.netNormal = false
-            setTimeout(this.forceUpdated, 500)
-            // this.forceUpdated()
-          }
-        })
+        this.updatedPromise
+          .then(() => {
+            // 捕获到错误
+          })
+          .catch(errType => {
+            // 错误类型是否为网络错误
+            if (errType == 'abort') {
+              // 标记网络错误
+              // this.netNormal = false
+              setTimeout(this.forceUpdated, 500)
+              // this.forceUpdated()
+            }
+          })
       }
     },
     //异步标记上拉结束
@@ -249,7 +224,6 @@ export default {
         // 标记上拉完成状态
         this.$refs.scroll.forceUpdate(this.hasMore)
       })
-
     },
     checkMore() {
       // 判断已加载数据列表个数和总个数
@@ -262,5 +236,5 @@ export default {
         this.begin += this.query.num
       }
     },
-  }
+  },
 }
