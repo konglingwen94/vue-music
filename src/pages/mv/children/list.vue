@@ -88,7 +88,7 @@ export default {
     'currentMv.videoType.index': function(index) {
       // body...
       if (index) {
-        this.currentVdo.src = this.currentMv.urls[index]
+        this.currentVdo.src = this.currentMv.playurls[index]
       }
     },
     // body...
@@ -201,7 +201,7 @@ export default {
       if (this.currentVdo === e.target) {
         return
       }
-      e.target.src = mv.urls[mv.videoType.index]
+      e.target.src = mv.playurls[mv.videoType.index]
 
       this.currentVdo = e.target
       this.currentMv = mv

@@ -15,12 +15,7 @@ const pickerData = [
   { text: '高清', value: '720' },
   { text: '超清', value: '1080' }
 ]
-const videoParams = [
-  { index: 0,  },
-  { index: 1,  },
-  { index: 2,  },
-  { index: 3,  }
-]
+const videoParams = [{ index: 0 }, { index: 1 }, { index: 2 }, { index: 3 }]
 
 const r = 1
 const merge = _.merge([], pickerData, videoParams)
@@ -70,34 +65,19 @@ export default {
   },
   methods: {
     async getMvList() {
-      var { mv_list = [], code } = await this.__getJson(
-        this.__HOT_MV_LIST_URL,
-        this.query
-      ).catch(err => {
-        console.error(err)
-        this.error = true
+      var list = await this.__getJson(this.__HOT_MV_LIST_URL, this.query).catch(
+        err => {
+          console.error(err)
+          this.error = true
+        }
+      )
+
+      return list.map(item => {
+        item.videoType = this.__clone__(videoType)
+        item.singer = this.__format(item.singers)
+
+        return item
       })
-      if (code == this.__QERR_OK) {
-        // console.log(mv_list)
-
-        const { list } = mv_list.data
-        const vids = list.map(item => item.vid)
-        const {
-          getMvUrl: { data: urlData }
-        } = await this.__getJson('/getMvPlayUrl', { vids })
-
-        return list.map(item => {
-          item.videoType = this.__clone__(videoType)
-          item.singer = this.__format(item.singers)
-          item.url = urlData[item.vid].mp4[1].freeflow_url[0]
-          item.urls = urlData[item.vid].mp4
-            .filter((item, index) => index > 0)
-            .map(item => item.freeflow_url[0])
-          return item
-        })
-      } else {
-        // console.log(data)
-      }
     },
     async initData() {
       this.mvList = await this.getMvList()

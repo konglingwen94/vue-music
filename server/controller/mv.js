@@ -1,7 +1,36 @@
-const commonParams = require('../config/commonParams.js')
-const path = require('path')
 const request = require('request')
-const qs = require('querystring')
+const commonParams = require('../config/commonParams.js')
+const { createMv } = require('../config')
+
+function getMvPlayUrl(vids) {
+  const data = {
+    getMvUrl: {
+      module: 'gosrf.Stream.MvUrlProxy',
+      method: 'GetMvUrls',
+      param: { vids, request_typet: 10001 },
+    },
+  }
+
+  var options = {
+    url: 'https://u.y.qq.com/cgi-bin/musicu.fcg',
+    qs: {
+      ...commonParams,
+      data: JSON.stringify(data),
+    },
+  }
+  return new Promise((resolve, reject) => {
+    request(options, function(error, response, body) {
+      if (error) reject(new Error(error))
+      try {
+        body = JSON.parse(body).getMvUrl.data
+      } catch (error) {}
+      for (let key in body) {
+        body[key] = body[key].mp4.slice(1).map(item => item.freeflow_url[0])
+      }
+      resolve(body)
+    })
+  })
+}
 
 exports.getHotMvList = function(req, res) {
   let query = req.query
@@ -21,7 +50,7 @@ exports.getHotMvList = function(req, res) {
     },
   }
 
-  let params = Object.assign({},commonParams, {
+  let params = Object.assign({}, commonParams, {
     data: JSON.stringify(data),
   })
   var options = {
@@ -29,21 +58,29 @@ exports.getHotMvList = function(req, res) {
     url: 'https://u.y.qq.com/cgi-bin/musicu.fcg',
     qs: params,
     headers: {
-      'cache-control': 'no-cache',
       referer: 'https://y.qq.com',
     },
   }
 
-  request(options, function(error, response, body) {
+  request(options, async function(error, response, body) {
     if (error) throw new Error(error)
 
-    res.end(body)
+    try {
+      body = JSON.parse(body).mv_list.data.list
+    } catch (error) {}
+
+    const vids = await getMvPlayUrl(body.map(item => item.vid))
+    body = body.map(item => {
+      item.playurls = vids[item.vid]
+      return createMv(item)
+    })
+     
+    res.json(body)
   })
 }
 
 exports.getMvTagList = function(req, res) {
-  let query = req._parsedUrl.query
-  query = qs.parse(query)
+  const query = req.query
   // query = qs.stringify(query)
   let data = {
     comm: { ct: 24 },
@@ -53,7 +90,7 @@ exports.getMvTagList = function(req, res) {
       param: {},
     },
   }
-  let params = Object.assign({},commonParams, {
+  let params = Object.assign({}, commonParams, {
     data: JSON.stringify(data),
   })
 
@@ -69,35 +106,6 @@ exports.getMvTagList = function(req, res) {
   request(options, function(error, response, body) {
     if (error) throw new Error(error)
 
-    res.end(body)
-  })
-}
-
-exports.getMvPlayUrl = (req, res) => {
-  const vids = req.query.vids
-
-  const data = {
-    getMvUrl: {
-      module: 'gosrf.Stream.MvUrlProxy',
-      method: 'GetMvUrls',
-      param: { vids, request_typet: 10001 },
-    },
-  }
-
-  var options = {
-    method: 'GET',
-    url: 'https://u.y.qq.com/cgi-bin/musicu.fcg',
-    qs: {
-      data: JSON.stringify(data),
-      ...commonParams,
-    },
-    headers: {
-      'cache-control': 'no-cache',
-    },
-  }
-
-  request(options, function(error, response, body) {
-    if (error) throw new Error(error)
     res.end(body)
   })
 }
@@ -130,3 +138,5 @@ exports.getMvData = function(req, res) {
     res.end(body)
   })
 }
+
+exports.getMvPlayUrl = getMvPlayUrl

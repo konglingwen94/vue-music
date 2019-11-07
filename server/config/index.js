@@ -10,7 +10,6 @@ const songFields = [
   'singer',
   'url',
   'songname',
-   
 ]
 
 function getAlbumPicUrl(mid) {
@@ -34,6 +33,11 @@ module.exports = {
     song.url = getSongUrl(purl)
     return _.pick(song, songFields)
   },
+
+  createMv(item) {
+    return _.pick(item, ['playurls', 'picurl', 'title', 'vid', 'singers'])
+  },
+
   getAlbumPicUrl,
   getSingerPicUrl,
 
