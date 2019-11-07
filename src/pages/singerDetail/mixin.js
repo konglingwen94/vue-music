@@ -5,8 +5,7 @@ export default {
       // 设置数据加载索引
       begin: 0,
       // num: 20,
-      // 设置数据总个数
-      total: 0,
+
       // 是否有更多数据
       hasMore: true,
       // 没有数据时记录上拉次数
@@ -67,8 +66,16 @@ export default {
         num: this.layoutColumnCount * num, // 设置数据加载个数
       }
     },
+    total() {
+      const result = this.navList.find(item => item.name === this.$options.name)
+      return (result && result.total) || -1
+    },
   },
   props: {
+    navList: {
+      type: Array,
+      default: [],
+    },
     // 滚动容器实际偏移位置
     translateY: {
       type: Number,

@@ -61,47 +61,19 @@ export default {
       }
 
       this.loading = true
-      var { data, code } = await this.__getJson(`/getMusicData`, this.query)
+      var list = await this.__getJson(`/getMusicData`, this.query)
       this.loading = false
-      if (!this.total) {
-        this.total = data.total
-      }
-      if (code == 0) {
-        this.netNormal = true
-        return this.getListViewData(data.list)
-      } else {
-        throw Error('err')
-      }
+
+      return this.getListViewData(list)
     },
     async getListViewData(list) {
-      const playlist = await this.getSongUrl(list.map(item => item.musicData))
-
-      playlist.forEach(item => {
+      list.forEach(item => {
         this.list.push(new Song(item))
       })
 
       this.list = this.__uniqBy__(this.list, 'id')
       // this.checkMore()
       return this.forceUpdated()
-    },
-    async getSongUrl(list) {
-      var mids = list.map(song => {
-        return song.songmid
-      })
-      const songParams = {
-        mid: mids.join(',')
-      }
-      var { code, req } = await this.__getJson(`/getMusicPlayData`, songParams)
-      if (code == this.__QERR_OK && req.code == this.__QERR_OK) {
-        var { midurlinfo } = req.data
-        midurlinfo.forEach((mid, index) => {
-          list[index].url = `${this.SONG_SOURCE}${mid.purl}`
-          list[index].purl = mid.purl
-          list[index].errorPic=this.$route.query.picUrl
-        })
-
-        return list.filter(item => item.purl)
-      }
     }
   }
 }

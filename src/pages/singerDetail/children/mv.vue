@@ -10,7 +10,7 @@ import mixin from '../mixin.js'
 import ListView from '../listView-tpl.vue'
 
 export default {
-  name: 'mv',
+  name: 'singerMv',
   mixins: [mixin],
   components: { ListView },
   data() {

@@ -46,6 +46,7 @@
             :scrollY.sync="scrollY"
             class="scroll-wrapper"
             :style="scrollStyle"
+            :navList="navList"
           ></router-view>
         </keep-alive>
       </div>
@@ -55,13 +56,29 @@
 <script type="text/javascript">
 import { prefixStyle } from '@/config/dom.js'
 const filter = prefixStyle('backdrop-filter')
+
+const navList = [
+  {
+    label: '歌曲',
+    name: 'music'
+  },
+  {
+    label: '专辑',
+    name: 'album'
+  },
+  {
+    label: 'MV',
+    name: 'singerMv'
+  }
+]
+
 export default {
   // name: 'singerDetail',
 
   data() {
     return {
       // scroll: {},
-      navList: [], //子页面切换导航列表
+      navList, //子页面切换导航列表
       topNavHeight: 0, //顶部导航高度
       translateY: 0, //页面偏移距离
       scrollMinY: 0, //页面偏移最小距离
@@ -145,19 +162,6 @@ export default {
   created() {
     // 获取当前歌手列表信息总数
     this.getSingerTotal()
-    // 获取歌手子路由信息
-    // console.log(this.$options.__file);
-    var name = this.$route.matched[0].name
-    var curRoute = this.$router.options.routes.find(
-      item => item.name == _.camelCase(name)
-    )
-    // 获取当前列表导航项列表名称
-    // console.log(curRoute.children);
-    this.navList = curRoute.children.map(item => {
-      delete item.component
-      delete item.path
-      return item
-    })
   },
   mounted() {
     this.$nextTick(() => {
@@ -180,31 +184,13 @@ export default {
 
     getSingerTotal() {
       let singermid = this.$route.query.mid
-      let num = 1
-      Promise.all([
-        this.__getJson(`/getMusicData`, {
-          singermid,
-          num
-        }),
-        this.__getJson(`/getAlbumData`, {
-          singermid,
-          num
-        }),
-        this.__getJson(`/getMvData`, {
-          singermid,
-          num
-        })
-      ]).then(res => {
-        res.forEach((item, key) => {
-          if (!item.singerAlbum) {
-            Vue.set(this.navList[key], 'total', item.data.total)
-            // totalInfo.push(item.data.total)
-          } else {
-            Vue.set(this.navList[key], 'total', item.singerAlbum.data.total)
-            // totalInfo.push(item.singerAlbum.data.total)
-
-            // this.navList[key].total =
-          }
+      this.__getJson('/getSingerTotalInfo', { singermid }).then(res => {
+        res.forEach(info => {
+          Vue.set(
+            this.navList.find(item => item.name === info.name),
+            'total',
+            info.total
+          )
         })
       })
     }

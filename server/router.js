@@ -15,12 +15,20 @@ router.get('/getCategoryTags', Callback.getCategoryTags)
 router.get('/getSongSheetList', Callback.getSongSheetList)
 router.get('/getSongList', Callback.getSongList)
 // 获取歌手数据
+
+router.get('/getSingerTotalInfo', singerCallback.getTotalInfo)
+
 router.get('/getMusicData', singerCallback.getMusicData)
+
 router.get('/getAlbumData', singerCallback.getAlbumData)
+
 router.get('/getMvData', singerCallback.getMvData)
+
 router.get('/getMusicPlayData', musicPlayDataCb.getMusicPlayData)
+
 router.get('/getLyric', musicPlayDataCb.getLyric)
-router.get('/getAlbumSongList',singerCallback.getAlbumSongList)
+
+router.get('/getAlbumSongList', singerCallback.getAlbumSongList)
 // router.get('/getBLyric', musicPlayDataCb.getBLyric)
 // 获取搜索热词
 router.get('/getHotKey', searchCb.getHotKey)
