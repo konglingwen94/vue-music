@@ -4,7 +4,7 @@ import remoteUrl from './remoteUrl.js'
 export class __Song {
   constructor({
     url = '',
-    errorPic = '',
+    picurl,
     songid,
     songmid,
     albumid,
@@ -16,14 +16,8 @@ export class __Song {
     this.mid = songmid
     this.name = songname
     this.singer = format(singer)
-    if (url) {
-      this.url = url
-    }
-
-    if (errorPic) {
-      this.errorPic = errorPic
-    }
-    this.pic = remoteUrl.__albumImg(albummid)
+    this.url = url
+    this.picurl = picurl
     this.albummid = albummid
     this.albumid = albumid
   }

@@ -113,25 +113,7 @@ export default {
         this.musicList.push(new this.__Song(item))
       })
     },
-    async getSongUrl(list) {
-      var mid = list
-        .map(song => {
-          return song.songmid
-        })
-        .join(',')
 
-      var { code, req } = await this.__getJson(`/getMusicPlayData`, {
-        mid
-      })
-      if (code == this.__QERR_OK && req.code == this.__QERR_OK) {
-        var { midurlinfo } = req.data
-        midurlinfo.forEach((mid, index) => {
-          list[index].url = `${this.SONG_SOURCE}${mid.purl}`
-          list[index].purl = mid.purl
-        })
-        // console.log(list)
-      }
-    },
     async getSongList() {
       const commonParams = { begin: this.song_begin, num: this.song_num }
       this.loading = true
@@ -146,47 +128,18 @@ export default {
               disstid: this.$route.query.dissid,
               ...commonParams
             })
-      let songlist = [],
-        code
+      let songlist = []
       await action
         .then(response => {
-          // console.log('response', response.albumSonglist.data.songList.map(item => item.songInfo),)
-          code = response.code
-          songlist =
-            this.type === 'album'
-              ? response.albumSonglist.data.songList.map(item => {
-                  item.songInfo.songmid = item.songInfo.mid
-                  item.songInfo.songid = item.songInfo.id
-                  item.songInfo.songname = item.songInfo.name
-                  item.songInfo.albumid = item.songInfo.album.id
-                  item.songInfo.albummid = item.songInfo.album.mid
-
-                  return item.songInfo
-                })
-              : response.cdlist[0].songlist
+          songlist = response
         })
         .catch(console.error)
-      await this.getSongUrl(songlist).catch(console.error)
+
       this.loading = false
 
-      if (code === this.__QERR_OK) {
-        console.log(songlist, code)
-        this.musicList = songlist
-          .filter(item => item.purl)
-          .map(item => {
-            return new this.__Song(
-              this.__pick__(item, [
-                'songid',
-                'songmid',
-                'albummid',
-                'albumid',
-                'singer',
-                'songname',
-                'url'
-              ])
-            )
-          })
-      }
+      this.musicList = songlist.map(item => {
+        return new this.__Song(item)
+      })
     }
   }
 }

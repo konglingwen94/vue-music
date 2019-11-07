@@ -99,46 +99,15 @@ export default {
     },
     async search(limit = this.originLimit) {
       // console.log(limit);
-      var { code, data } = await this.__getJson(this.__SEARCH_URL, {
+      const result = await this.__getJson(this.__SEARCH_URL, {
         ...this.params,
         limit
       })
-      if (code == this.__QERR_OK) {
-        const vm = this
-        await this.getSongUrl(data.song.list)
-        return data.song.list
-          .filter(item => item.purl)
-          .map(item => {
-            return new this.__Song(
-              this.__pick__(item, [
-                'songid',
-                'songmid',
-                'albummid',
-                'albumid',
-                'singer',
-                'url',
-                'songname'
-              ])
-            )
-          })
-      }
-    },
-    async getSongUrl(list) {
-      var mids = list.map(song => {
-        return song.songmid
+      return result.map(item => {
+        return new this.__Song(item)
       })
-      const songParams = {
-        mid: mids.join(',')
-      }
-      var { code, req } = await this.__getJson(`/getMusicPlayData`, songParams)
-      if (code == this.__QERR_OK && req.code == this.__QERR_OK) {
-        var { midurlinfo } = req.data
-        midurlinfo.forEach((mid, index) => {
-          list[index].url = `${this.SONG_SOURCE}${mid.purl}`
-          list[index].purl = mid.purl
-        })
-      }
     },
+
     async coverData() {
       this.list = []
       this.list = await this.search()

@@ -1,7 +1,10 @@
 const commonParams = require('../config/commonParams.js')
 const qs = require('querystring')
-
 const request = require('request')
+const _ = require('lodash')
+const { createSong } = require('../config')
+
+const { getSongPlayUrl } = require('./musicPlayData')
 
 exports.getHotKey = function(req, res) {
   request(
@@ -39,9 +42,22 @@ exports.getSongSearchResult = function(req, res) {
     },
   }
 
-  request(options, function(error, response, body) {
+  request(options, async function(error, response, body) {
     if (error) throw new Error(error)
 
-    res.end(body)
+    try {
+      var result = JSON.parse(body).data.song.list
+    } catch (error) {}
+    const url = await getSongPlayUrl(result.map(item => item.songmid))
+
+    const searchResult = result
+      .map(item => {
+        item.purl = url[item.songmid]
+        
+        return createSong(item)
+      })
+      .filter(item => item.purl)
+
+    res.json(searchResult)
   })
 }

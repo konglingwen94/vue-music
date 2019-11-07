@@ -34,7 +34,7 @@
                     ref="cd"
                     :class="['cd',{rotate:playing && !waiting && songReady}]"
                     :key="currentSong.pic"
-                    v-lazy="{src:currentSong.pic,error:currentSong.errorPic}"
+                    v-lazy="currentSong.picurl"
                   />
                 </div>
               </div>
@@ -168,7 +168,7 @@
             ref="miniCd"
             :class="['cd',{rotate:playing && !waiting}]"
             :key="currentSong.id"
-            v-lazy="{src:currentSong.pic,error:currentSong.errorPic}"
+            v-lazy="currentSong.picurl"
           />
         </div>
         <div class="text YCenter">

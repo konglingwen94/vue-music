@@ -1,7 +1,9 @@
 const commonParams = require('../config/commonParams.js')
 const path = require('path')
 const request = require('request')
-const qs = require('querystring')
+ 
+const { createSong } = require('../config')
+const { getSongPlayUrl } = require('./musicPlayData')
 
 exports.getCategoryTags = function(req, res) {
   request(
@@ -56,12 +58,12 @@ exports.getSongList = function(req, res) {
       json: 1,
       utf8: 1,
       onlysong: 0,
-      ...req.query
+      ...req.query,
     }
-    // req.query
+    
   )
 
-  // https://c.y.qq.com/v8/fcg-bin/fcg_v8_singer_track_cp.fcg
+  
   request(
     {
       url: `https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg`,
@@ -69,12 +71,25 @@ exports.getSongList = function(req, res) {
       headers: {
         referer: 'https://y.qq.com/',
         host: 'y.qq.com',
-        // "content-type": "application/json",
+        
       },
     },
-    function(error, response, body) {
+    async function(error, response, body) {
       if (!error && response.statusCode == 200) {
-        res.end(body)
+        try {
+          body = JSON.parse(body).cdlist[0].songlist
+        } catch (error) {}
+        const url = await getSongPlayUrl(body.map(item => item.songmid))
+
+        res.json(
+          body
+            .map(item => {
+              item.purl = url[item.songmid]
+              
+              return createSong(item)
+            })
+            .filter(item => item.purl)
+        )
       }
     }
   )

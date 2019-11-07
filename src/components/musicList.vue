@@ -52,7 +52,7 @@ export default {
        
     },
     async selectItem(item, index) {
-      console.log('selectItem')
+    
       this.selectPlay({ list: this.__cloneDeep__(this.list), index })
     }
   }

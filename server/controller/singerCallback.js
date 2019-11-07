@@ -1,7 +1,6 @@
-const _ = require('lodash')
 const commonParams = require('../config/commonParams.js')
-const path = require('path')
 const request = require('request')
+const { createSong } = require('../config')
 const { getSongPlayUrl } = require('./musicPlayData')
 
 exports.getMusicData = function(req, res) {
@@ -43,27 +42,14 @@ exports.getMusicData = function(req, res) {
     const mids = list.map(item => item.songmid)
     const playurl = await getSongPlayUrl(mids)
 
-    list.forEach(item => {
-      item.purl = playurl[item.songmid]
-      item.url = `http://dl.stream.qqmusic.qq.com/${item.purl}`
-    })
+    const response = list
+      .map(item => {
+        item.purl = playurl[item.songmid]
+        return createSong(item)
+      })
+      .filter(item => item.purl)
 
-    res.json(
-      list
-        .filter(item => item.purl)
-        .map(item => {
-          return _.pick(item, [
-            'songid',
-            'songmid',
-            'albummid',
-            'albumid',
-            'singer',
-            'url',
-            'songname',
-          ])
-        })
-    )
-    // console.log(list)
+    res.json(response)
   })
 }
 
@@ -162,9 +148,25 @@ exports.getAlbumSongList = (req, res) => {
     },
   }
 
-  request(options, (err, response, body) => {
+  request(options, async (err, response, body) => {
     if (err) return
-    res.end(body)
+    try {
+      body = JSON.parse(body).albumSonglist.data.songList.map(
+        item => item.songInfo
+      )
+    } catch (error) {}
+    const url = await getSongPlayUrl(body.map(item => item.mid))
+
+     
+    body = body.map(item => {
+      item.purl = url[item.mid]
+      item.songid=item.id
+      item.songmid=item.mid
+      item.songname = item.name
+      return createSong(item)
+    })
+    .filter(item => item.purl)
+    res.json(body)
   })
 }
 
@@ -205,7 +207,7 @@ exports.getTotalInfo = async (req, res) => {
       param: {
         singermid,
         order: 'time',
-        begin:  0,
+        begin: 0,
         num: 1,
         exstatus: 1,
       },
@@ -222,11 +224,10 @@ exports.getTotalInfo = async (req, res) => {
         url: 'https://u.y.qq.com/cgi-bin/musicu.fcg',
         qs: albumParams,
       },
-      (error, response, body) =>{
+      (error, response, body) => {
         if (error) reject(new Error(error))
 
         try {
-        
           const total = JSON.parse(body).singerAlbum.data.total
           resolve({ name: 'album', total })
         } catch (error) {
@@ -268,5 +269,4 @@ exports.getTotalInfo = async (req, res) => {
   } catch (error) {}
 
   res.json(result)
-  
 }

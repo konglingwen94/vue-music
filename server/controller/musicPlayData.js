@@ -105,10 +105,12 @@ exports.getSongPlayUrl = songmid => {
         body: JSON.stringify(songParams),
       },
       function(error, response, body) {
-        let url={}
+        let url = {}
+
         if (!error && response.statusCode == 200) {
           try {
             var result = JSON.parse(body)
+             
           } catch (error) {
             result = []
           }
