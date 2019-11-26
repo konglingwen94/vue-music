@@ -40,7 +40,7 @@ exports.getMusicPlayData = function(req, res) {
     },
     function(error, response, body) {
       if (!error && response.statusCode == 200) {
-        res.end(body)
+        res.send(body)
         // console.log(body)
       }
     }
@@ -64,7 +64,7 @@ exports.getLyric = function(req, res) {
       var reg = /^\w+\(({[^()]+})\)$/
       var matches = body.match(reg)
       var ret = matches[1]
-      res.end(ret)
+      res.send(ret)
     }
   })
 }

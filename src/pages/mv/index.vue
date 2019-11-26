@@ -14,8 +14,8 @@
         </cube-button>
       </div>
     </transition>
+    <!-- {{undefined.a}} -->
     <cube-scroll
-      v-if="1"
       :scroll-events="['scroll','scroll-end','before-scroll-start']"
       @scroll="onScroll"
       @scroll-end="onScrollEnd
@@ -175,7 +175,7 @@ export default {
     showMutiPicker() {
       if (!this.mutiPicker) {
         this.mutiPicker = this.$createPicker({
-          title: 'Multi-column Picker',
+          title: '分类标签',
           data: this.mutiPickerData,
           onSelect: this.selectHandle,
           $props: {
@@ -344,8 +344,9 @@ export default {
 }
 
 .cube-picker-confirm,
-.cube-picker-cancel {
-  .font-dpr(13px);
+.cube-picker-cancel,
+.cube-picker-title {
+  .font-dpr(13Px);
 }
 
 .picker-enter-active,

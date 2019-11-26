@@ -75,7 +75,7 @@ exports.getHotMvList = function(req, res) {
       return createMv(item)
     })
      
-    res.json(body)
+    res.send(body)
   })
 }
 
@@ -106,7 +106,7 @@ exports.getMvTagList = function(req, res) {
   request(options, function(error, response, body) {
     if (error) throw new Error(error)
 
-    res.end(body)
+    res.send(body)
   })
 }
 
@@ -135,7 +135,7 @@ exports.getMvData = function(req, res) {
   request(options, function(error, response, body) {
     if (error) throw new Error(error)
 
-    res.end(body)
+    res.send(body)
   })
 }
 

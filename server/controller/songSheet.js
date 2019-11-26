@@ -16,7 +16,7 @@ exports.getCategoryTags = function(req, res) {
     },
     function(error, response, body) {
       if (!error && response.statusCode == 200) {
-        res.end(body)
+        res.send(body)
       }
     }
   )
@@ -43,7 +43,7 @@ exports.getSongSheetList = function(req, res) {
     },
     function(error, response, body) {
       if (!error && response.statusCode == 200) {
-        res.end(body)
+        res.send(body)
       }
     }
   )

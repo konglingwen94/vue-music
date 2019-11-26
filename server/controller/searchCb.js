@@ -15,8 +15,12 @@ exports.getHotKey = function(req, res) {
       },
     },
     function(error, response, body) {
+      console.log(response.toJSON())
+
       if (!error && response.statusCode == 200) {
-        res.end(body)
+        console.log(body)
+
+        res.send(JSON.parse(body))
       }
     }
   )
@@ -53,7 +57,7 @@ exports.getSongSearchResult = function(req, res) {
     const searchResult = result
       .map(item => {
         item.purl = url[item.songmid]
-        
+
         return createSong(item)
       })
       .filter(item => item.purl)

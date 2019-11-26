@@ -86,7 +86,7 @@ exports.getAlbumData = function(req, res) {
   request(options, function(error, response, body) {
     if (error) throw new Error(error)
     console.log(JSON.parse(body))
-    res.end(body)
+    res.send(body)
   })
 }
 
@@ -114,7 +114,7 @@ exports.getMvData = function(req, res) {
   request(options, function(error, response, body) {
     if (error) throw new Error(error)
 
-    res.end(body)
+    res.send(body)
   })
 }
 

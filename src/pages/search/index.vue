@@ -194,7 +194,7 @@ export default {
     }
   }
   .history-item {
-    .font-dpr(12px);
+    .font-dpr(12Px);
     margin-bottom: 14px;
     .item-icon {
       float: right;

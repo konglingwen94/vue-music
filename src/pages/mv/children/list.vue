@@ -142,7 +142,7 @@ export default {
     showPicker() {
       if (!this.picker) {
         this.picker = this.$createPicker({
-          title: 'Picker',
+          title: '视频清晰度',
           $props: {
             selectedIndex: 'selectedIndex'
           },
