@@ -1,20 +1,20 @@
 # vue-music
 
-a vue mobile music project
+A vue mobile music project
 
 ## 安装依赖
 
 `npm install`
 
-## 启动后台服务
+## 启动后台API服务
 
 `npm run server`
 
-## 启动项目
+## 启动一个具有热重载功能的开发环境
 
 `npm start`
 
-## build setup
+## 项目构建
 
 `npm run build`
 
