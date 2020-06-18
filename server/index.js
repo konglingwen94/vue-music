@@ -18,7 +18,7 @@ app
   )
   .use('/api', router)
   .use(history())
-  .use(express.static(path.join(__dirname, '../dist')))
+  .use(express.static(path.join(__dirname, 'dist')))
 
 app.all('*', function(req, res, next) {
   res.header('Access-Control-Allow-Origin', '*')
@@ -30,6 +30,6 @@ app.all('*', function(req, res, next) {
 })
 
 // 开启服务
-app.listen(3000, () => {
-  console.log('Server listening on http://localhost:3000')
+app.listen(4000, () => {
+  console.log('Server listening on http://localhost:4000')
 })
