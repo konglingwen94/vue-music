@@ -1,5 +1,5 @@
 <template>
-  <div class="player" v-show="1">
+  <div class="player"  >
     <!-- 全屏播放 -->
     <transition @enter="enter" @after-enter="afterEnter" @leave="leave" @after-leave="afterLeave">
       <div v-show="fullScreen" :class="['normal-player','fullScreenFixed']">
@@ -847,11 +847,11 @@ export default {
   left: 0;
 
   transition-property: filter;
-  // filter: blur(35px);
+  
 }
 
 .player {
-  // height: 100vh;
+   
   position: relative;
   z-index: 90;
 }
@@ -881,15 +881,15 @@ export default {
     .flexXCenter;
     height: 50vh;
     width: 200vw;
-    // text-align: center;
+     
     position: relative;
 
     & > [class^='middle'] {
       width: 50%;
-      // width: 100vw;
+       
     }
 
-    // height: @height;
+    
     .middle-l {
       .cd-container {
         width: 260px;
@@ -908,7 +908,7 @@ export default {
 
       // 当前歌词
       .curLyric-wrapper {
-        .font-dpr(12px); /* no  */
+        .font-dpr(8px); /* no  */
 
         height: 26px;
         overflow: hidden;
@@ -921,7 +921,7 @@ export default {
         color: hsla(0, 0%, 100%, 0.5);
 
         .curLyric-text {
-          // line-height: 16px;
+          
           padding: 5px 0;
           height: 100%;
         }
@@ -942,7 +942,7 @@ export default {
         .lyricLine {
           padding: 0 30px;
           margin-bottom: 16px;
-          .font-dpr(14px); /* no  */
+          .font-dpr(8px); /* no  */
 
           color: hsla(130, 30%, 100%, 0.5);
 
@@ -968,7 +968,7 @@ export default {
     position: fixed;
     bottom: 120px;
     width: 100%;
-    // left: 0;
+  
     .flexXCenter;
 
     .dot {
@@ -1002,7 +1002,7 @@ export default {
     width: 100vw;
 
     .play-progress {
-      // margin-top: 80px;
+       
       .flexBetween;
       align-items: center;
       width: 100%;
@@ -1015,18 +1015,16 @@ export default {
       color: #fff;
 
       .currentTimer {
-        // margin-right: 10px;
+         
 
         &.draging {
           color: #ffcd32;
-          // font-size: 1.3em;
+           
           transform: scale(1.3);
         }
       }
 
-      .totalTimer {
-        // margin-left: 46px;
-      }
+      
     }
 
     .player-control {
@@ -1067,7 +1065,7 @@ export default {
   .title-wrap {
     padding: 12px;
 
-    // margin-bottom: 4px;
+     
     .icon {
       font-size: 24px;
     }
@@ -1139,7 +1137,7 @@ export default {
       font-size: 34px;
     }
 
-    // margin-right: 10px;
+     
   }
 
   z-index: 40;
@@ -1154,5 +1152,4 @@ export default {
   font-size: 42px;
 }
 </style>
-<style type="text/css" lang="less">
-</style>
+ 

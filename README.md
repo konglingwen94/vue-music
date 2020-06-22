@@ -18,6 +18,10 @@ A vue mobile music project
 
 `npm run build`
 
+## 项目部署
+
+`sh deploy.sh`
+
 ## 页面截图
 
 ![singer.png](https://github.com/konglingwen94/vue-music/blob/master/screenshot/singer.png)

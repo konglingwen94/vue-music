@@ -11,7 +11,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {
-        target: 'http://localhost:3000', //目标接口域名
+        target: 'http://123.56.124.33:4000', //目标接口域名
         changeOrigin: true, //是否跨域
       },
     },
@@ -54,10 +54,10 @@ module.exports = {
 
   build: {
     // Template for index.html
-    index: path.resolve(__dirname, '../dist/index.html'),
+    index: path.resolve(__dirname, '../server/dist/index.html'),
 
     // Paths
-    assetsRoot: path.resolve(__dirname, '../dist'),
+    assetsRoot: path.resolve(__dirname, '../server/dist'),
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
 
