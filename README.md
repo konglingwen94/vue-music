@@ -2,6 +2,12 @@
 
 A vue mobile music project
 
+## 线上预览
+
+[http://123.56.124.33:4000](http://123.56.124.33:4000)
+
+![vue-music](./screenshot/previewQrcode.png)
+
 ## 安装依赖
 
 `npm install`
