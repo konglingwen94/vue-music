@@ -22,7 +22,7 @@ A vue mobile music project
 
 `npm run deploy`
 
-> 修改 deploy.sh 文件 中的部署命令
+> 修改 deploy.sh 文件 中的部署命令 <br>
 > scp -r server/\* 你的服务器用户名@你的服务器公网 IP:服务器项目存放目录
 
 ## 实现功能
@@ -59,9 +59,19 @@ A vue mobile music project
 
 ## 使用技术栈
 
-`vue + vuex + vue-router` 
-`express 搭建服务端 API`
 `vue + vuex + vue-router`
+
+`express` 搭建服务端 API
+
+`mint-ui + cube-ui + vux`
+
+`lyric-parser`把给定的歌词字符串解析成有格式文本的一个插件
+
+`good-storage` 快速操作 localStorage 的第三方插件
+
+`vue-lazyload` 一个基于`Vue`的图片懒加载插件
+
+`lib-flexible` 由淘宝开发的移动端适配方案库
 
 ## 页面截图
 
