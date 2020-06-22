@@ -50,10 +50,10 @@ export default {
       }
 
       var { code, data } = await this.__getJson(this.__SONG_SHEET_LIST, option)
-      // (data)
+       
       let list = data.list
       list.forEach(item => {
-        // console.log(item)
+         
         item.id = item.dissid
       })
       if (code == this.__QERR_OK) {
@@ -67,7 +67,7 @@ export default {
       var { code, data } = await this.__getJson(
         `/getCategoryTags`
       )
-      // (data)
+    
       if (code == 0) {
         this.category = data.categories
         this._formatCategory()
@@ -76,7 +76,7 @@ export default {
     async _formatCategory() {
       let num = 3
       this.category.forEach((item, index) => {
-        // console.log(index)
+   
         if (index == 0) return
 
         const arr = item.items.slice(0, num)
@@ -98,8 +98,7 @@ export default {
   top: 50%;
 }
 
-.songSheet-page {
-}
+ 
 
 .scroll-wrapper {
   margin-top: 14px;

@@ -73,7 +73,7 @@ export default {
   border-radius: 3px;
 
   .sortIndex {
-    // width: 20px;
+    
     margin-right: 10px;
 
     &.newLoad {
@@ -99,15 +99,13 @@ export default {
 
     .text-singer {
       width: 50%;
-      // margin-left: auto;
+       
       text-align: right;
-      // padding-right: 5px;
+       
 
       min-width: 0;
 
-      .singer {
-        // color: #ccc;
-      }
+       
     }
   }
 }

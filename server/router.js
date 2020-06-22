@@ -25,7 +25,7 @@ router.get('/getMusicPlayData', musicPlayDataCb.getMusicPlayData)
 router.get('/getLyric', musicPlayDataCb.getLyric)
 
 router.get('/getAlbumSongList', singerCallback.getAlbumSongList)
-// router.get('/getBLyric', musicPlayDataCb.getBLyric)
+ 
 // 获取搜索热词
 router.get('/getHotKey', searchCb.getHotKey)
 router.get('/getSongSearchResult', searchCb.getSongSearchResult)

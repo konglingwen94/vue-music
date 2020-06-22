@@ -3,7 +3,15 @@
     <div v-show="showFlag" @click="hide" class="volume fullScreenFixed">
       <div class="volume-wrapper" @click.stop>
         <div class="radio-wrapper flex Around">
-          <li @click.stop="toggleRadio(item)" :class="{current:item.value===radio}" class="radio-item" :key="key" v-for="(item,key) in radios">{{item.text}}</li>
+          <li
+            @click.stop="toggleRadio(item)"
+            :class="{ current: item.value === radio }"
+            class="radio-item"
+            :key="key"
+            v-for="(item, key) in radios"
+          >
+            {{ item.text }}
+          </li>
         </div>
         <div class="volume-content">
           <mt-range v-model="volume" v-on="$listeners" class="volume-range">
@@ -19,14 +27,14 @@
 </template>
 <script type="text/javascript">
 const radios = [
-  { text: '标准', value: 48 },
-  { text: '高清', value: 96 },
-  { text: '高品质', value: 320 },
-  { text: '无损音质', value: 'flac' },
-  { text: '压缩无损音质', value: 'ape' }
-]
+  { text: "标准", value: 48 },
+  { text: "高清", value: 96 },
+  { text: "高品质", value: 320 },
+  { text: "无损音质", value: "flac" },
+  { text: "压缩无损音质", value: "ape" }
+];
 export default {
-  name: '',
+  name: "",
   data() {
     return {
       muted: false,
@@ -47,60 +55,56 @@ export default {
   },
   mounted() {
     setTimeout(() => {
-
-      this.$emit('input', this.volume)
-    })
+      this.$emit("input", this.volume);
+    });
   },
   computed: {
-    ...Vuex.mapGetters(['currentSong']),
+    ...Vuex.mapGetters(["currentSong"]),
     volumeCls() {
-      return this.volume === 0 || this.muted ? 'cubeic-mute' : 'cubeic-volume'
-    },
+      return this.volume === 0 || this.muted ? "cubeic-mute" : "cubeic-volume";
+    }
   },
   watch: {
     volume(newV, oldV) {
-      this.oldV = oldV
-    },
+      this.oldV = oldV;
+    }
   },
   methods: {
     show() {
-      this.showFlag = true
+      this.showFlag = true;
     },
     hide() {
-      this.showFlag = false
+      this.showFlag = false;
     },
     toggleRadio(item) {
       if (this.radio === item.value) {
-        return
+        return;
       }
-      if (!this.currentSong.hasOwnProperty('time')) {
+      if (!this.currentSong.hasOwnProperty("time")) {
         this.Toast({
-          message: '此音质不可用',
+          message: "此音质不可用",
           duration: 1000
-        })
-        return
+        });
+        return;
       }
-      // this.brVal = this.radios.find(_item => item.value === _item.value).value;
-      this.$emit('toggleRadio', item)
-      // this.$emit('update:radio', item.value)
-      this.hide()
+      this.$emit("toggleRadio", item);
+      this.hide();
       this.showToast = this.Toast({
-        message: '切换为' + item.text,
+        message: "切换为" + item.text,
         duration: 2000
-      })
+      });
     },
     muteVolume() {
       this.muted = !this.muted;
-      this.$emit('operate', this.muted)
+      this.$emit("operate", this.muted);
     }
   }
 };
-
 </script>
 <style scoped lang="less">
 .volume-enter-active,
 .volume-leave-active {
-  transition: all .3s;
+  transition: all 0.3s;
 
   .volume-wrapper {
     transition: inherit;
@@ -112,14 +116,13 @@ export default {
   background: transparent !important;
 
   .volume-wrapper {
-
     transform: translate3d(0, 100%, 0);
   }
 }
 
 .volume {
   position: fixed;
-  background: rgba(0, 0, 0, .2);
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .radio-wrapper {
@@ -129,8 +132,6 @@ export default {
     &.current {
       color: red;
     }
-
-    // margin-right: 5px;
   }
 }
 
@@ -138,9 +139,8 @@ export default {
   position: absolute;
   bottom: 0;
   width: 100%;
-  // height: 100px;
-  background: #fff;
 
+  background: #fff;
 }
 
 .volume-content {
@@ -152,13 +152,9 @@ export default {
   }
 }
 
-// margin-bottom: 10px;
-.volume-range {}
-
 .close {
   text-align: center;
   line-height: 3;
   background: #eee;
 }
-
 </style>

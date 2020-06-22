@@ -18,7 +18,7 @@
 </template>
 <script type="text/javascript">
 import mixin from '../mixin.js'
-// import { getPlayUrl } from '@/config/song'
+ 
 import ListView from '../listView-tpl.vue'
 
 export default {
@@ -51,7 +51,7 @@ export default {
   methods: {
     ...Vuex.mapActions(['selectPlay']),
     async selectItem(item, index) {
-      // console.log(item, index);
+      
       await this.playPromise
       this.selectPlay({ list: this.__cloneDeep__(this.list), index })
     },
@@ -72,7 +72,7 @@ export default {
       })
 
       this.list = this.__uniqBy__(this.list, 'id')
-      // this.checkMore()
+     
       return this.forceUpdated()
     }
   }

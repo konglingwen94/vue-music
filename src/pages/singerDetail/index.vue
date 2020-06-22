@@ -3,13 +3,22 @@
     <!-- 顶部导航 -->
     <mt-header class="mt-header" fixed :title="$route.query.name">
       <!-- 返回到上一级按钮 -->
-      <mt-button @click="$router.push({name:'singer'})" slot="left" icon="back">返回</mt-button>
+      <mt-button
+        @click="$router.push({ name: 'singer' })"
+        slot="left"
+        icon="back"
+        >返回</mt-button
+      >
       <!-- 右侧显示更多按钮 -->
       <mt-button icon="more" slot="right"></mt-button>
     </mt-header>
     <!-- 主题背景 -->
-    <div :style="[themeBgStyle]" class="themeBg" v-lazy:background-image="$route.query.picUrl">
-      {{$route.matche}}
+    <div
+      :style="[themeBgStyle]"
+      class="themeBg"
+      v-lazy:background-image="$route.query.picUrl"
+    >
+      {{ $route.matche }}
       <!-- 背景遮罩 -->
       <div :style="[themeFilterStyle]" class="themeFilter"></div>
     </div>
@@ -17,20 +26,26 @@
     <div class="offsetBody" :style="offsetBodyStyle">
       <!-- 导航栏 -->
       <nav-bar
-        @on-has-height="h=>navbarHeight=h"
+        @on-has-height="h => (navbarHeight = h)"
         :style="[translateYStyle]"
         :query="$route.query"
         :navList="navList"
         class="navbar"
       ></nav-bar>
       <!-- 偏移遮罩 -->
-      <div :style="[translateYStyle,layerStyle]" class="layer">
+      <div :style="[translateYStyle, layerStyle]" class="layer">
         <!-- 子页面初始化状态提示 -->
         <div class="sonPageState">
           <!-- 加载中 -->
-          <cube-loading v-if="pageState.isLoading" class="loadingIcon" :size="50*__DPR"></cube-loading>
+          <cube-loading
+            v-if="pageState.isLoading"
+            class="loadingIcon"
+            :size="50 * __DPR"
+          ></cube-loading>
           <!-- 无网络提示 -->
-          <p class="abortInfo" v-else-if="pageState.isAbort">网络未连接，检查网络后点击页面尝试重新加载</p>
+          <p class="abortInfo" v-else-if="pageState.isAbort">
+            网络未连接，检查网络后点击页面尝试重新加载
+          </p>
         </div>
       </div>
       <!-- 滚动容器 -->
@@ -54,23 +69,23 @@
   </div>
 </template>
 <script type="text/javascript">
-import { prefixStyle } from '@/config/dom.js'
-const filter = prefixStyle('backdrop-filter')
+import { prefixStyle } from "@/config/dom.js";
+const filter = prefixStyle("backdrop-filter");
 
 const navList = [
   {
-    label: '歌曲',
-    name: 'music'
+    label: "歌曲",
+    name: "music"
   },
   {
-    label: '专辑',
-    name: 'album'
+    label: "专辑",
+    name: "album"
   },
   {
-    label: 'MV',
-    name: 'singerMv'
+    label: "MV",
+    name: "singerMv"
   }
-]
+];
 
 export default {
   // name: 'singerDetail',
@@ -92,110 +107,100 @@ export default {
         isAbort: false //加载中断
       },
       navbarHeight: 0 //导航列表高度
-    }
+    };
   },
   computed: {
     // 偏移主体
     offsetBodyStyle() {
       return {
         top: `${this.picHeight}px`
-      }
+      };
     },
-    // 滚动容器
-    scrollStyle() {
-      return {
-        // height: `${this.scrollWrapHeight}px`
-      }
-    },
+
     // 偏移遮罩
     layerStyle() {
       return {
         height: `${this.scrollWrapHeight + Math.abs(this.translateY)}px`
-      }
+      };
     },
     // 实时偏移
     translateYStyle() {
       return {
         transform: `translateY(${this.translateY}px)`
-      }
+      };
     },
     themeBgStyle() {
-      var height = '40vh'
-      height = this.offsetToTop ? this.topNavHeight + 'px' : height
+      var height = "40vh";
+      height = this.offsetToTop ? this.topNavHeight + "px" : height;
       return {
         height,
         zIndex: this.zIndex,
         transform: `scale(${this.scrollY > 0 ? this.scale : 1})`
-      }
+      };
     },
     themeFilterStyle() {
       return {
-        'backdrop-filter': `blur(${this.scrollY < 0 ? this.blur : 0}px)`
-      }
+        "backdrop-filter": `blur(${this.scrollY < 0 ? this.blur : 0}px)`
+      };
     }
   },
   watch: {
     scrollY(y) {
       // 设置向上滚动实际偏移距离
-      this.translateY = Math.max(y, this.scrollMinY)
+      this.translateY = Math.max(y, this.scrollMinY);
 
       // 获取滚动距离相对于背景图片高度的比例
-      var percent = Math.abs(y / this.picHeight)
+      var percent = Math.abs(y / this.picHeight);
       // 设置图片放大倍数
-      this.scale = 1 + percent
+      this.scale = 1 + percent;
       // 设置图片模糊值
-      this.blur = Math.min(30, 30 * percent)
+      this.blur = Math.min(30, 30 * percent);
       // 如果容器向下滚动，放大图片
-      this.zIndex = 0
+      this.zIndex = 0;
       // 判断是否滚动到顶部
       if (y <= this.scrollMinY) {
-        this.zIndex = 10
-        this.offsetToTop = true
+        this.zIndex = 10;
+        this.offsetToTop = true;
       } else {
-        this.offsetToTop = false
+        this.offsetToTop = false;
       }
       if (y > 0) {
-        this.zIndex = 10
+        this.zIndex = 10;
       }
     }
   },
   created() {
     // 获取当前歌手列表信息总数
-    this.getSingerTotal()
+    this.getSingerTotal();
   },
   mounted() {
     this.$nextTick(() => {
       // 获取顶部导航栏高度
-      this.topNavHeight = $('.mt-header').height()
+      this.topNavHeight = $(".mt-header").height();
       // 获取背景图片高度
-      this.picHeight = $('.themeBg').height()
+      this.picHeight = $(".themeBg").height();
       // 获取滚动容器高度
-      this.scrollWrapHeight = innerHeight - this.picHeight - this.navbarHeight
+      this.scrollWrapHeight = innerHeight - this.picHeight - this.navbarHeight;
 
       // 设置向上滚动最小偏移距离
-      this.scrollMinY = this.topNavHeight - this.picHeight
-    })
+      this.scrollMinY = this.topNavHeight - this.picHeight;
+    });
   },
   methods: {
-    onScroll(y) {
-      // this.scrollY = y;
-      // console.log(y)
-    },
-
     getSingerTotal() {
-      let singermid = this.$route.query.mid
-      this.__getJson('/getSingerTotalInfo', { singermid }).then(res => {
+      let singermid = this.$route.query.mid;
+      this.__getJson("/getSingerTotalInfo", { singermid }).then(res => {
         res.forEach(info => {
           Vue.set(
             this.navList.find(item => item.name === info.name),
-            'total',
+            "total",
             info.total
-          )
-        })
-      })
+          );
+        });
+      });
     }
   }
-}
+};
 </script>
 <style scoped lang="less">
 .mt-header {
@@ -205,7 +210,7 @@ export default {
 
 .themeBg {
   position: relative;
-  // height: 300px;
+
   background-size: cover;
   background-repeat: no-repeat;
   transform-origin: top;
@@ -224,12 +229,11 @@ export default {
   height: 300px;
   background-repeat: no-repeat;
   background-size: cover;
-  // width: 100%;
 }
 
 .navbar {
   position: relative;
-  // top: 50px;
+
   z-index: 30;
   min-height: 30px;
   width: 100%;
@@ -240,14 +244,13 @@ export default {
   .posCenter(sonPageState);
 
   .sonPageState {
-    // height: 100%;
     z-index: 10;
   }
 
   background: #eee;
   height: 100vh;
   z-index: 1;
-  // transform: scaleY(10);
+
   position: absolute;
   width: 100%;
 
@@ -262,13 +265,10 @@ export default {
 
 // 滚动容器
 .scroll-contain {
-  // padding-top: 40px;
-  // position: absolute;
   width: 100%;
 }
 
 .scroll-wrapper {
-  // height: 350px;
   overflow: visible;
   background-color: #eee;
   border: 1px solid red;

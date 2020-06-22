@@ -17,11 +17,7 @@
 <script type="text/javascript">
 export default {
   name: 'category',
-  data() {
-    return {
-      // category: []
-    };
-  },
+   
   props: {
     category: {
       type: Array,
@@ -57,8 +53,7 @@ export default {
     }
 
     .icon-arrow {
-      // float: right;
-      // border: 4px solid transparent;
+       
       padding: 9px;
 
       .icon-right-allCategory {

@@ -1,12 +1,20 @@
-
 <template>
   <div @click.once="initPlay" id="app" style>
     <div class="page">
-      <nav-bar class="home-navbar" :navList="navList" namePrefix="home" ref="navbar"></nav-bar>
-      <!-- <cube-loading class="loadingIcon" v-if="!pageLoaded"></cube-loading> -->
+      <nav-bar
+        class="home-navbar"
+        :navList="navList"
+        namePrefix="home"
+        ref="navbar"
+      ></nav-bar>
+
       <transition :name="transitionName">
         <keep-alive max="1">
-          <router-view :style="zIndex" :key="$route.query.id" :class="[{fullScreenFixed},pageCls]" />
+          <router-view
+            :style="zIndex"
+            :key="$route.query.id"
+            :class="[{ fullScreenFixed }, pageCls]"
+          />
         </keep-alive>
       </transition>
     </div>
@@ -17,36 +25,36 @@
   </div>
 </template>
 <script>
-import SongPlayer from '@/pages/songPlayer'
+import SongPlayer from "@/pages/songPlayer";
 export default {
   data() {
     return {
-      transitionName: '',
+      transitionName: "",
       navbarHeight: 0,
       duration: 400,
       navList: [
         {
-          label: '歌手',
-          name: 'singer'
+          label: "歌手",
+          name: "singer"
           // link: '/singer'
         },
         {
-          label: '歌单',
-          name: 'songSheet'
+          label: "歌单",
+          name: "songSheet"
           // link: '/songSheet'
         },
         {
-          label: '视频',
-          name: 'mv',
-          link: '/mv'
+          label: "视频",
+          name: "mv",
+          link: "/mv"
         },
         {
-          label: '搜索',
-          name: 'search',
-          link: '/search'
+          label: "搜索",
+          name: "search",
+          link: "/search"
         }
       ]
-    }
+    };
   },
   computed: {
     zIndex() {
@@ -54,79 +62,73 @@ export default {
         ? {
             zIndex: this.$route.matched[0].meta.index
           }
-        : {}
+        : {};
     },
     pageCls() {
-      return this.$route.name ? this.$route.matched[0].name + '-page' : ''
+      return this.$route.name ? this.$route.matched[0].name + "-page" : "";
     },
     fullScreenFixed() {
-      // console.log(this.$route);
-      var matchRoutes = this.$route.matched
-      return matchRoutes[0] && matchRoutes[0].meta.fullScreenFixed
+      var matchRoutes = this.$route.matched;
+      return matchRoutes[0] && matchRoutes[0].meta.fullScreenFixed;
     }
   },
   watch: {
     $route: function(to, from) {
       if (!to.name || !from.name) {
-        return
+        return;
       }
-      this.oldRoute = from
-      // ('route changed');
-      this.setTransitionName(to, from)
+      this.oldRoute = from;
+      this.setTransitionName(to, from);
     }
   },
   components: { SongPlayer },
   methods: {
     enter(el, done) {
-      // console.log('enter', this.$route);
-      el.style.zIndex = this.$route.matched[0].meta.index
-      setTimeout(done, this.duration)
+      el.style.zIndex = this.$route.matched[0].meta.index;
+      setTimeout(done, this.duration);
     },
     afterEnter(el) {
-      el.style.removeProperty('z-index')
-      // console.log('afterEnter');
+      el.style.removeProperty("z-index");
     },
     leave(el, done) {
-      // console.log('leave', this.$route);
-      el.style.zIndex = this.oldRoute.matched[0].meta.index
+      el.style.zIndex = this.oldRoute.matched[0].meta.index;
 
-      setTimeout(done, this.duration)
+      setTimeout(done, this.duration);
     },
     afterLeave(el) {
-      // console.log('after-leave');
-      el.style.removeProperty('z-index')
+      el.style.removeProperty("z-index");
     },
     setTransitionName(to, from) {
-      to = to.matched[0]
-      from = from.matched[0]
+      to = to.matched[0];
+      from = from.matched[0];
 
-      const fromIndex = from.meta.index
-      const toIndex = to.meta.index
+      const fromIndex = from.meta.index;
+      const toIndex = to.meta.index;
       if (toIndex < fromIndex) {
-        this.transitionName = 'prev'
+        this.transitionName = "prev";
         if (fromIndex >= 4) {
-          this.transitionName = 'back'
+          this.transitionName = "back";
         }
       } else {
-        this.transitionName = 'next'
+        this.transitionName = "next";
         if (!to.meta.isHome) {
-          this.transitionName = 'forward'
+          this.transitionName = "forward";
         }
       }
     },
     initPlay() {
-      $('audio')[0]
+      $("audio")[0]
         .play()
         .catch(err => {
-          console.error(err)
-        })
+          console.error(err);
+        });
     }
   }
-}
+};
 </script>
 <style scoped lang="less">
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
@@ -136,7 +138,6 @@ export default {
     position: fixed;
     width: 100vw;
     top: 0;
-    // overflow-y: auto;
   }
 
   .home-navbar {
@@ -173,11 +174,6 @@ export default {
 .next-leave-to,
 .prev-enter {
   transform: translate3d(-100vw, 0, 0);
-}
-
-.next-enter-to,
-.prev-leave {
-  // transform: translate3d(0, 0, 0)
 }
 
 .back-enter,

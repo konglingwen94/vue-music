@@ -81,7 +81,7 @@ exports.getHotMvList = function(req, res) {
 
 exports.getMvTagList = function(req, res) {
   const query = req.query
-  // query = qs.stringify(query)
+   
   let data = {
     comm: { ct: 24 },
     mv_tag: {

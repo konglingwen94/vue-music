@@ -41,14 +41,14 @@ exports.getMusicPlayData = function(req, res) {
     function(error, response, body) {
       if (!error && response.statusCode == 200) {
         res.send(body)
-        // console.log(body)
+         
       }
     }
   )
 }
-// exports.getMusicPlayData()
+
 exports.getLyric = function(req, res) {
-  // body...
+   
 
   var musicid = req.query.musicid
   var options = {
@@ -101,7 +101,7 @@ exports.getSongPlayUrl = songmid => {
         headers: {
           referer: 'http://u.y.qq.com',
         },
-        // body: songParams
+        
         body: JSON.stringify(songParams),
       },
       function(error, response, body) {

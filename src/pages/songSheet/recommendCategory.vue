@@ -18,11 +18,7 @@
 <script type="text/javascript">
 export default {
   name: 'recommendCategory',
-  data() {
-    return {
-      // recommendCategory: []
-    };
-  },
+   
   props: {
     recommendCategory: {
       type: Array,
@@ -33,10 +29,7 @@ export default {
       default: true,
     }
   },
-  updated() {
-    // ('3')
-    // this.getRecommendCategory()
-  },
+  
   methods: {
     goDetail(item) {
       this.$router.push({
@@ -53,7 +46,7 @@ export default {
         path: '/categoryGroup',
 
       })
-      // this.position = "categoryGroup"
+       
     },
   },
 };
@@ -74,8 +67,7 @@ export default {
     }
 
     .icon-arrow {
-      // float: right;
-      // border: 4px solid transparent;
+   
       padding: 9px;
 
       .icon-right-allCategory {

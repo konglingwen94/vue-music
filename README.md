@@ -6,7 +6,7 @@ A vue mobile music project
 
 `npm install`
 
-## 启动后台API服务
+## 启动后台 API 服务
 
 `npm run server`
 
@@ -20,7 +20,48 @@ A vue mobile music project
 
 ## 项目部署
 
-`sh deploy.sh`
+`npm run deploy`
+
+> 修改 deploy.sh 文件 中的部署命令
+> scp -r server/\* 你的服务器用户名@你的服务器公网 IP:服务器项目存放目录
+
+## 实现功能
+
+- [x] 歌手
+
+  - [x] 歌曲
+  - [x] 专辑
+  - [x] MV
+
+* [x] 歌单
+  - [x] 全部分类
+  - [x] 歌单列表
+  - [x] 歌单详情
+* [x] 视频
+  - [x] 视频播放
+  - [x] 分类选择
+* [x] 搜索
+  - [x] 热门搜索
+  - [x] 搜索历史
+  - [x] 分页加载
+* [x] 播放器
+  - [x] 吸底播放
+  - [x] 全屏播放
+  - [x] 进度条
+  - [x] 上一首
+  - [x] 下一首
+  - [x] 播放/暂停
+  - [x] 播放模式
+  - [ ] 收藏
+  - [x] 音质选择
+  - [x] 音量控制
+  - [x] 歌词展示
+
+## 使用技术栈
+
+`vue + vuex + vue-router` 
+`express 搭建服务端 API`
+`vue + vuex + vue-router`
 
 ## 页面截图
 

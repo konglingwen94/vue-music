@@ -3,7 +3,7 @@ export default {
     if (!this.songReady) {
       return
     }
-    // this.play()
+     
     let index = this.currentIndex - 1;
     if (index == -1) {
       index = this.playlist.length - 1
@@ -15,7 +15,7 @@ export default {
 
     this.playing && this.setPrevTransform()
     this.setPlayingState(!this.playing)
-    // this.playing ? this.audio.play() : this.audio.pause()
+     
     this.currentLyric && this.currentLyric.togglePlay()
 
 

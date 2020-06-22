@@ -36,28 +36,7 @@ export class __Song {
       .catch(() => 'No Lyric')
   }
 }
-// export const getPlayUrl = async function(mids) {
-//   // var mids
-
-//   return new Promise((resolve, reject) => {
-//     request(
-//       {
-//         method: 'POST',
-//         url: remoteUrl.__SONG_URL,
-//         headers: {
-//           referer: 'http://u.y.qq.com',
-//         },
-//         body: songParams,
-//       },
-//       function(error, response, body) {
-//         if (!error && response.statusCode == 200) {
-//           resolve(body)
-//         } else {
-//         }
-//       }
-//     )
-//   })
-// }
+ 
 
 function format(singer_arr) {
   // body...

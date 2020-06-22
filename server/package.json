@@ -10,12 +10,6 @@
   "scripts": {
     "start": "pm2 start index.js --name='vue-music'"
   },
-  "transformModules": {
-    "cube-ui": {
-      "transform": "cube-ui/src/modules/${member}",
-      "kebabCase": true
-    }
-  },
   "dependencies": {
     "compression": "^1.7.4",
     "connect-history-api-fallback": "^1.6.0",

@@ -50,8 +50,7 @@ export default {
 }
 </script>
 <style scoped lang="less">
-.scroll-list-wrap {
-}
+ 
 
 .swipeItem {
   display: flex;

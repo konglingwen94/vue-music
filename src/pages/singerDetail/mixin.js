@@ -26,11 +26,11 @@ export default {
       y: 0,
     }
   },
-  // inject: ['onLine'],
+ 
   computed: {
     ...Vuex.mapGetters(['miniPlayerHeight']),
     options() {
-      // console.log(this.navigator.onLine);
+      
       return {
         // 设置滚动初始位置
         startY: this.translateY,
@@ -177,7 +177,7 @@ export default {
       addList: 'ADD_PLAY_LIST',
     }),
     refreshPage() {
-      // this.$off()
+       
 
       this.getData()
     },

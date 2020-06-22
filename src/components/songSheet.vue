@@ -1,57 +1,45 @@
 <template>
   <div class="songSheet-list">
-    <router-link tag="div" :to="{
-      name:'songList',
-      params:{id:data.dissid},
-  }" class="swipeItem" :key="data.id" v-for="data in songSheetList" ref="swipeItem">
+    <router-link
+      tag="div"
+      :to="{
+        name: 'songList',
+        params: { id: data.dissid }
+      }"
+      class="swipeItem"
+      :key="data.id"
+      v-for="data in songSheetList"
+      ref="swipeItem"
+    >
       <div>
-        <img class="icon" v-lazy="data.imgurl">
+        <img class="icon" v-lazy="data.imgurl" />
       </div>
-        <div class="text">
-          <h2 class="item-name" v-html="data.creator.name
-"></h2>
-          <p class="item-desc line2" v-html="data.dissname"></p>
-        </div>
+      <div class="text">
+        <h2 class="item-name" v-html="data.creator.name"></h2>
+        <p class="item-desc line2" v-html="data.dissname"></p>
+      </div>
     </router-link>
   </div>
 </template>
 <script type="text/javascript">
 export default {
-  name: 'hotSongList',
-  data() {
-    return {
-      // lasttime: '',
-    };
-  },
+  name: "hotSongList",
+
   props: {
     songSheetList: {
       type: Array,
-      default: () => [],
+      default: () => []
     }
+  },
 
-  },
-  created() {
-    // this.getHotSongList()
-  },
   updated() {
-    // (this.__$('.swipeItem').length)
     this.$nextTick(() => {
-      // ('nextTick---', this.__$('.swipeItem').length)
-
-      this.$emit('updated')
-    })
-  },
-  methods: {
-
+      this.$emit("updated");
+    });
   }
 };
-
 </script>
 <style scoped lang="less">
-.scroll-list-wrap {}
-
-
-
 .swipeItem {
   display: flex;
   align-items: center;
@@ -73,5 +61,4 @@ export default {
     }
   }
 }
-
 </style>

@@ -29,4 +29,3 @@ export function prefixStyle(style, camelCase = false) {
   }
   return '-' + vendor + '-' + style
 }
-// Vue.prototype.prefixStyle = prefixStyle

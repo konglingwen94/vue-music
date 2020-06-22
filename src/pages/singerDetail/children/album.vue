@@ -4,7 +4,7 @@
     @click.native="!inited && refreshPage()"
     @pulling-up="onPullingUp"
     ref="scroll"
-    :scroll-events="['scroll','scroll-end']"
+    :scroll-events="['scroll', 'scroll-end']"
     @scroll="onScroll"
     :options="options"
   >
@@ -13,16 +13,16 @@
       name="album-list"
       hasImg
       :list="list"
-      :keyInfo="{picUrl:'albumImg',desc:'creator',title:'name'}"
+      :keyInfo="{ picUrl: 'albumImg', desc: 'creator', title: 'name' }"
     />
     <!-- <album-list :albumList="list"></album-list> -->
   </cube-scroll>
   <!-- </div> -->
 </template>
 <script type="text/javascript">
-import mixin from '../mixin.js'
+import mixin from "../mixin.js";
 
-import ListView from '../listView-tpl.vue'
+import ListView from "../listView-tpl.vue";
 
 export default {
   // name: 'singerAlbum',
@@ -32,48 +32,42 @@ export default {
     return {
       list: [],
       onloaded: false
-      // first: true,
-    }
-  },
-  computed: {},
-  created() {
-    // this.getAlbumData()
+    };
   },
 
   methods: {
     onSelected(item) {
       this.$router.push({
-        name: 'songList',
+        name: "songList",
         query: {
           ...item,
           disstid: item.id,
-          type: 'album',
+          type: "album",
           imgurl: item.albumImg
         }
-      })
-      console.log('on-selected', item)
+      });
     },
     async getData() {
       // 获取响应数据
-      var res = await this.__getJson(`/getAlbumData`, this.query) //等待响应完成
+      var res = await this.__getJson(`/getAlbumData`, this.query); //等待响应完成
       // 判断响应数据状态码
       if (res.code == 0) {
         // 获取专辑数据
-        let albumData = res.singerAlbum.data
+        let albumData = res.singerAlbum.data;
         // 判断首次加载
         if (this.total == 0) {
           // 获取总数
-          this.total = albumData.total
+          this.total = albumData.total;
         }
         // 标记网络正常
 
-        this.netNormal = true
+        this.netNormal = true;
 
         // 格式化新数据
-        return this.normalizeData(albumData.list)
+        return this.normalizeData(albumData.list);
       } else {
         // 抛出数据错误
-        throw new Error('data error')
+        throw new Error("data error");
       }
     },
     normalizeData(list) {
@@ -86,19 +80,11 @@ export default {
           name: item.album_name, //专辑名称
           id: item.albumid, //专辑id
           albumImg: this.__albumImg(item.album_mid) //专辑封面
-        })
-      })
+        });
+      });
       // 返回页面异步更新状态对象
-      return this.forceUpdated()
+      return this.forceUpdated();
     }
   }
-}
+};
 </script>
-<style scoped lang="less">
-.album-page {
-}
-
-.loading-wrap {
-  // height: 700px;
-}
-</style>

@@ -10,6 +10,4 @@ export default {
   SONG_SOURCE: 'http://dl.stream.qqmusic.qq.com/'
 }
 
-// https: //y.gtimg.cn/music/photo_new/T002R300x300M000000QgFcm0v8WaF.jpg?max_age=2592000
-//   https: //y.gtimg.cn/music/photo_new/T002R300x300M000.jpg?max_age=2592000
-// 003y8dsH2wBHlo
+ 
