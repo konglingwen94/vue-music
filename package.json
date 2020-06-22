@@ -15,7 +15,8 @@
     "server:debug": "nodemon  --inspect server",
     "unit": "jest --config test/unit/jest.conf.js --coverage",
     "test": "npm run unit",
-    "build": "node build/build.js"
+    "build": "node build/build.js",
+    "deploy":"sh deploy.sh"
   },
   "transformModules": {
     "cube-ui": {
