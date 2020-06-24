@@ -26,8 +26,8 @@ export const __HOT_MV_LIST_URL = "/getHotMvList";
 export const __SONG_LIST = "/getSongList"; //歌单
 export const __HOT_KEY = `/getHotKey`; //热门搜索
 export const __SONG_SHEET_LIST = "/getSongSheetList";
-// export const __SINGER_LIST =
-// "https://c.y.qq.com/v8/fcg-bin/v8.fcg?page=list&key=all_all_all";
+export const __SINGER_LIST =
+"https://c.y.qq.com/v8/fcg-bin/v8.fcg?page=list&key=all_all_all";
 
 export const playMode = {
   sequence: 0,
