@@ -6,7 +6,7 @@ A vue mobile music project
 
 [http://123.56.124.33:4000](http://123.56.124.33:4000)
 
-![vue-music](./screenshot/previewQrcode.png)
+![previewQrcode](https://user-images.githubusercontent.com/46000016/92676323-ea7b3680-f353-11ea-8e97-6d6e605746ba.png)
 
 ## 安装依赖
 
@@ -81,19 +81,22 @@ A vue mobile music project
 
 ## 页面截图
 
-![singer.png](https://github.com/konglingwen94/vue-music/blob/master/screenshot/singer.png)
-![songSheet.png](https://github.com/konglingwen94/vue-music/blob/master/screenshot/songSheet.png)
-![mv.png](https://github.com/konglingwen94/vue-music/blob/master/screenshot/mv.png)
-![search.png](https://github.com/konglingwen94/vue-music/blob/master/screenshot/search.png)
-![songPlayer(1).png](<https://github.com/konglingwen94/vue-music/blob/master/screenshot/songPlayer(1).png>)
-![songPlayer(2).png](<https://github.com/konglingwen94/vue-music/blob/master/screenshot/songPlayer(2).png>)
-![categoryGroup.png](https://github.com/konglingwen94/vue-music/blob/master/screenshot/categoryGroup.png)
-![categoryDetail.png](https://github.com/konglingwen94/vue-music/blob/master/screenshot/categoryDetail.png)
-![singerDetail(1).png](<https://github.com/konglingwen94/vue-music/blob/master/screenshot/singerDetail(1).png>)
-![singerDetail(2).png](<https://github.com/konglingwen94/vue-music/blob/master/screenshot/singerDetail(2).png>)
-![singerDetail(3).png](<https://github.com/konglingwen94/vue-music/blob/master/screenshot/singerDetail(3).png>)
-![searchResult.png](https://github.com/konglingwen94/vue-music/blob/master/screenshot/searchResult.png)
-![playlist.png](https://github.com/konglingwen94/vue-music/blob/master/screenshot/playlist.png)
-![mv-picker.png](https://github.com/konglingwen94/vue-music/blob/master/screenshot/mv-picker.png)
-![videoRadio-picker.png](https://github.com/konglingwen94/vue-music/blob/master/screenshot/videoRadio-picker.png)
-![videoRadio-picker.png](https://github.com/konglingwen94/vue-music/blob/master/screenshot/videoRadio-picker.png)
+
+![videoRadio-picker](https://user-images.githubusercontent.com/46000016/92676327-ec44fa00-f353-11ea-911c-28dc31e5404f.png)
+![songlist](https://user-images.githubusercontent.com/46000016/92676334-eea75400-f353-11ea-8e41-283d1245983b.png)
+![songSheet](https://user-images.githubusercontent.com/46000016/92676337-ef3fea80-f353-11ea-8600-24c39e858231.png)
+![songPlayer(2)](https://user-images.githubusercontent.com/46000016/92676339-efd88100-f353-11ea-8862-13cb10e79d08.png)
+![songPlayer(1)](https://user-images.githubusercontent.com/46000016/92676342-f0711780-f353-11ea-9251-5264a9a2b5e3.png)
+![singerDetail(3)](https://user-images.githubusercontent.com/46000016/92676344-f109ae00-f353-11ea-8aa4-cd4a54b5c2ea.png)
+![singerDetail(2)](https://user-images.githubusercontent.com/46000016/92676349-f23adb00-f353-11ea-957c-37613b6cb3dd.png)
+![singerDetail(1)](https://user-images.githubusercontent.com/46000016/92676353-f4049e80-f353-11ea-9e45-9283c01829ca.png)
+![singer](https://user-images.githubusercontent.com/46000016/92676359-f535cb80-f353-11ea-8590-d8d453fe7916.png)
+![searchResult](https://user-images.githubusercontent.com/46000016/92676360-f666f880-f353-11ea-97df-8fbfe0edfa95.png)
+![search](https://user-images.githubusercontent.com/46000016/92676362-f6ff8f00-f353-11ea-8fe5-9a858addbc3f.png)
+![playlist](https://user-images.githubusercontent.com/46000016/92676367-f7982580-f353-11ea-9056-03c5d2d441a1.png)
+![mv](https://user-images.githubusercontent.com/46000016/92676369-f830bc00-f353-11ea-8bec-2ebdb98d794a.png)
+![mv-picker](https://user-images.githubusercontent.com/46000016/92676371-f9fa7f80-f353-11ea-9a2e-f0326e1422d4.png)
+![miniPlayer](https://user-images.githubusercontent.com/46000016/92676373-fa931600-f353-11ea-8698-8f0d426c23cc.png)
+![categoryGroup](https://user-images.githubusercontent.com/46000016/92676376-fb2bac80-f353-11ea-864e-b8352fd1e968.png)
+![categoryDetail](https://user-images.githubusercontent.com/46000016/92676378-fbc44300-f353-11ea-98cd-75dab3f3d3d2.png)
+
