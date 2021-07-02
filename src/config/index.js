@@ -28,4 +28,4 @@ window.Vuex = Vuex;
 window.Util = util;
 window.Song = song.__Song;
 const ENV = process.env.NODE_ENV;
-window.domain = ENV === "development" ? "localhost" : "123.56.124.33";
+window.domain = ENV === "development" ? "localhost" : "123.57.204.48";

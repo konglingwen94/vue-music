@@ -4,7 +4,7 @@ A vue mobile music project
 
 ## 线上预览
 
-[http://123.56.124.33:4000](http://123.56.124.33:4000)
+[http://123.57.204.48:4000](http://123.57.204.48:4000)
 
 ![previewQrcode](https://user-images.githubusercontent.com/46000016/92676323-ea7b3680-f353-11ea-8e97-6d6e605746ba.png)
 
@@ -81,7 +81,6 @@ A vue mobile music project
 
 ## 页面截图
 
-
 ![videoRadio-picker](https://user-images.githubusercontent.com/46000016/92676327-ec44fa00-f353-11ea-911c-28dc31e5404f.png)
 ![songlist](https://user-images.githubusercontent.com/46000016/92676334-eea75400-f353-11ea-8e41-283d1245983b.png)
 ![songSheet](https://user-images.githubusercontent.com/46000016/92676337-ef3fea80-f353-11ea-8600-24c39e858231.png)
@@ -99,4 +98,3 @@ A vue mobile music project
 ![miniPlayer](https://user-images.githubusercontent.com/46000016/92676373-fa931600-f353-11ea-8698-8f0d426c23cc.png)
 ![categoryGroup](https://user-images.githubusercontent.com/46000016/92676376-fb2bac80-f353-11ea-864e-b8352fd1e968.png)
 ![categoryDetail](https://user-images.githubusercontent.com/46000016/92676378-fbc44300-f353-11ea-98cd-75dab3f3d3d2.png)
-
